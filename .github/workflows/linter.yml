@@ -3,7 +3,16 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [15.6.0]
     steps:
     - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Modules
+      run: npm i
     - name: Run ESLint
-      run: ./node_modules/.bin/eslint . --ext .js,.jsx
+      run: npx eslint . --ext .js,.jsx
