@@ -1,25 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  AppBar,
   Button,
   Drawer,
   IconButton,
   List,
   ListItem,
   SwipeableDrawer,
-  Toolbar,
-  Typography,
 } from '@material-ui/core';
 import { ChevronLeft, Menu } from '@material-ui/icons';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
-import Spacer from '../components/Spacer';
+import Spacer from './Spacer';
 
 const drawerWidth = 142;
 const headerHeight = 50;
 
-const Header = styled(AppBar)`
+const Header = styled.div`
   width: 100%;
   height: ${headerHeight}px;
   background-color: gray;
@@ -68,10 +64,6 @@ export default function Wrapper({ children }) {
 
   return (
     <div>
-      {/* <Header>
-        <DesktopOnly>Donor Relationship Management</DesktopOnly>
-        <MobileOnly>DRM</MobileOnly>
-      </Header> */}
       <Header>
         <DesktopOnly>Donor Relationship Management</DesktopOnly>
         <MobileOnly>DRM</MobileOnly>
@@ -83,7 +75,15 @@ export default function Wrapper({ children }) {
           </Drawer>
         </DesktopOnly>
         <MobileOnly>
-          <IconButton style={{ position: 'absolute', top: 0, left: 0, zIndex: 5000 }} onClick={toggleMenu}>
+          <IconButton
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              zIndex: 5000,
+            }}
+            onClick={toggleMenu}
+          >
             {openMenu ? <ChevronLeft /> : <Menu />}
           </IconButton>
           <SwipeableDrawer
@@ -91,7 +91,7 @@ export default function Wrapper({ children }) {
             onClose={toggleMenuClosed}
             onOpen={toggleMenuOpened}
           >
-            <Spacer height={30}/>
+            <Spacer height={30} />
             <MenuButtons toggleMenu={toggleMenu} />
           </SwipeableDrawer>
         </MobileOnly>
@@ -100,5 +100,5 @@ export default function Wrapper({ children }) {
         {children}
       </Main>
     </div>
-  )
-};
+  );
+}
