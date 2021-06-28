@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Button,
   Drawer,
   IconButton,
-  List,
-  ListItem,
   SwipeableDrawer,
 } from '@material-ui/core';
 import { ChevronLeft, Menu } from '@material-ui/icons';
 import styled from '@emotion/styled';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
+import MenuButtons from './MenuButtons';
 import Spacer from './Spacer';
 
 const drawerWidth = 142;
@@ -36,25 +34,6 @@ const Main = styled.main`
     padding-left: ${drawerWidth}px;
   }
 `;
-
-const buttonNames = [
-  'All Donors',
-  'My Donors',
-  'All Staff',
-  'Profile',
-];
-
-const MenuButtons = ({ toggleMenu }) => (
-  <List>
-    {buttonNames.map((name) => (
-      <ListItem key={name}>
-        <Button onClick={toggleMenu}>
-          {name}
-        </Button>
-      </ListItem>
-    ))}
-  </List>
-);
 
 export default function Wrapper({ children }) {
   const [openMenu, setOpenMenu] = useState(false);
