@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 
 // later will dynamically get userId from auth
-const userId = 'qui-gonj'
+const userId = 'qui-gonj';
 
 export default function MenuButtons({ toggleMenu }) {
   return (
@@ -26,14 +26,14 @@ export default function MenuButtons({ toggleMenu }) {
         </Link>
       </ListItem>
       <ListItem>
-        <Link href='/donors'>
+        <Link href="/donors">
           <Button onClick={toggleMenu}>
             Donors
           </Button>
         </Link>
       </ListItem>
       <ListItem>
-        <Link href='/staff'>
+        <Link href="/staff">
           <Button onClick={toggleMenu}>
             Staff
           </Button>

@@ -8,10 +8,15 @@ import {
 } from '@material-ui/core';
 import { ChevronLeft, Menu } from '@material-ui/icons';
 import styled from '@emotion/styled';
+import {
+  last,
+  pipe,
+  prop,
+  split,
+} from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import MenuButtons from './MenuButtons';
 import Spacer from './Spacer';
-import { last, pipe, prop, split } from 'ramda';
 
 const drawerWidth = 142;
 const headerHeight = 50;
