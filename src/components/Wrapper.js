@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
 import {
   Drawer,
   IconButton,
@@ -9,6 +11,7 @@ import styled from '@emotion/styled';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import MenuButtons from './MenuButtons';
 import Spacer from './Spacer';
+import { last, pipe, prop, split } from 'ramda';
 
 const drawerWidth = 142;
 const headerHeight = 50;
@@ -35,7 +38,16 @@ const Main = styled.main`
   }
 `;
 
+const capitalize = (text) => text[0].toUpperCase() + text.slice(1);
+
 export default function Wrapper({ children }) {
+  const router = useRouter();
+  const currentPage = pipe(
+    prop('pathname'),
+    split('/'),
+    last,
+    capitalize,
+  )(router);
   const [openMenu, setOpenMenu] = useState(false);
   const toggleMenu = () => setOpenMenu(!openMenu);
   const toggleMenuClosed = () => setOpenMenu(false);
@@ -43,6 +55,9 @@ export default function Wrapper({ children }) {
 
   return (
     <div>
+      <Head>
+        <title>{currentPage}</title>
+      </Head>
       <Header>
         <DesktopOnly>Donor Relationship Management</DesktopOnly>
         <MobileOnly>DRM</MobileOnly>
