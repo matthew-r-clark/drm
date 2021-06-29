@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
 import {
-  Button,
   Drawer,
   IconButton,
-  List,
-  ListItem,
   SwipeableDrawer,
 } from '@material-ui/core';
 import { ChevronLeft, Menu } from '@material-ui/icons';
 import styled from '@emotion/styled';
+import {
+  last,
+  pipe,
+  prop,
+  split,
+} from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
+import MenuButtons from './MenuButtons';
 import Spacer from './Spacer';
 
 const drawerWidth = 142;
@@ -37,26 +43,21 @@ const Main = styled.main`
   }
 `;
 
-const buttonNames = [
-  'All Donors',
-  'My Donors',
-  'All Staff',
-  'Profile',
-];
-
-const MenuButtons = ({ toggleMenu }) => (
-  <List>
-    {buttonNames.map((name) => (
-      <ListItem key={name}>
-        <Button onClick={toggleMenu}>
-          {name}
-        </Button>
-      </ListItem>
-    ))}
-  </List>
-);
+const capitalize = (text) => {
+  if (text) {
+    return text[0].toUpperCase() + text.slice(1);
+  }
+  return text;
+};
 
 export default function Wrapper({ children }) {
+  const router = useRouter();
+  const currentPage = pipe(
+    prop('pathname'),
+    split('/'),
+    last,
+    capitalize,
+  )(router);
   const [openMenu, setOpenMenu] = useState(false);
   const toggleMenu = () => setOpenMenu(!openMenu);
   const toggleMenuClosed = () => setOpenMenu(false);
@@ -64,6 +65,9 @@ export default function Wrapper({ children }) {
 
   return (
     <div>
+      <Head>
+        <title>{currentPage}</title>
+      </Head>
       <Header>
         <DesktopOnly>Donor Relationship Management</DesktopOnly>
         <MobileOnly>DRM</MobileOnly>
