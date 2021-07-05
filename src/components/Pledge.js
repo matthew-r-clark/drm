@@ -7,12 +7,12 @@ const Pledge = ({ instance }) => {
     margin-left: 1rem;
     `;
   return (
-      <Grid>
-          <h4>{instance.first_name}</h4>
-          <h4>{instance.last_name}</h4>
-      </Grid>
-       
-     );
-}
+    <Grid>
+        <h4>{instance.first_name}</h4>
+        <h4>{instance.last_name}</h4>
+    </Grid>
+
+  );
+};
  
 export default Pledge;
