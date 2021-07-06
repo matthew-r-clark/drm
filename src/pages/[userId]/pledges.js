@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
-import styled from '@emotion/styled';
+
+import GridWrapper from '../../utils/GridWrapper';
 
 import Pledge from '../../components/Pledge';
 
@@ -32,21 +33,13 @@ export default function Pledges() {
 
   const pledges = pledgesArr.map((pledge) => <Pledge key={pledge.id} donor={pledge} />);
 
-  const Title = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-left: 1rem;
-  `;
   return (
     <>
-
-      {/* <DesktopOnly> */}
       <h1 style={{ marginLeft: '1rem' }}>pledges for {userId}</h1>
-      {/* </DesktopOnly> */}
-      <Title>
+      <GridWrapper cols={2}>
         <h3>First Name:</h3>
         <h3>Last Name:</h3>
-      </Title>
+      </GridWrapper>
       {pledges}
     </>
   );

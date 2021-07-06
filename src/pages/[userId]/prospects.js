@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
-import styled from '@emotion/styled';
+
+import GridWrapper from '../../utils/GridWrapper';
+
 import Prospect from '../../components/Prospect';
 
 export default function Prospects() {
@@ -35,19 +37,14 @@ export default function Prospects() {
 
   const prospects = prosArr.map((prospect) => <Prospect key={prospect.id} donor={prospect} />);
 
-  const Title = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  margin-left: 1rem;
-  `;
   return (
     <>
       <h1 style={{ marginLeft: '1rem' }}>Prospects for {userId}</h1>
-      <Title>
+      <GridWrapper cols={3}>
         <h3>First Name:</h3>
         <h3>Last Name:</h3>
         <h3>Notes</h3>
-      </Title>
+      </GridWrapper>
       {prospects}
     </>
   );
