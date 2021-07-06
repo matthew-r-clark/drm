@@ -43,7 +43,7 @@ export default function Prospects() {
       <GridWrapper cols={3}>
         <h3>First Name:</h3>
         <h3>Last Name:</h3>
-        <h3>Notes</h3>
+        <h3>Notes:</h3>
       </GridWrapper>
       {prospects}
     </>
