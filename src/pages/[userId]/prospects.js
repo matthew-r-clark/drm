@@ -33,7 +33,7 @@ export default function Prospects() {
     },
   ];
 
-  const prospects = prosArr.map((prospect) => <Prospect key={prospect.id} instance={prospect} />);
+  const prospects = prosArr.map((prospect) => <Prospect key={prospect.id} donor={prospect} />);
 
   const Title = styled.div`
   display: grid;
@@ -42,10 +42,7 @@ export default function Prospects() {
   `;
   return (
     <>
-
-      {/* <DesktopOnly> */}
       <h1 style={{ marginLeft: '1rem' }}>Prospects for {userId}</h1>
-      {/* </DesktopOnly> */}
       <Title>
         <h3>First Name:</h3>
         <h3>Last Name:</h3>

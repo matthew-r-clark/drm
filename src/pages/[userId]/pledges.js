@@ -30,7 +30,7 @@ export default function Pledges() {
     },
   ];
 
-  const pledges = pledgesArr.map((pledge) => <Pledge key={pledge.id} instance={pledge} />);
+  const pledges = pledgesArr.map((pledge) => <Pledge key={pledge.id} donor={pledge} />);
 
   const Title = styled.div`
   display: grid;
