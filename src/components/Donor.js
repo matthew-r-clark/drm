@@ -1,10 +1,10 @@
-import GridWrapper from '../utils/GridWrapper';
+import Grid from '../utils/Grid';
 
 const Donor = ({ donor }) => (
-  <GridWrapper cols={2}>
+  <Grid cols={2}>
     <h4>{donor.first_name}</h4>
     <h4>{donor.last_name}</h4>
-  </GridWrapper>
+  </Grid>
 
 );
 

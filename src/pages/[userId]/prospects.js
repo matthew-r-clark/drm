@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import GridWrapper from '../../utils/GridWrapper';
+import Grid from '../../utils/Grid';
 
 import Prospect from '../../components/Prospect';
 
@@ -40,11 +40,11 @@ export default function Prospects() {
   return (
     <>
       <h1 style={{ marginLeft: '1rem' }}>Prospects for {userId}</h1>
-      <GridWrapper cols={3}>
+      <Grid cols={3}>
         <h3>First Name:</h3>
         <h3>Last Name:</h3>
         <h3>Notes:</h3>
-      </GridWrapper>
+      </Grid>
       {prospects}
     </>
   );

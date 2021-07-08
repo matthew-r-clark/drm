@@ -1,11 +1,11 @@
-import GridWrapper from '../utils/GridWrapper';
+import Grid from '../utils/Grid';
 
 const Prospect = ({ donor }) => (
-  <GridWrapper cols={3}>
+  <Grid cols={3}>
     <h4>{donor.first_name}</h4>
     <h4>{donor.last_name}</h4>
     <h4>{donor.notes}</h4>
-  </GridWrapper>
+  </Grid>
 
 );
 

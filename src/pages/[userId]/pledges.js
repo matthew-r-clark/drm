@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import GridWrapper from '../../utils/GridWrapper';
+import Grid from '../../utils/Grid';
 
 import Pledge from '../../components/Pledge';
 
@@ -35,11 +35,11 @@ export default function Pledges() {
 
   return (
     <>
-      <h1 style={{ marginLeft: '1rem' }}>pledges for {userId}</h1>
-      <GridWrapper cols={2}>
+      <h1 style={{ marginLeft: '1rem' }}>Pledges for {userId}</h1>
+      <Grid cols={2}>
         <h3>First Name:</h3>
         <h3>Last Name:</h3>
-      </GridWrapper>
+      </Grid>
       {pledges}
     </>
   );
