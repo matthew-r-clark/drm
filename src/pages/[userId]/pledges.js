@@ -5,7 +5,7 @@ export default function Pledges() {
   const router = useRouter();
   const { userId } = router.query;
 
-  const pledgesArr = [
+  const pledges = [
     {
       id: 1,
       first_name: 'Jon',
@@ -35,7 +35,7 @@ export default function Pledges() {
         <h3>First Name:</h3>
         <h3>Last Name:</h3>
       </Grid>
-      {pledgesArr.map((pledge) => (
+      {pledges.map((pledge) => (
         <Grid key={pledge.id} cols={2}>
           <h4>{pledge.first_name}</h4>
           <h4>{pledge.last_name}</h4>
