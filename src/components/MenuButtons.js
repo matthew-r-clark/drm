@@ -26,9 +26,9 @@ export default function MenuButtons({ toggleMenu }) {
         </Link>
       </ListItem>
       <ListItem>
-        <Link href="/donors">
+        <Link href="/ministry-partners">
           <Button onClick={toggleMenu}>
-            Donors
+            Partners
           </Button>
         </Link>
       </ListItem>

@@ -1,8 +1,5 @@
 import { useRouter } from 'next/router';
-
 import Grid from '../../utils/Grid';
-
-import Pledge from '../../components/Pledge';
 
 export default function Pledges() {
   const router = useRouter();
@@ -31,8 +28,6 @@ export default function Pledges() {
     },
   ];
 
-  const pledges = pledgesArr.map((pledge) => <Pledge key={pledge.id} donor={pledge} />);
-
   return (
     <>
       <h1 style={{ marginLeft: '1rem' }}>Pledges for {userId}</h1>
@@ -40,7 +35,12 @@ export default function Pledges() {
         <h3>First Name:</h3>
         <h3>Last Name:</h3>
       </Grid>
-      {pledges}
+      {pledgesArr.map((pledge) => (
+        <Grid key={pledge.id} cols={2}>
+          <h4>{pledge.first_name}</h4>
+          <h4>{pledge.last_name}</h4>
+        </Grid>
+      ))}
     </>
   );
 }

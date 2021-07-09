@@ -1,14 +1,11 @@
 import { useRouter } from 'next/router';
-
 import Grid from '../../utils/Grid';
-
-import Prospect from '../../components/Prospect';
 
 export default function Prospects() {
   const router = useRouter();
   const { userId } = router.query;
 
-  const prosArr = [
+  const prospects = [
     {
       id: 1,
       first_name: 'Jon',
@@ -35,8 +32,6 @@ export default function Prospects() {
     },
   ];
 
-  const prospects = prosArr.map((prospect) => <Prospect key={prospect.id} donor={prospect} />);
-
   return (
     <>
       <h1 style={{ marginLeft: '1rem' }}>Prospects for {userId}</h1>
@@ -45,7 +40,15 @@ export default function Prospects() {
         <h3>Last Name:</h3>
         <h3>Notes:</h3>
       </Grid>
-      {prospects}
+
+      {prospects.map((prospect) => (
+        <Grid key={prospect.id} cols={3}>
+          <h4>{prospect.first_name}</h4>
+          <h4>{prospect.last_name}</h4>
+          <h4>{prospect.notes}</h4>
+        </Grid>
+      ))}
+
     </>
   );
 }
