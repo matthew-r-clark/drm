@@ -1,0 +1,44 @@
+import Grid from "../utils/Grid";
+import Button from '@material-ui/core/Button';
+
+const ministers = [
+  {
+    id: 1,
+    name: "Reagann Smith",
+    email: "reagann.smith@anyfocus.org"
+  },
+  {
+    id: 2,
+    name: "Danielle Rodriguez-Clark",
+    email: "danielleclark@anyfocus.org"
+  },
+  {
+    id: 3,
+    name: "Brandon Worsham",
+    email: "supremeleaderoffocus@anyfocus.org"
+  },
+  
+]
+
+export default function Ministers() {
+  return (
+    <>
+    <h1 style={{ marginLeft: '1rem' }}>Ministers</h1>
+    <Grid cols={4}>
+      <h2>Name:</h2>
+      <h2>Email:</h2>
+      <h2>Update:</h2>
+      <h2>Delete:</h2>
+    </Grid>
+    {ministers.map(minister => (
+
+    <Grid cols={4}>
+      <a href="#">{minister.name}</a>
+      <p>{minister.email}</p>
+      <Button style={{width:'40%', height:'60%'}} variant="contained" color="default">Update</Button>
+      <Button style={{width:'40%', height:'60%'}} variant="contained" color="secondary">Delete</Button>
+    </Grid>
+    ))}
+    </>
+  );
+}

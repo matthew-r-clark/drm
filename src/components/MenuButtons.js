@@ -33,9 +33,9 @@ export default function MenuButtons({ toggleMenu }) {
         </Link>
       </ListItem>
       <ListItem>
-        <Link href="/staff">
+        <Link href="/ministers">
           <Button onClick={toggleMenu}>
-            Staff
+            Ministers
           </Button>
         </Link>
       </ListItem>
