@@ -10,12 +10,12 @@ const ministers = [
   {
     id: 2,
     name: 'Danielle Rodriguez-Clark',
-    email: 'danielleclark@anyfocus.org',
+    email: 'danielle.clark@anyfocus.org',
   },
   {
     id: 3,
     name: 'Brandon Worsham',
-    email: 'supremeleaderoffocus@anyfocus.org',
+    email: 'brandon.worsham@anyfocus.org',
   },
 
 ];
