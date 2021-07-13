@@ -16,7 +16,7 @@ import {
 } from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import Spacer from './Spacer';
-import TopButtons from './TopButtons';
+import MenuButtons from './MenuButtons';
 
 const drawerWidth = 142;
 const headerHeight = 50;
@@ -77,7 +77,7 @@ export default function Wrapper({ children }) {
 
       <nav>
         <DesktopOnly>
-          <TopButtons />
+          <MenuButtons />
         </DesktopOnly>
         <MobileOnly>
           <IconButton
@@ -100,7 +100,7 @@ export default function Wrapper({ children }) {
             <Spacer height={30} />
             <Drawer variant="permanent" anchor="top" open>
 
-              <TopButtons toggleMenu={toggleMenu} />
+              <MenuButtons toggleMenu={toggleMenu} />
             </Drawer>
 
           </SwipeableDrawer>
