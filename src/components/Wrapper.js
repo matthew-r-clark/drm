@@ -14,8 +14,9 @@ import {
   split,
 } from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
+import MenuButtons from './MenuButtons';
 import Spacer from './Spacer';
-import TopButtons from './TopButtons';
+import TopButtons from './TopButtons'
 
 const drawerWidth = 142;
 const headerHeight = 50;
@@ -67,16 +68,16 @@ export default function Wrapper({ children }) {
       <Head>
         <title>{currentPage}</title>
       </Head>
-
-      <MobileOnly>
+      
+        <MobileOnly>
         <Header>
           Fundraising Tracker
-        </Header>
-      </MobileOnly>
-
+          </Header>
+        </MobileOnly>
+      
       <nav>
-        <DesktopOnly>
-          <TopButtons />
+        <DesktopOnly> 
+            <TopButtons /> 
         </DesktopOnly>
         <MobileOnly>
           <IconButton
@@ -85,7 +86,7 @@ export default function Wrapper({ children }) {
               top: 0,
               left: 0,
               zIndex: 5000,
-              marginBottom: '1rem',
+              marginBottom:'1rem'
             }}
             onClick={toggleMenu}
           >
