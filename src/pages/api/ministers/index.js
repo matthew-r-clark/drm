@@ -4,8 +4,8 @@ import supabase from '@@supabase';
 const api = {
   get: async (req, res) => {
     const { data, error } = await supabase
-    .from('staff')
-    .select('*');
+      .from('staff')
+      .select('*');
     if (data) {
       res.status(200).json(data);
     } else {
