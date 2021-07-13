@@ -57,8 +57,8 @@ export default function Links() {
           </Link>
         </Menu>
         <Profile>
-        <Link className="link" href="/">
-          Log out
+          <Link className="link" href="/">
+            Log out
           </Link>
         </Profile>
 
