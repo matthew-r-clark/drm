@@ -14,7 +14,6 @@ import {
   split,
 } from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
-import MenuButtons from './MenuButtons';
 import Spacer from './Spacer';
 import TopButtons from './TopButtons';
 
