@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import {
+  Drawer,
   IconButton,
   SwipeableDrawer,
 } from '@material-ui/core';
-import { ChevronLeft, Menu } from '@material-ui/icons';
+import { Menu, KeyboardArrowUp } from '@material-ui/icons';
 import styled from '@emotion/styled';
 import {
   last,
@@ -14,7 +15,6 @@ import {
   split,
 } from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
-import MenuButtons from './MenuButtons';
 import Spacer from './Spacer';
 import TopButtons from './TopButtons';
 
@@ -90,7 +90,7 @@ export default function Wrapper({ children }) {
             }}
             onClick={toggleMenu}
           >
-            {openMenu ? <ChevronLeft /> : <Menu />}
+            {openMenu ? <KeyboardArrowUp /> : <Menu />}
           </IconButton>
           <SwipeableDrawer
             open={openMenu}
@@ -98,7 +98,11 @@ export default function Wrapper({ children }) {
             onOpen={toggleMenuOpened}
           >
             <Spacer height={30} />
-            <MenuButtons toggleMenu={toggleMenu} />
+            <Drawer variant="permanent" anchor="top" open>
+
+              <TopButtons toggleMenu={toggleMenu} />
+            </Drawer>
+
           </SwipeableDrawer>
         </MobileOnly>
       </nav>
