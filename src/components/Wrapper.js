@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import {
-  Drawer,
   IconButton,
   SwipeableDrawer,
 } from '@material-ui/core';
@@ -17,6 +16,7 @@ import {
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import MenuButtons from './MenuButtons';
 import Spacer from './Spacer';
+import TopButtons from './TopButtons';
 
 const drawerWidth = 142;
 const headerHeight = 50;
@@ -24,7 +24,7 @@ const headerHeight = 50;
 const Header = styled.div`
   width: 100%;
   height: ${headerHeight}px;
-  background-color: gray;
+  background-color:#0079D3 ;
   color: white;
   font-size: 30px;
   display: flex;
@@ -68,15 +68,16 @@ export default function Wrapper({ children }) {
       <Head>
         <title>{currentPage}</title>
       </Head>
-      <Header>
-        <DesktopOnly>Donor Relationship Management</DesktopOnly>
-        <MobileOnly>DRM</MobileOnly>
-      </Header>
+
+      <MobileOnly>
+        <Header>
+          Fundraising Tracker
+        </Header>
+      </MobileOnly>
+
       <nav>
         <DesktopOnly>
-          <Drawer variant="permanent" anchor="left" open>
-            <MenuButtons />
-          </Drawer>
+          <TopButtons />
         </DesktopOnly>
         <MobileOnly>
           <IconButton
@@ -85,6 +86,7 @@ export default function Wrapper({ children }) {
               top: 0,
               left: 0,
               zIndex: 5000,
+              marginBottom: '1rem',
             }}
             onClick={toggleMenu}
           >
