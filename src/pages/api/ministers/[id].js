@@ -12,6 +12,12 @@ const api = {
       res.status(400).send(error);
     }
   },
+
+  put: (req, res) => {},
+
+  post: (req, res) => {},
+
+  delete: (req, res) => {},
 };
 
 export default router(api);
