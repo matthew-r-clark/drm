@@ -1,10 +1,12 @@
 import router from '@@router';
 import supabase from '@@supabase';
+import YAML from 'yaml';
 import {
   assoc,
   isEmpty,
   omit,
   pipe,
+  propOr,
 } from 'ramda';
 
 const api = {
@@ -24,6 +26,7 @@ const api = {
     } else {
       const payload = data.map((prospect) => pipe(
         assoc('partner', prospect.partners),
+        assoc('notes', YAML.parse(propOr('', 'notes', prospect))),
         omit(['partners', 'minister_id', 'partner_id']),
       )(prospect));
       res.status(200).json(payload);
