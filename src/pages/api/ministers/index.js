@@ -4,10 +4,22 @@ import supabase from '@@supabase';
 const api = {
   get: async (req, res) => {
     const { data, error } = await supabase
-      .from('staff')
-      .select('*');
+      .from('ministers')
+      .select()
+      .match(req.query);
     if (data) {
       res.status(200).json(data);
+    } else {
+      res.status(400).send(error);
+    }
+  },
+
+  post: async (req, res) => {
+    const { data, error } = await supabase
+      .from('ministers')
+      .insert(req.body);
+    if (data) {
+      res.status(201).json(data);
     } else {
       res.status(400).send(error);
     }
