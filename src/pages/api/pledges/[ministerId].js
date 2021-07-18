@@ -18,7 +18,7 @@ const api = {
       `)
       .match({ minister_id: ministerId, is_pledge_submitted: true });
     if (data && isEmpty(data)) {
-      res.status(404).send(`Partner with ID ${ministerId} not found.`);
+      res.status(404).send(`No pledges found for minister with ID ${ministerId}.`);
     } else if (error) {
       res.status(400).send(error);
     } else {
