@@ -4,9 +4,9 @@ import supabase from '@@supabase';
 const api = {
   get: async (req, res) => {
     const { data, error } = await supabase
-      .from('donors')
-      .select('*')
-      .limit(1);
+      .from('partners')
+      .select()
+      .match(req.query);
     if (data) {
       res.status(200).json(data);
     } else {
@@ -14,11 +14,16 @@ const api = {
     }
   },
 
-  put: (req, res) => {},
-
-  post: (req, res) => {},
-
-  delete: (req, res) => {},
+  post: async (req, res) => {
+    const { data, error } = await supabase
+      .from('partners')
+      .insert(req.body);
+    if (data) {
+      res.status(201).json(data);
+    } else {
+      res.status(400).send(error);
+    }
+  },
 };
 
 export default router(api);
