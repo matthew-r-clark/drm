@@ -1,6 +1,6 @@
 import router from '@@router';
 import supabase from '@@supabase';
-import { head } from 'ramda';
+import { head, isEmpty } from 'ramda';
 
 const api = {
   get: async (req, res) => {
@@ -8,11 +8,13 @@ const api = {
     const { data, error } = await supabase
       .from('ministers')
       .select()
-      .filter('id', 'eq', id);
-    if (data) {
-      res.status(200).json(head(data));
-    } else {
+      .match({ id });
+    if (data && isEmpty(data)) {
+      res.status(404).send(`Minister with ID ${id} not found.`);
+    } else if (error) {
       res.status(400).send(error);
+    } else {
+      res.status(200).json(head(data));
     }
   },
 
@@ -22,10 +24,12 @@ const api = {
       .from('ministers')
       .update(req.body)
       .match({ id });
-    if (data) {
-      res.status(200).json(data);
-    } else {
+    if (data && isEmpty(data)) {
+      res.status(404).send(`Minister with ID ${id} not found.`);
+    } else if (error) {
       res.status(400).send(error);
+    } else {
+      res.status(200).json(data);
     }
   },
 
@@ -33,12 +37,14 @@ const api = {
     const { id } = req.query;
     const { data, error } = await supabase
       .from('ministers')
-      .delete(req.body)
+      .delete()
       .match({ id });
-    if (data) {
-      res.status(200).end();
-    } else {
+    if (data && isEmpty(data)) {
+      res.status(404).send(`Minister with ID ${id} not found.`);
+    } else if (error) {
       res.status(400).send(error);
+    } else {
+      res.status(200).end();
     }
   },
 };
