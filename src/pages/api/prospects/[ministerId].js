@@ -16,7 +16,7 @@ const api = {
       .from('ministers_partners')
       .select(`
         *,
-        partners (*)
+        partner:partner_id (*)
       `)
       .match({ minister_id: ministerId, is_pledge_submitted: false });
     if (data && isEmpty(data)) {
@@ -25,9 +25,8 @@ const api = {
       res.status(400).send(error);
     } else {
       const payload = data.map((prospect) => pipe(
-        assoc('partner', prospect.partners),
         assoc('notes', YAML.parse(propOr('', 'notes', prospect))),
-        omit(['partners', 'minister_id', 'partner_id']),
+        omit(['minister_id', 'partner_id']),
       )(prospect));
       res.status(200).json(payload);
     }
