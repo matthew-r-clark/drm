@@ -2,6 +2,8 @@ import Link from '@material-ui/core/Link';
 import styled from '@emotion/styled';
 import {
   Button,
+  List,
+  ListItem,
 } from '@material-ui/core';
 import Grid from '../utils/Grid';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
@@ -36,6 +38,8 @@ a {
 `;
 
 const MobileContainer = styled.div`
+height: 100%;
+padding-top: 2rem;
 background: #0079D3;
 color: white;
 Button {
@@ -51,33 +55,36 @@ export default function Links({ toggleMenu }) {
       {/* Mobile Menu */}
       <MobileOnly>
         <MobileContainer>
-          <Grid style={{ justifyItems: 'center' }} cols={1} rows={5}>
-            <Link href={`/${userId}/prospects`}>
-              <Button onClick={toggleMenu}>
-                Prospects
-              </Button>
-            </Link>
-            <Link href={`/${userId}/pledges`}>
-              <Button onClick={toggleMenu}>
-                Pledges
-              </Button>
-            </Link>
-            <Link href="/ministry-partners">
-              <Button onClick={toggleMenu}>
-                Partners
-              </Button>
-            </Link>
-            <Link href="/ministers">
-              <Button onClick={toggleMenu}>
-                Ministers
-              </Button>
-            </Link>
-            <Link href="/">
-              <Button onClick={toggleMenu}>
-                Logout
-              </Button>
-            </Link>
-          </Grid>
+          <List>
+            <ListItem>
+              <Link href={`/${userId}/prospects`}>
+                <Button onClick={toggleMenu}>
+                  Prospects
+                </Button>
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link href={`/${userId}/pledges`}>
+                <Button onClick={toggleMenu}>
+                  Pledges
+                </Button>
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link href="/ministry-partners">
+                <Button onClick={toggleMenu}>
+                  Partners
+                </Button>
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link href="/staff">
+                <Button onClick={toggleMenu}>
+                  Staff
+                </Button>
+              </Link>
+            </ListItem>
+          </List>
         </MobileContainer>
       </MobileOnly>
 

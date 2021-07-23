@@ -6,7 +6,7 @@ import {
   IconButton,
   SwipeableDrawer,
 } from '@material-ui/core';
-import { Menu, KeyboardArrowUp } from '@material-ui/icons';
+import { Menu, ChevronLeft } from '@material-ui/icons';
 import styled from '@emotion/styled';
 import {
   last,
@@ -90,7 +90,7 @@ export default function Wrapper({ children }) {
             }}
             onClick={toggleMenu}
           >
-            {openMenu ? <KeyboardArrowUp /> : <Menu />}
+            {openMenu ? <ChevronLeft /> : <Menu />}
           </IconButton>
           <SwipeableDrawer
             open={openMenu}
@@ -98,7 +98,7 @@ export default function Wrapper({ children }) {
             onOpen={toggleMenuOpened}
           >
             <Spacer height={30} />
-            <Drawer variant="permanent" anchor="top" open>
+            <Drawer variant="permanent" anchor="left" open>
 
               <MenuButtons toggleMenu={toggleMenu} />
             </Drawer>
