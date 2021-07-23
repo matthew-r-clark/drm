@@ -79,7 +79,7 @@ export default function Links({ toggleMenu }) {
               </Link>
             </ListItem>
             <ListItem>
-             <Link className="link" href="/ministers">
+              <Link className="link" href="/ministers">
                 <Button onClick={toggleMenu}>
                   Ministers
                 </Button>
