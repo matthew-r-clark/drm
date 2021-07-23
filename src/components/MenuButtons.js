@@ -39,6 +39,7 @@ a {
 
 const MobileContainer = styled.div`
 height: 100%;
+margin: 0;
 padding-top: 2rem;
 background: #0079D3;
 color: white;

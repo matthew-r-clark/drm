@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import {
-  Drawer,
   IconButton,
   SwipeableDrawer,
 } from '@material-ui/core';
@@ -15,7 +14,6 @@ import {
   split,
 } from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
-import Spacer from './Spacer';
 import MenuButtons from './MenuButtons';
 
 const drawerWidth = 142;
@@ -97,11 +95,8 @@ export default function Wrapper({ children }) {
             onClose={toggleMenuClosed}
             onOpen={toggleMenuOpened}
           >
-            <Spacer height={30} />
-            <Drawer variant="permanent" anchor="left" open>
 
-              <MenuButtons toggleMenu={toggleMenu} />
-            </Drawer>
+            <MenuButtons toggleMenu={toggleMenu} />
 
           </SwipeableDrawer>
         </MobileOnly>
