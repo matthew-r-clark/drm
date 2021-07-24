@@ -29,16 +29,16 @@ const Header = styled.div`
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  @media (min-width: 960px) {
+  /* @media (min-width: 960px) {
     padding-left: ${drawerWidth}px;
-  }
+  } */
 `;
 
 const Main = styled.main`
   /* padding-top: ${headerHeight}px; */
-  @media (min-width: 960px) {
+  /* @media (min-width: 960px) {
     padding-left: ${drawerWidth}px;
-  }
+  } */
 `;
 
 const capitalize = (text) => {
