@@ -7,7 +7,7 @@ export default function Prospects() {
   const { userId } = router.query;
 
   const Container = styled.div`
-
+  padding-right: 1rem;
 
   .first-col {
     grid-column: 1/ span 2;
@@ -27,10 +27,16 @@ export default function Prospects() {
   .sixth-col {
     grid-column: 12/ span 1;
   }
+
+  .dark {
+    background: #F5F5F5;
+
+  }
   `;
 
 const prospects = [
   {
+    id: 1,
     name: "Jon Smith",
     status: "contacted",
     last_contacted: "07/13",
@@ -39,12 +45,31 @@ const prospects = [
     pledge: false
   },
   {
+    id: 2,
     name: "Matt Clark",
     status: "pledged, no amount",
     last_contacted: "06/21",
     notes: "Need to follow up",
     others: "Danielle Clark",
     pledge: true
+  },
+  {
+    id: 3,
+    name: "Mitchell Pavel",
+    status: "contacted",
+    last_contacted: "06/30",
+    notes: "Wants to donate, partnering with the wife",
+    others: "",
+    pledge: true
+  },
+  {
+    id: 4,
+    name: "Bob Chin",
+    status: "No answer",
+    last_contacted: "06/01",
+    notes: "Attempted contact; No response.",
+    others: "",
+    pledge: false
   },
 ];
 
@@ -61,8 +86,8 @@ const prospects = [
       </Grid>
 
       {prospects.map((prospect) => (
-        <Grid key={prospect.id} cols={12}>
-        <p className="first-col">{prospect.name}</p>
+        <Grid className={prospect.id % 2 ? 'dark columns' : 'columns'} key={prospect.id} cols={12}>
+        <p style={{ marginLeft: '1rem' }} className="first-col">{prospect.name}</p>
         <p className="second-col">{prospect.status}</p>
         <p className="third-col">{prospect.last_contacted}</p>
         <p className="fourth-col">{prospect.notes}</p>
