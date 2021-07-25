@@ -15,30 +15,18 @@ import {
 } from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import MenuButtons from './MenuButtons';
-
-const drawerWidth = 142;
-const headerHeight = 50;
+import colors from '../utils/colors';
 
 const Header = styled.div`
   width: 100%;
-  height: ${headerHeight}px;
-  background-color:#0079D3 ;
-  color: white;
+  height: 50px;
+  background-color:${colors.blue} ;
+  color: ${colors.white};
   font-size: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  @media (min-width: 960px) {
-    padding-left: ${drawerWidth}px;
-  }
-`;
-
-const Main = styled.main`
-  /* padding-top: ${headerHeight}px; */
-  @media (min-width: 960px) {
-    padding-left: ${drawerWidth}px;
-  }
 `;
 
 const capitalize = (text) => {
@@ -101,9 +89,9 @@ export default function Wrapper({ children }) {
           </SwipeableDrawer>
         </MobileOnly>
       </nav>
-      <Main>
+      <main>
         {children}
-      </Main>
+      </main>
     </div>
   );
 }
