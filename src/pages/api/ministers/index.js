@@ -2,11 +2,9 @@ import router from '@@router';
 import supabase from '@@supabase';
 import { isEmpty, omit } from 'ramda';
 
-const ROW_LIMIT = 15;
-
 const api = {
   get: async (req, res) => {
-    let { limit = ROW_LIMIT, page = 1 } = req.query;
+    let { limit = 15, page = 1 } = req.query;
     limit = Number(limit);
     page = Number(page);
     const query = omit(['limit', 'page'], req.query);

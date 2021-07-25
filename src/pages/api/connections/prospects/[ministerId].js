@@ -16,7 +16,7 @@ const api = {
       .from('ministers_partners')
       .select(`
         *,
-        partner:partner_id (*)
+        partner:partner_id (*) // TODO: need to also pull in other connected staff 
       `)
       .match({ minister_id: ministerId, is_pledge_submitted: false });
     if (data && isEmpty(data)) {
