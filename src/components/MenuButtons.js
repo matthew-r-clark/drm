@@ -54,44 +54,42 @@ Button {
 
 export default function MenuButtons({ toggleMenu }) {
   const userId = 'qui-gonj';
+  const links = [
+    {
+      href: `/${userId}/prospects`,
+      text: 'Prospects',
+    },
+    {
+      href: `/${userId}/pledges`,
+      text: 'Pledges',
+    },
+    {
+      href: '/ministry-partners',
+      text: 'Partners',
+    },
+    {
+      href: '/ministers',
+      text: 'Ministers',
+    },
+  ];
   return (
     <>
       {/* Mobile Menu */}
       <MobileOnly>
         <MobileContainer>
           <List>
-            <ListItem>
-              <Link href={`/${userId}/prospects`}>
-                <Button onClick={toggleMenu}>
-                  Prospects
-                </Button>
-              </Link>
-            </ListItem>
-            <ListItem>
-              <Link href={`/${userId}/pledges`}>
-                <Button onClick={toggleMenu}>
-                  Pledges
-                </Button>
-              </Link>
-            </ListItem>
-            <ListItem>
-              <Link href="/ministry-partners">
-                <Button onClick={toggleMenu}>
-                  Partners
-                </Button>
-              </Link>
-            </ListItem>
-            <ListItem>
-              <Link href="/ministers">
-                <Button onClick={toggleMenu}>
-                  Ministers
-                </Button>
-              </Link>
-            </ListItem>
+            {links.map((link) => (
+              <ListItem>
+                <Link href={link.href}>
+                  <Button onClick={toggleMenu}>
+                    {link.text}
+                  </Button>
+                </Link>
+              </ListItem>
+            ))}
           </List>
         </MobileContainer>
       </MobileOnly>
-
       {/* Desktop Menu */}
       <DesktopOnly>
         <Container>
@@ -100,18 +98,11 @@ export default function MenuButtons({ toggleMenu }) {
               Fundraising Tracker
             </Logo>
             <Menu>
-              <Link href={`/${userId}/prospects`}>
-                Prospects
-              </Link>
-              <Link href={`/${userId}/pledges`}>
-                Pledges
-              </Link>
-              <Link href="/ministry-partners">
-                Partners
-              </Link>
-              <Link href="/ministers">
-                Ministers
-              </Link>
+              {links.map((link) => (
+                <Link href={link.href}>
+                  {link.text}
+                </Link>
+              ))}
             </Menu>
             <Profile>
               <Link href="/">
