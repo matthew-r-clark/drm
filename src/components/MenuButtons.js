@@ -5,9 +5,9 @@ import {
   List,
   ListItem,
 } from '@material-ui/core';
-import Grid from '../utils/Grid';
+import Grid from './utils/Grid';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
-import colors from '../utils/colors';
+import {white, blue} from '../styles/colors';
 
 const Logo = styled.div`
 grid-column: 1/6;
@@ -28,16 +28,16 @@ justify-self: end;
 `;
 
 const Container = styled.div`
-background: ${colors.blue};
-color: ${colors.white};
+background: ${blue};
+color: ${white};
 height: 50px;
 a {
-    color: ${colors.white};
-    border-bottom: 2px solid ${colors.blue};
+    color: ${white};
+    border-bottom: 2px solid ${blue};
 }
 
 a:hover {
-  border-bottom: 2px solid ${colors.white};
+  border-bottom: 2px solid ${white};
 }
 `;
 
@@ -45,10 +45,10 @@ const MobileContainer = styled.div`
 height: 100%;
 margin: 0;
 padding-top: 2rem;
-background: ${colors.blue};
-color: ${colors.white};
+background: ${blue};
+color: ${white};
 Button {
-    color: ${colors.white};
+    color: ${white};
 }
 `;
 
