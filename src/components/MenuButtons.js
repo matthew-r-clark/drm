@@ -1,12 +1,13 @@
-import Link from '@material-ui/core/Link';
+import Link from 'next/link';
 import styled from '@emotion/styled';
 import {
   Button,
   List,
   ListItem,
 } from '@material-ui/core';
-import Grid from '../utils/Grid';
+import Grid from './utils/Grid';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
+import colors from '../styles/colors';
 
 const Logo = styled.div`
 grid-column: 1/6;
@@ -15,11 +16,9 @@ font-size:1.5rem;
 
 const Menu = styled.div`
 grid-column-start:6;
-
-
-.link {
-    margin: 0 1rem;
-}
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 1rem;
 `;
 
 const Profile = styled.div`
@@ -29,11 +28,16 @@ justify-self: end;
 `;
 
 const Container = styled.div`
-background: #0079D3;
-color: white;
+background: ${colors.blue};
+color: ${colors.white};
 height: 50px;
 a {
-    color: white;
+    color: ${colors.white};
+    border-bottom: 2px solid ${colors.blue};
+}
+
+a:hover {
+  border-bottom: 2px solid ${colors.white};
 }
 `;
 
@@ -41,54 +45,51 @@ const MobileContainer = styled.div`
 height: 100%;
 margin: 0;
 padding-top: 2rem;
-background: #0079D3;
-color: white;
+background: ${colors.blue};
+color: ${colors.white};
 Button {
-    color: white;
+    color: ${colors.white};
 }
 `;
 
-export default function Links({ toggleMenu }) {
+export default function MenuButtons({ toggleMenu }) {
   const userId = 'qui-gonj';
+  const links = [
+    {
+      href: `/${userId}/prospects`,
+      text: 'Prospects',
+    },
+    {
+      href: `/${userId}/pledges`,
+      text: 'Pledges',
+    },
+    {
+      href: '/ministry-partners',
+      text: 'Partners',
+    },
+    {
+      href: '/ministers',
+      text: 'Ministers',
+    },
+  ];
   return (
-
     <>
       {/* Mobile Menu */}
       <MobileOnly>
         <MobileContainer>
           <List>
-            <ListItem>
-              <Link href={`/${userId}/prospects`}>
-                <Button onClick={toggleMenu}>
-                  Prospects
-                </Button>
-              </Link>
-            </ListItem>
-            <ListItem>
-              <Link href={`/${userId}/pledges`}>
-                <Button onClick={toggleMenu}>
-                  Pledges
-                </Button>
-              </Link>
-            </ListItem>
-            <ListItem>
-              <Link href="/ministry-partners">
-                <Button onClick={toggleMenu}>
-                  Partners
-                </Button>
-              </Link>
-            </ListItem>
-            <ListItem>
-              <Link className="link" href="/ministers">
-                <Button onClick={toggleMenu}>
-                  Ministers
-                </Button>
-              </Link>
-            </ListItem>
+            {links.map((link) => (
+              <ListItem>
+                <Link href={link.href}>
+                  <Button onClick={toggleMenu}>
+                    {link.text}
+                  </Button>
+                </Link>
+              </ListItem>
+            ))}
           </List>
         </MobileContainer>
       </MobileOnly>
-
       {/* Desktop Menu */}
       <DesktopOnly>
         <Container>
@@ -97,21 +98,14 @@ export default function Links({ toggleMenu }) {
               Fundraising Tracker
             </Logo>
             <Menu>
-              <Link className="link" href={`/${userId}/prospects`}>
-                Prospects
-              </Link>
-              <Link className="link" href={`/${userId}/pledges`}>
-                Pledges
-              </Link>
-              <Link className="link" href="/ministry-partners">
-                Partners
-              </Link>
-              <Link className="link" href="/ministers">
-                Ministers
-              </Link>
+              {links.map((link) => (
+                <Link href={link.href}>
+                  {link.text}
+                </Link>
+              ))}
             </Menu>
             <Profile>
-              <Link className="link" href="/">
+              <Link href="/">
                 Log out
               </Link>
             </Profile>

@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import Grid from '../utils/Grid';
+import Grid from '../components/utils/Grid';
 
 const ministers = [
   {

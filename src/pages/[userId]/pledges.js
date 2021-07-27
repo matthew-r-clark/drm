@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import Grid from '../../utils/Grid';
+import Grid from '../../components/utils/Grid';
 
 export default function Pledges() {
   const router = useRouter();
