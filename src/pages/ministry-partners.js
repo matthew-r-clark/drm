@@ -1,4 +1,4 @@
-import Grid from '../utils/Grid';
+import Grid from '../components/utils/Grid';
 
 export default function MinistryPartners() {
   const partners = [
