@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import Grid from './utils/Grid';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
-import {white, blue} from '../styles/colors';
+import colors from '../styles/colors';
 
 const Logo = styled.div`
 grid-column: 1/6;
@@ -28,16 +28,16 @@ justify-self: end;
 `;
 
 const Container = styled.div`
-background: ${blue};
-color: ${white};
+background: ${colors.blue};
+color: ${colors.white};
 height: 50px;
 a {
-    color: ${white};
-    border-bottom: 2px solid ${blue};
+    color: ${colors.white};
+    border-bottom: 2px solid ${colors.blue};
 }
 
 a:hover {
-  border-bottom: 2px solid ${white};
+  border-bottom: 2px solid ${colors.white};
 }
 `;
 
@@ -45,10 +45,10 @@ const MobileContainer = styled.div`
 height: 100%;
 margin: 0;
 padding-top: 2rem;
-background: ${blue};
-color: ${white};
+background: ${colors.blue};
+color: ${colors.white};
 Button {
-    color: ${white};
+    color: ${colors.white};
 }
 `;
 

@@ -15,7 +15,7 @@ import {
 } from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import MenuButtons from './MenuButtons';
-import colors from '../utils/colors';
+import colors from '../styles/colors';
 
 const Header = styled.div`
   width: 100%;
