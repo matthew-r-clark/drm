@@ -1,34 +1,20 @@
 import router from '@@router';
 import supabase from '@@supabase';
-import YAML from 'yaml';
-import {
-  assoc,
-  isEmpty,
-  omit,
-  pipe,
-  propOr,
-} from 'ramda';
+import { isEmpty } from 'ramda';
 
 const api = {
   get: async (req, res) => {
     const { ministerId } = req.query;
     const { data, error } = await supabase
-      .from('ministers_partners')
-      .select(`
-        *,
-        partner:partner_id (*)
-      `)
-      .match({ minister_id: ministerId, is_pledge_submitted: true });
+      .from('pledges')
+      .select()
+      .match({ minister_id: ministerId });
     if (data && isEmpty(data)) {
       res.status(404).send(`No pledges found for minister with ID ${ministerId}.`);
     } else if (error) {
       res.status(400).send(error);
     } else {
-      const payload = data.map((prospect) => pipe(
-        assoc('notes', YAML.parse(propOr('', 'notes', prospect))),
-        omit(['minister_id', 'partner_id']),
-      )(prospect));
-      res.status(200).json(payload);
+      res.status(200).json(data);
     }
   },
 };
