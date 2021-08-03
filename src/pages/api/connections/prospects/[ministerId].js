@@ -4,7 +4,6 @@ import YAML from 'yaml';
 import {
   assoc,
   isEmpty,
-  omit,
   pipe,
   propOr,
 } from 'ramda';
@@ -13,12 +12,9 @@ const api = {
   get: async (req, res) => {
     const { ministerId } = req.query;
     const { data, error } = await supabase
-      .from('ministers_partners')
-      .select(`
-        *,
-        partner:partner_id (*) // TODO: need to also pull in other connected staff 
-      `)
-      .match({ minister_id: ministerId, is_pledge_submitted: false });
+      .from('prospects') // sql view
+      .select()
+      .match({ minister_id: ministerId });
     if (data && isEmpty(data)) {
       res.status(404).send(`No prospects found for minister with ID ${ministerId}.`);
     } else if (error) {
@@ -26,7 +22,6 @@ const api = {
     } else {
       const payload = data.map((prospect) => pipe(
         assoc('notes', YAML.parse(propOr('', 'notes', prospect))),
-        omit(['minister_id', 'partner_id']),
       )(prospect));
       res.status(200).json(payload);
     }
