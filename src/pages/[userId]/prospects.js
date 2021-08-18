@@ -8,27 +8,31 @@ export default function Prospects() {
   const { userId } = router.query;
 
   const Container = styled.div`
-  margin-left: -1rem;
 
-  .first-col {
+  h1 {
+    margin-left: 1rem;
+  }
+  .columns {
+    margin-left: -1rem;
+    padding-left: 1rem;
+  }
+
+  .name-col {
     grid-column: 1/ span 2;
     padding-left: 1rem;
 
   }
-  .second-col {
+  .status-col {
     grid-column: 3/ span 2;
   }
-  .third-col {
+  .contact-col {
     grid-column: 5/ span 2;
   }
-  .fourth-col {
-    grid-column: 7/ span 2;
+  .notes-col {
+    grid-column: 7/ span 4;
   }
-  .fifth-col {
-    grid-column: 9/ span 3;
-  }
-  .sixth-col {
-    grid-column: 12/ span 1;
+  .connections-col {
+    grid-column: 11/ span 2;
   }
 
   .dark {
@@ -50,8 +54,24 @@ export default function Prospects() {
 @media (max-width: 800px){
   font-size: .7rem;
   text-align: center;
-  .first-col{
+
+  h1 {
+    margin-left: 0;
+  }
+
+  .name-col{
     margin-left: -1rem;
+    grid-column: 1/ span 3;
+  }
+
+  .status-col {
+    grid-column: 4/ span 2;
+  }
+  .contact-col {
+    grid-column: 6/ span 4;
+  }
+  .connections-col {
+    grid-column: 10/ span 3;
   }
 
 }
@@ -98,24 +118,28 @@ export default function Prospects() {
 
   return (
     <Container>
-      <h1 style={{ marginLeft: '1rem' }}>Prospects for {userId}</h1>
-      <Grid cols={12}>
-        <h4 className="first-col">Name</h4>
-        <h4 className="second-col">Status</h4>
-        <h4 className="third-col">Last Contacted</h4>
-        <h4 className="fourth-col">Notes</h4>
-        <h4 className="fifth-col">Other Connections</h4>
-        <h4 className="sixth-col">Pledge</h4>
+      <h1>Prospects for {userId}</h1>
+      <Grid className="columns" cols={12}>
+        <h4 className="name-col">Name</h4>
+        <h4 className="status-col">Status</h4>
+        <h4 className="contact-col">Last Contacted</h4>
+        <DesktopOnly>
+          <h4 className="notes-col">Notes</h4>
+        </DesktopOnly>
+
+        <h4 className="connections-col">Other Connections</h4>
       </Grid>
 
       {prospects.map((prospect) => (
         <Grid className={prospect.id % 2 ? 'dark columns' : 'columns'} key={prospect.id} cols={12}>
-          <p className="first-col">{prospect.name}</p>
-          <p className="second-col">{prospect.status}</p>
-          <p className="third-col">{prospect.last_contacted}</p>
-          <p className="fourth-col">{prospect.notes[0]}</p>
+          <p className="name-col">{prospect.name}</p>
+          <p className="status-col">{prospect.status}</p>
+          <p className="contact-col">{prospect.last_contacted}</p>
+          <DesktopOnly>
+            <p className="notes-col">{prospect.notes[0]}</p>
+          </DesktopOnly>
 
-          <p className="fifth-col">
+          <p className="connections-col">
             <DesktopOnly>
               {prospect.others.map((other, index) => (
                 <span>
@@ -125,8 +149,6 @@ export default function Prospects() {
             </DesktopOnly>
             <MobileOnly><span className="numbers">{prospect.others.length}</span></MobileOnly>
           </p>
-
-          <p className="sixth-col">{prospect.pledge ? 'Yes' : 'No'}</p>
         </Grid>
       ))}
 
