@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import Grid from '../components/utils/Grid';
+import { DesktopOnly, MobileOnly } from '../components/MediaQuery';
 
 const Container = styled.div`
 h1 {
@@ -45,6 +46,53 @@ grid-column: 12 / span 1;
 .dark {
     background: #F5F5F5;
   }
+
+  @media (max-width: 800px){
+    font-size: .7rem;
+    text-align: center;
+    overflow-wrap: break-word;
+    border: 1px solid black;
+    h1{
+      margin: 0;
+    }
+  .columns {
+    margin-left: 0;
+    padding-left: 0;
+    border: 1px solid black;
+  }
+    .name-col {
+      grid-column: 1/span 2;
+    }
+
+    .email-col {
+      grid-column: 3/ span 4;
+    }
+
+    .admin-col {
+grid-column: 7/ span 1;
+border: 1px solid black;
+}
+
+.apprentice-col {
+  grid-column: 8 / span 1;
+  border: 1px solid black;
+}
+
+.coach-col {
+grid-column: 9 / span 1;
+border: 1px solid black;
+
+}
+
+.coachees-col {
+grid-column: 10 / span 2;
+border: 1px solid black;
+}
+
+.goal-col {
+grid-column: 12 / span 1;
+}
+  }
 `;
 
 const ministers = [
@@ -56,7 +104,7 @@ const ministers = [
     isApprentice: false,
     isCoach: false,
     coachees: [],
-    goal: "2,000"
+    goal: '2,000',
 
   },
   {
@@ -67,7 +115,7 @@ const ministers = [
     isApprentice: false,
     isCoach: false,
     coachees: [],
-    goal: "2,000"
+    goal: '2,000',
   },
   {
     id: 3,
@@ -76,29 +124,29 @@ const ministers = [
     isAdmin: false,
     isApprentice: false,
     isCoach: true,
-    coachees: ["Reagann Smith", "Darby Cleveland"],
-    goal: "2,000"
+    coachees: ['Reagann Smith', 'Darby Cleveland'],
+    goal: '2,000',
   },
- {
-  id: 4,
-  name: "Paul Ueng",
-  email: "paul.ueng@anyfocus.org",
-  isAdmin: true,
-  isApprentice: false,
-  isCoach: false,
-  coachees: [],
-  goal: null 
- },
- {
-  id: 5,
-  name: "Becca Wilson",
-  email: "becca.wilson@anyfocus.org",
-  isAdmin: false,
-  isApprentice: true,
-  isCoach: false,
-  coachees: [],
-  goal: null 
- },
+  {
+    id: 4,
+    name: 'Paul Ueng',
+    email: 'paul.ueng@anyfocus.org',
+    isAdmin: true,
+    isApprentice: false,
+    isCoach: false,
+    coachees: [],
+    goal: null,
+  },
+  {
+    id: 5,
+    name: 'Becca Wilson',
+    email: 'becca.wilson@anyfocus.org',
+    isAdmin: false,
+    isApprentice: true,
+    isCoach: false,
+    coachees: [],
+    goal: '1,700',
+  },
 
 ];
 
@@ -109,26 +157,35 @@ export default function Ministers() {
       <Grid className="columns" cols={12}>
         <h4 className="name-col">Name</h4>
         <h4 className="email-col">Email</h4>
-        <h4 className="admin-col">Admin</h4>
-        <h4 className="apprentice-col">Apprentice</h4>
-        <h4 className="coach-col">Coach</h4>
+        <DesktopOnly>
+          <h4 className="admin-col">Admin</h4>
+          <h4 className="apprentice-col">Apprentice</h4>
+          <h4 className="coach-col">Coach</h4>
+        </DesktopOnly>
+        <MobileOnly>
+          <h4 className="admin-col">A</h4>
+          <h4 className="apprentice-col">App</h4>
+          <h4 className="coach-col">C</h4>
+        </MobileOnly>
+
         <h4 className="coachees-col">Coachees</h4>
-        <h4 className="goal-col">Fundraising Goal</h4>
+        <h4 className="goal-col">Goal</h4>
       </Grid>
       {ministers.map((minister) => (
 
         <Grid className={minister.id % 2 ? 'dark columns' : 'columns'} key={minister.id} cols={12}>
           <p className="name-col">{minister.name}</p>
           <p className="email-col">{minister.email}</p>
-          <p className="admin-col">{minister.isAdmin ? <span>&#10003;</span> : ''}</p>
-          <p className="apprentice-col">{minister.isApprentice ? <span>&#10003;</span> : ''}</p>
-          <p className="coach-col">{minister.isCoach ? <span>&#10003;</span> : ''}</p>
+          <p className="admin-col">{minister.isAdmin ? <span>&#10003;</span> : <span />}</p>
+          <p className="apprentice-col">{minister.isApprentice ? <span>&#10003;</span> : <span />}</p>
+          <p className="coach-col">{minister.isCoach ? <span>&#10003;</span> : <span />}</p>
           <p className="coachees-col">{minister.coachees.map((coachee, index) => (
             <span>
               {coachee}{minister.coachees.length > 1 && index !== minister.coachees.length - 1 ? ', ' : ''}
             </span>
-          ))}</p>
-          <p className="goal-col">{minister.goal ? minister.goal :  'N/A'}</p>
+          ))}
+          </p>
+          <p className="goal-col">{minister.goal ? minister.goal : 'N/A'}</p>
         </Grid>
       ))}
     </Container>
