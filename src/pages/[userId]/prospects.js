@@ -9,6 +9,7 @@ import { DesktopOnly, MobileOnly } from '../../components/MediaQuery';
 export default function Prospects() {
   const router = useRouter();
   const { userId } = router.query;
+  // Setting up Ramda functions to catch any missing data from the database
   const getNames = pathOr('No Name', ['names', '0']);
   const getStatus = propOr('No status set', 'status');
   const getLastContacted = propOr('No contact history', 'last_contacted');
@@ -17,6 +18,7 @@ export default function Prospects() {
     prop('others'),
     join(', '),
   );
+  // Base container for the CSS of this page
   const Container = styled.div`
   h1 {
     margin-left: 1rem;
@@ -91,7 +93,7 @@ export default function Prospects() {
     }
 }
   `;
-
+  // Testing data (Will be replaced with real data from the database)
   const prospects = [
     {
       id: 1,
