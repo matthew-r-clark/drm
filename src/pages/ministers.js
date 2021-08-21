@@ -1,49 +1,64 @@
 import styled from '@emotion/styled';
+import CheckIcon from '@material-ui/icons/Check';
+import {
+  pipe, join, prop, propOr,
+} from 'ramda';
 import Grid from '../components/utils/Grid';
 import { DesktopOnly, MobileOnly } from '../components/MediaQuery';
 
+const getName = propOr('--', 'name');
+const getEmail = propOr('--', 'email');
+const getAdminStatus = prop('isAdmin');
+const getApprenticeStatus = prop('isApprentice');
+const getCoachStatus = prop('isCoach');
+const joinCoachees = pipe(
+  prop('coachees'),
+  join(', '),
+);
+const getGoal = propOr('--', 'goal');
+
 const Container = styled.div`
-h1 {
+  h1 {
     margin-left: 1rem;
   }
+
   .columns {
     margin-left: -1rem;
     padding-left: 2rem;
   }
 
-.name-col {
-  grid-column: 1/ span 2;
-}
+  .name-col {
+    grid-column: 1/ span 2;
+  }
 
-.email-col {
-grid-column: 3/ span 2;
-}
+  .email-col {
+    grid-column: 3/ span 2;
+  }
 
-.admin-col {
-grid-column: 5/ span 1;
-text-align: center;
-}
+  .admin-col {
+    grid-column: 5/ span 1;
+    text-align: center;
+  }
 
-.apprentice-col {
-  grid-column: 6 / span 1;
-  text-align: center;
-}
+  .apprentice-col {
+    grid-column: 6 / span 1;
+    text-align: center;
+  }
 
-.coach-col {
-grid-column: 7 / span 1;
-text-align: center;
+  .coach-col {
+    grid-column: 7 / span 1;
+    text-align: center;
+  }
 
-}
+  .coachees-col {
+    grid-column: 8 / span 3;
+  }
 
-.coachees-col {
-grid-column: 8 / span 3;
-}
+  .goal-col {
+    grid-column: 12 / span 1;
+  }
 
-.goal-col {
-grid-column: 12 / span 1;
-}
-
-.dark {
+  .striped:nth-of-type(2n) {
     background: #F5F5F5;
   }
 
@@ -52,14 +67,17 @@ grid-column: 12 / span 1;
     text-align: center;
     overflow-wrap: break-word;
     border: 1px solid black;
+
     h1{
       margin: 0;
     }
-  .columns {
-    margin-left: 0;
-    padding-left: 0;
-    border: 1px solid black;
-  }
+
+    .columns {
+      margin-left: 0;
+      padding-left: 0;
+      border: 1px solid black;
+    }
+
     .name-col {
       grid-column: 1/span 2;
     }
@@ -69,29 +87,28 @@ grid-column: 12 / span 1;
     }
 
     .admin-col {
-grid-column: 7/ span 1;
-border: 1px solid black;
-}
+      grid-column: 7/ span 1;
+      border: 1px solid black;
+    }
 
-.apprentice-col {
-  grid-column: 8 / span 1;
-  border: 1px solid black;
-}
+    .apprentice-col {
+      grid-column: 8 / span 1;
+      border: 1px solid black;
+    }
 
-.coach-col {
-grid-column: 9 / span 1;
-border: 1px solid black;
+    .coach-col {
+      grid-column: 9 / span 1;
+      border: 1px solid black;
+    }
 
-}
+    .coachees-col {
+      grid-column: 10 / span 2;
+      border: 1px solid black;
+    }
 
-.coachees-col {
-grid-column: 10 / span 2;
-border: 1px solid black;
-}
-
-.goal-col {
-grid-column: 12 / span 1;
-}
+    .goal-col {
+      grid-column: 12 / span 1;
+    }
   }
 `;
 
@@ -100,6 +117,7 @@ const ministers = [
     id: 1,
     name: 'Reagann Smith',
     email: 'reagann.smith@anyfocus.org',
+    isActive: true,
     isAdmin: false,
     isApprentice: false,
     isCoach: false,
@@ -111,6 +129,7 @@ const ministers = [
     id: 2,
     name: 'Danielle Rodriguez-Clark',
     email: 'danielle.clark@anyfocus.org',
+    isActive: true,
     isAdmin: false,
     isApprentice: false,
     isCoach: false,
@@ -121,6 +140,7 @@ const ministers = [
     id: 3,
     name: 'Ryan Bristow',
     email: 'ryan.bristow@anyfocus.org',
+    isActive: true,
     isAdmin: false,
     isApprentice: false,
     isCoach: true,
@@ -131,6 +151,7 @@ const ministers = [
     id: 4,
     name: 'Paul Ueng',
     email: 'paul.ueng@anyfocus.org',
+    isActive: true,
     isAdmin: true,
     isApprentice: false,
     isCoach: false,
@@ -141,6 +162,18 @@ const ministers = [
     id: 5,
     name: 'Becca Wilson',
     email: 'becca.wilson@anyfocus.org',
+    isActive: true,
+    isAdmin: false,
+    isApprentice: true,
+    isCoach: false,
+    coachees: [],
+    goal: '1,700',
+  },
+  {
+    id: 6,
+    name: null,
+    email: null,
+    isActive: true,
     isAdmin: false,
     isApprentice: true,
     isCoach: false,
@@ -167,25 +200,21 @@ export default function Ministers() {
           <h4 className="apprentice-col">App</h4>
           <h4 className="coach-col">C</h4>
         </MobileOnly>
-
         <h4 className="coachees-col">Coachees</h4>
         <h4 className="goal-col">Goal</h4>
       </Grid>
       {ministers.map((minister) => (
 
-        <Grid className={minister.id % 2 ? 'dark columns' : 'columns'} key={minister.id} cols={12}>
-          <p className="name-col">{minister.name}</p>
-          <p className="email-col">{minister.email}</p>
-          <p className="admin-col">{minister.isAdmin ? <span>&#10003;</span> : <span />}</p>
-          <p className="apprentice-col">{minister.isApprentice ? <span>&#10003;</span> : <span />}</p>
-          <p className="coach-col">{minister.isCoach ? <span>&#10003;</span> : <span />}</p>
-          <p className="coachees-col">{minister.coachees.map((coachee, index) => (
-            <span>
-              {coachee}{minister.coachees.length > 1 && index !== minister.coachees.length - 1 ? ', ' : ''}
-            </span>
-          ))}
+        <Grid className="striped columns" key={minister.id} cols={12}>
+          <p className="name-col">{getName(minister)}</p>
+          <p className="email-col">{getEmail(minister)}</p>
+          <p className="admin-col">{getAdminStatus(minister) ? <CheckIcon /> : <span />}</p>
+          <p className="apprentice-col">{getApprenticeStatus(minister) ? <CheckIcon /> : <span />}</p>
+          <p className="coach-col">{getCoachStatus(minister) ? <CheckIcon /> : <span />}</p>
+          <p className="coachees-col">
+            {joinCoachees(minister)}
           </p>
-          <p className="goal-col">{minister.goal ? minister.goal : 'N/A'}</p>
+          <p className="goal-col">{getGoal(minister)}</p>
         </Grid>
       ))}
     </Container>
