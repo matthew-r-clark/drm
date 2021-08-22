@@ -1,10 +1,17 @@
 import router from '@@router';
 import supabase from '@@supabase';
-import { isEmpty } from 'ramda';
+import { isEmpty, path } from 'ramda';
+import getConfig from 'next/config';
+import { Logtail } from '@logtail/node';
+
+const { serverRuntimeConfig } = getConfig();
+const logtailSourceToken = path(['logtail', 'sourceToken'], serverRuntimeConfig);
+
+const logtail = new Logtail(logtailSourceToken);
 
 const api = {
   get: async (req, res) => {
-    console.log('hit the route: api/connections/pledges/[ministerId]');
+    logtail.info('hit the route: api/connections/pledges/[ministerId]');
     const { ministerId } = req.query;
     const { data, error } = await supabase
       .from('pledges')
