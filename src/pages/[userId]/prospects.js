@@ -1,108 +1,61 @@
 import { useRouter } from 'next/router';
 import styled from '@emotion/styled';
 import {
-  pipe, join, prop, propOr, pathOr,
+  pipe, join, length, path, prop,
 } from 'ramda';
-import Grid from '../../components/utils/Grid';
+import Grid from '@material-ui/core/Grid';
 import { DesktopOnly, MobileOnly } from '../../components/MediaQuery';
 
 export default function Prospects() {
   const router = useRouter();
   const { userId } = router.query;
-  // Setting up Ramda functions to catch any missing data from the database
-  const getNames = pathOr('No Name', ['names', '0']);
-  const getStatus = propOr('No status set', 'status');
-  const getLastContacted = propOr('No contact history', 'last_contacted');
-  const getNotes = pathOr('No notes', ['notes', '0']);
-  const joinOthers = pipe(
-    prop('others'),
-    join(', '),
-  );
-  // Base container for the CSS of this page
+  const joinOtherMinisters = pipe(prop('other_ministers'), join(', '));
   const Container = styled.div`
-  h1 {
-    margin-left: 1rem;
-  }
-
-  .columns {
-    margin-left: -1rem;
-    padding-left: 1rem;
-  }
-
-  .name-col {
-    grid-column: 1/ span 2;
-    padding-left: 1rem;
-
-  }
-
-  .status-col {
-    grid-column: 3/ span 2;
-  }
-
-  .contact-col {
-    grid-column: 5/ span 2;
-  }
-
-  .notes-col {
-    grid-column: 7/ span 4;
-  }
-
-  .connections-col {
-    grid-column: 11/ span 2;
-  }
-
-  .striped:nth-child(2n) {
-    background: #F5F5F5;
-
-  }
-
-  .numbers {
-    display: block;
-    width: 15px;
-    height: 15px;
-    text-align: center;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    margin: 0 auto;
-  }
-
-  @media (max-width: 800px){
-    font-size: .7rem;
-    text-align: center;
-
     h1 {
-      margin-left: 0;
+      margin-left: 1rem;
     }
 
-    .name-col{
-      margin-left: -1rem;
-      grid-column: 1/ span 3;
+    .columns {
+      padding-left: 1rem;
     }
 
-    .status-col {
-      grid-column: 4/ span 2;
+    .striped:nth-of-type(2n) {
+      background: #f5f5f5;
     }
 
-    .contact-col {
-      grid-column: 6/ span 4;
+    .numbers {
+      display: block;
+      width: 25px;
+      height: 25px;
+      text-align: center;
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      margin: 0 auto;
     }
 
-    .connections-col {
-      grid-column: 10/ span 3;
+    @media (max-width: 960px) {
+      text-align: center;
+
+      h1 {
+        margin-left: 0;
+      }
+
+      .columns {
+        padding: 0;
+      }
     }
-}
   `;
-  // Testing data (Will be replaced with real data from the database)
+
   const prospects = [
     {
       id: 1,
-      names: ['Jon Smith'],
+      names: ['Jon smith'],
       preferred_name: null,
       status: 'contacted',
       last_contacted: '07/13',
       notes: ['Meeting up on 08/27', 'Left a voicemail', 'Emailed'],
-      others: ['Reagann Smith', 'Ryan Bristow'],
+      other_ministers: ['Reagann Smith', 'Ryan Bristow'],
     },
     {
       id: 2,
@@ -111,7 +64,7 @@ export default function Prospects() {
       status: 'pledged, no amount',
       last_contacted: '06/21',
       notes: ['Need to follow up'],
-      others: ['Danielle Clark'],
+      other_ministers: ['Danielle Clark'],
     },
     {
       id: 3,
@@ -120,7 +73,7 @@ export default function Prospects() {
       status: 'contacted',
       last_contacted: '06/30',
       notes: ['Wants to donate, partnering with the wife'],
-      others: [],
+      other_ministers: [],
     },
     {
       id: 4,
@@ -129,49 +82,65 @@ export default function Prospects() {
       status: 'No answer',
       last_contacted: '07/01',
       notes: ['Left voicemail', 'Attempted contact; No response.'],
-      others: [],
-    },
-    {
-      id: 5,
-      names: null,
-      preferred_name: null,
-      status: null,
-      last_contacted: null,
-      notes: null,
-      others: [],
+      other_ministers: [],
     },
   ];
 
   return (
     <Container>
       <h1>Prospects for {userId}</h1>
-      <Grid className="columns" cols={12}>
-        <h4 className="name-col">Name</h4>
-        <h4 className="status-col">Status</h4>
-        <h4 className="contact-col">Last Contacted</h4>
+      <Grid container spacing={0} className="columns">
+        <Grid item md={2} xs={3}>
+          <h4>Name</h4>
+        </Grid>
+        <Grid item md={2} xs={3}>
+          <h4>Status</h4>
+        </Grid>
+        <Grid item md={2} xs={3}>
+          <h4>Last Contacted</h4>
+        </Grid>
         <DesktopOnly>
-          <h4 className="notes-col">Notes</h4>
+          <Grid item md={3}>
+            <h4>Notes</h4>
+          </Grid>
         </DesktopOnly>
-        <h4 className="connections-col">Other Connections</h4>
+        <Grid item md={3} xs={3}>
+          <h4>Other Ministers</h4>
+        </Grid>
       </Grid>
-
       {prospects.map((prospect) => (
-
-        <Grid className="striped columns" key={prospect.id} cols={12}>
-          <p className="name-col">{getNames(prospect)}</p>
-          <p className="status-col">{getStatus(prospect)}</p>
-          <p className="contact-col">{getLastContacted(prospect)}</p>
+        <Grid
+          container
+          spacing={1}
+          key={prospect.id}
+          className="striped columns"
+        >
+          <Grid item md={2} xs={3}>
+            <p>{path(['names', '0'], prospect)}</p>
+          </Grid>
+          <Grid item md={2} xs={3}>
+            <p>{prop('status', prospect)}</p>
+          </Grid>
+          <Grid item md={2} xs={3}>
+            <p>{prop('last_contacted', prospect)}</p>
+          </Grid>
           <DesktopOnly>
-            <p className="notes-col">{getNotes(prospect)}</p>
+            <Grid item md={3}>
+              <p>{path(['notes', '0'], prospect)}</p>
+            </Grid>
           </DesktopOnly>
-          <p className="connections-col">
-            <DesktopOnly>
-              <span>
-                {joinOthers(prospect)}
-              </span>
-            </DesktopOnly>
-            <MobileOnly><span className="numbers">{prospect.others.length}</span></MobileOnly>
-          </p>
+          <Grid item md={2} xs={3}>
+            <p>
+              <DesktopOnly>
+                <span>{joinOtherMinisters(prospect)}</span>
+              </DesktopOnly>
+              <MobileOnly>
+                <span className="numbers">
+                  {pipe(prop('other_ministers'), length)(prospect)}
+                </span>
+              </MobileOnly>
+            </p>
+          </Grid>
         </Grid>
       ))}
     </Container>
