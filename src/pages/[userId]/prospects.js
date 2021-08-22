@@ -131,9 +131,7 @@ export default function Prospects() {
           </DesktopOnly>
           <Grid item md={2} xs={3}>
             <p>
-              <DesktopOnly>
-                <span>{joinOtherMinisters(prospect)}</span>
-              </DesktopOnly>
+              <DesktopOnly>{joinOtherMinisters(prospect)}</DesktopOnly>
               <MobileOnly>
                 <span className="numbers">
                   {pipe(prop('other_ministers'), length)(prospect)}
