@@ -1,23 +1,11 @@
 import styled from '@emotion/styled';
 import CheckIcon from '@material-ui/icons/Check';
-import {
-  pipe, join, prop, propOr,
-} from 'ramda';
-import Grid from '../components/utils/Grid';
+import { prop } from 'ramda';
+import Grid from '@material-ui/core/Grid';
 import { DesktopOnly, MobileOnly } from '../components/MediaQuery';
 
-const getName = propOr('--', 'name');
-const getEmail = propOr('--', 'email');
-const getAdminStatus = prop('isAdmin');
-const getApprenticeStatus = prop('isApprentice');
-const getCoachStatus = prop('isCoach');
-const joinCoachees = pipe(
-  prop('coachees'),
-  join(', '),
-);
-const getGoal = propOr('--', 'goal');
-
 const Container = styled.div`
+  overflow-wrap: break-word;
   h1 {
     margin-left: 1rem;
   }
@@ -27,87 +15,22 @@ const Container = styled.div`
     padding-left: 2rem;
   }
 
-  .name-col {
-    grid-column: 1/ span 2;
-  }
-
-  .email-col {
-    grid-column: 3/ span 2;
-  }
-
-  .admin-col {
-    grid-column: 5/ span 1;
-    text-align: center;
-  }
-
-  .apprentice-col {
-    grid-column: 6 / span 1;
-    text-align: center;
-  }
-
-  .coach-col {
-    grid-column: 7 / span 1;
-    text-align: center;
-  }
-
-  .coachees-col {
-    grid-column: 8 / span 3;
-  }
-
-  .goal-col {
-    grid-column: 12 / span 1;
-  }
-
   .striped:nth-of-type(2n) {
-    background: #F5F5F5;
+    background: #f5f5f5;
   }
 
-  @media (max-width: 800px){
-    font-size: .7rem;
+  @media (max-width: 960px) {
+    font-size: 0.7rem;
     text-align: center;
     overflow-wrap: break-word;
-    border: 1px solid black;
 
-    h1{
+    h1 {
       margin: 0;
     }
 
     .columns {
       margin-left: 0;
       padding-left: 0;
-      border: 1px solid black;
-    }
-
-    .name-col {
-      grid-column: 1/span 2;
-    }
-
-    .email-col {
-      grid-column: 3/ span 4;
-    }
-
-    .admin-col {
-      grid-column: 7/ span 1;
-      border: 1px solid black;
-    }
-
-    .apprentice-col {
-      grid-column: 8 / span 1;
-      border: 1px solid black;
-    }
-
-    .coach-col {
-      grid-column: 9 / span 1;
-      border: 1px solid black;
-    }
-
-    .coachees-col {
-      grid-column: 10 / span 2;
-      border: 1px solid black;
-    }
-
-    .goal-col {
-      grid-column: 12 / span 1;
     }
   }
 `;
@@ -120,10 +43,8 @@ const ministers = [
     isActive: true,
     isAdmin: false,
     isApprentice: false,
-    isCoach: false,
-    coachees: [],
+    coach: 'Ryan Bristow',
     goal: '2,000',
-
   },
   {
     id: 2,
@@ -132,8 +53,7 @@ const ministers = [
     isActive: true,
     isAdmin: false,
     isApprentice: false,
-    isCoach: false,
-    coachees: [],
+    coach: 'Brandon Worsham',
     goal: '2,000',
   },
   {
@@ -143,8 +63,7 @@ const ministers = [
     isActive: true,
     isAdmin: false,
     isApprentice: false,
-    isCoach: true,
-    coachees: ['Reagann Smith', 'Darby Cleveland'],
+    coach: null,
     goal: '2,000',
   },
   {
@@ -154,8 +73,7 @@ const ministers = [
     isActive: true,
     isAdmin: true,
     isApprentice: false,
-    isCoach: false,
-    coachees: [],
+    coach: null,
     goal: null,
   },
   {
@@ -165,56 +83,71 @@ const ministers = [
     isActive: true,
     isAdmin: false,
     isApprentice: true,
-    isCoach: false,
-    coachees: [],
+    coach: 'Drew Cleveland',
     goal: '1,700',
   },
-  {
-    id: 6,
-    name: null,
-    email: null,
-    isActive: true,
-    isAdmin: false,
-    isApprentice: true,
-    isCoach: false,
-    coachees: [],
-    goal: '1,700',
-  },
-
 ];
 
 export default function Ministers() {
   return (
     <Container>
       <h1>Ministers</h1>
-      <Grid className="columns" cols={12}>
-        <h4 className="name-col">Name</h4>
-        <h4 className="email-col">Email</h4>
+      <Grid container spacing={0} className="columns">
+        <Grid item md={2} xs={3}>
+          <h4>Name</h4>
+        </Grid>
+        <Grid item md={2} xs={3}>
+          <h4>Email</h4>
+        </Grid>
         <DesktopOnly>
-          <h4 className="admin-col">Admin</h4>
-          <h4 className="apprentice-col">Apprentice</h4>
-          <h4 className="coach-col">Coach</h4>
+          <Grid item md={2}>
+            <h4>Admin</h4>
+          </Grid>
+          <Grid item md={2}>
+            <h4>Apprentice</h4>
+          </Grid>
         </DesktopOnly>
         <MobileOnly>
-          <h4 className="admin-col">A</h4>
-          <h4 className="apprentice-col">App</h4>
-          <h4 className="coach-col">C</h4>
+          <Grid item xs={1}>
+            <h4>A</h4>
+          </Grid>
+          <Grid item xs={1}>
+            <h4>App</h4>
+          </Grid>
         </MobileOnly>
-        <h4 className="coachees-col">Coachees</h4>
-        <h4 className="goal-col">Goal</h4>
+        <Grid item md={2} xs={2}>
+          <h4>Coach</h4>
+        </Grid>
+        <Grid item md={2} xs={2}>
+          <h4>Goal</h4>
+        </Grid>
       </Grid>
-      {ministers.map((minister) => (
 
-        <Grid className="striped columns" key={minister.id} cols={12}>
-          <p className="name-col">{getName(minister)}</p>
-          <p className="email-col">{getEmail(minister)}</p>
-          <p className="admin-col">{getAdminStatus(minister) ? <CheckIcon /> : <span />}</p>
-          <p className="apprentice-col">{getApprenticeStatus(minister) ? <CheckIcon /> : <span />}</p>
-          <p className="coach-col">{getCoachStatus(minister) ? <CheckIcon /> : <span />}</p>
-          <p className="coachees-col">
-            {joinCoachees(minister)}
-          </p>
-          <p className="goal-col">{getGoal(minister)}</p>
+      {ministers.map((minister) => (
+        <Grid
+          container
+          spacing={0}
+          className="striped columns"
+          key={minister.id}
+        >
+          <Grid item md={2} xs={3}>
+            <p>{prop('name', minister)}</p>
+          </Grid>
+          <Grid item md={2} xs={3}>
+            <p>{prop('email', minister)}</p>
+          </Grid>
+          <Grid item md={2} xs={1}>
+            <p>{prop('isAdmin', minister) && <CheckIcon />}</p>
+          </Grid>
+          <Grid item md={2} xs={1}>
+            <p>{prop('isApprentice', minister) && <CheckIcon />}</p>
+          </Grid>
+          <Grid item md={2} xs={2}>
+            <p>{prop('coach', minister)}</p>
+          </Grid>
+          <Grid item md={2} xs={2}>
+            <p>{prop('goal', minister)}</p>
+          </Grid>
         </Grid>
       ))}
     </Container>
