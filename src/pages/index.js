@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { getMinisters } from '@@ministers';
+import logger from '@@logger';
 
 const H1 = styled.h1`
   text-align: center;
@@ -19,6 +20,14 @@ export default function Index() {
     <div>
       <H1>Ministers</H1>
       <Ministers />
+      <button
+        type="button"
+        onClick={() => {
+          logger.info('clicked button on index page');
+        }}
+      >
+        Click to log
+      </button>
     </div>
   );
 }
