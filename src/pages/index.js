@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { getMinisters } from '@@ministers';
-import logger from '@@logger';
+import Logger from '@@logger';
+
+const logger = Logger();
 
 const H1 = styled.h1`
   text-align: center;

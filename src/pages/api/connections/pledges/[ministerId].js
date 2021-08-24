@@ -1,7 +1,9 @@
 import router from '@@router';
 import supabase from '@@supabase';
 import { isEmpty } from 'ramda';
-import logger from '@@logger';
+import Logger from '@@logger';
+
+const logger = Logger();
 
 const api = {
   get: async (req, res) => {
