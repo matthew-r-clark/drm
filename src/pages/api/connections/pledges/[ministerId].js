@@ -6,6 +6,7 @@ import logger from '@@logger';
 const api = {
   get: async (req, res) => {
     logger.info('hit the route: api/connections/pledges/[ministerId]');
+    console.log({ logger });
     const { ministerId } = req.query;
     const { data, error } = await supabase
       .from('pledges')
