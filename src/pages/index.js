@@ -24,6 +24,7 @@ export default function Index() {
         type="button"
         onClick={() => {
           logger.info('clicked button on index page');
+          console.log({ logger });
         }}
       >
         Click to log
