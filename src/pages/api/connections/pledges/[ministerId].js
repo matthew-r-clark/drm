@@ -1,9 +1,13 @@
+import getConfig from 'next/config';
 import router from '@@router';
 import supabase from '@@supabase';
 import { isEmpty } from 'ramda';
-import Logger from '@@logger';
+// import logger from '@@logger';
+import { Node } from '@logtail/js';
 
-const logger = Logger();
+const { publicRuntimeConfig } = getConfig();
+const logtailSourceToken = prop('logtailSourceToken', publicRuntimeConfig);
+const logger = new Node(logtailSourceToken);
 
 const api = {
   get: async (req, res) => {
