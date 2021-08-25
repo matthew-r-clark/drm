@@ -1,7 +1,7 @@
 import getConfig from 'next/config';
 import router from '@@router';
 import supabase from '@@supabase';
-import { isEmpty } from 'ramda';
+import { isEmpty, prop } from 'ramda';
 // import logger from '@@logger';
 import { Node } from '@logtail/js';
 
