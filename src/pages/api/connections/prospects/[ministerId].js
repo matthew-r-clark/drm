@@ -3,38 +3,39 @@ import supabase from '@@supabase';
 import { isEmpty } from 'ramda';
 
 const api = {
-  /* Example response:
+  /* GET prospects for minister by ID
+  sample response:
   [
     {
-      "id": "cd8d8e03-d4cd-4564-9f26-ddce51533900",
-      "name": "Ronni Shovelbottom",
-      "status": "pledged - need to submit",
-      "last_contacted": "2021-01-20",
-      "notes": {
-        "prospect": [
-          "In hac habitasse platea dictumst"
-        ],
-        "pledge": null,
-        "general": null
-      },
-      "other_ministers": [
-        "Gennifer M",
-        "Gianina R"
+      "id": "dedc0121-e83f-4bfd-89e1-fe127bca507d",
+      "aliases": [
+          "Pete Cunney"
       ],
-      "pledged_one_time_cents": 186516,
-      "pledged_recurring_cents": null,
+      "nickname": null,
+      "status": "need to send letter",
+      "last_contacted": "2021-03-26",
+      "notes": {},
+      "is_thank_you_card_sent": false,
+      "other_ministers": [
+          "Padriac J",
+          "Hortensia B"
+      ],
+      "pledge_amount_cents": null,
+      "is_pledge_recurring": false,
       "address": {
-        "line1": "57409 2nd Hill",
-        "line2": null,
-        "city": "Reston",
-        "state": "VA",
-        "zipCode": "20195"
+          "line1": null,
+          "line2": null,
+          "city": null,
+          "state": null,
+          "zipCode": null
       },
-      "email": "zshovelbottom40@amazon.com",
-      "phone": "703-535-6425",
-      "birthday": "01/01",
-      "minister_id": "cc4138b1-9d10-4d21-9c12-a77eecf34bf4",
-      "partner_id": "e06de4ca-e49b-491c-861d-baf49ea6baa4"
+      "email": null,
+      "phone": "808-769-7786",
+      "birthday": "01/02",
+      "spouse_id": null,
+      "spouse": null,
+      "minister_id": "f181be5a-a5b1-4540-a912-46e3fc888718",
+      "partner_id": "cba06737-b36b-41e9-a3bc-b92f65b5e4dc"
     },
     ...
   ]

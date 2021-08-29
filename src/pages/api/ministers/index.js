@@ -3,6 +3,7 @@ import supabase from '@@supabase';
 import { isEmpty, omit } from 'ramda';
 
 const api = {
+  // GET all ministers
   get: async (req, res) => {
     let { limit = 15, page = 1 } = req.query;
     limit = Number(limit);
@@ -33,6 +34,40 @@ const api = {
     }
   },
 
+  /* POST (create) new ministers
+  sample body:
+  [
+    {
+      "first_name": "Jon",
+      "last_name": "Smith",
+      "email": "jons@anyfocus.org",
+      "is_admin": true,
+      "is_apprentice": false,
+      "fundraising_goal_dollars": 3000,
+      "coach_id": "3b6fc528-4f59-4f56-ab53-dd4c1b91b0b1"
+    },
+    ...
+  ]
+  * is_admin, is_apprentice, fundraising_goal_dollars, and coach_id are all optional
+  * is_admin and is_apprentice default to: false
+  * if only adding a single minister, can send object without enclosing array
+    response is always an array
+
+  sample response:
+  [
+    {
+      "id": "7b1ca639-61e5-41e9-889b-dd6d3d19af42",
+      "first_name": "Jon",
+      "last_name": "Smith",
+      "email": "jons@anyfocus.org",
+      "is_admin": true,
+      "is_apprentice": false,
+      "fundraising_goal_dollars": 3000,
+      "coach_id": "3b6fc528-4f59-4f56-ab53-dd4c1b91b0b1"
+    },
+    ...
+  ]
+  */
   post: async (req, res) => {
     const { data, error } = await supabase
       .from('ministers')
