@@ -1,6 +1,6 @@
 import router from '@@router';
 import supabase from '@@supabase';
-import { head, isEmpty, omit, path, pick } from 'ramda';
+import { head, isEmpty, omit } from 'ramda';
 
 const api = {
   /* GET minister by ID
