@@ -3,7 +3,33 @@ import supabase from '@@supabase';
 import { isEmpty, omit } from 'ramda';
 
 const api = {
-  // GET all ministers
+  /* GET all ministers
+  sample request:
+  api/ministers/?is_admin=true&limit=15&page=1
+  * limit and page are not required, but will default to values shown below
+
+  sample response:
+  {
+    "limit": 15,
+    "page": 1,
+    "pages": 3,
+    "page_count": 15,
+    "total_count": 32,
+    "data": [
+      {
+        "id": "68044bf6-9eae-4a2b-8a38-823c13fbffef",
+        "first_name": "Abba",
+        "last_name": "Lawday",
+        "email": "abbal@anyfocus.org",
+        "is_admin": true,
+        "is_apprentice": false,
+        "fundraising_goal_dollars": null,
+        "coach_id": null
+      },
+      ...
+    ]
+  }
+  */
   get: async (req, res) => {
     let { limit = 15, page = 1 } = req.query;
     limit = Number(limit);

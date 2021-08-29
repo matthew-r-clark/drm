@@ -1,43 +1,70 @@
 import router from '@@router';
 import supabase from '@@supabase';
-import { isEmpty } from 'ramda';
+import { isEmpty, omit } from 'ramda';
 
 const api = {
   /* GET all partners
+  sample request:
+  api/partners/?is_married=true&limit=15&page=1
+  * limit and page are not required, but will default to values shown below
+
   sample response:
-  [
-    {
-      "id": "2ea4cb08-76cb-4fed-91e2-5169f84bbf4c",
-      "address_line_1": "6 Blue Bill Park Lane",
-      "address_line_2": null,
-      "city": "Baton Rouge",
-      "state": "LA",
-      "zip_code": "70894",
-      "email": "edixseeq@ca.gov",
-      "phone": "225-179-8863",
-      "birthday": "08/18",
-      "is_married": false,
-      "preferred_contact_method": "text",
-      "spouse_id": null,
-      "aliases": [
-        "Mylo Dixsee",
-        "Olym Dixsee"
-      ]
-    },
-    ...
-  ]
+  {
+    "limit": 15,
+    "page": 1,
+    "pages": 67,
+    "page_count": 15,
+    "total_count": 1002,
+    "data": [
+      {
+        "id": "2ea4cb08-76cb-4fed-91e2-5169f84bbf4c",
+        "address_line_1": "6 Blue Bill Park Lane",
+        "address_line_2": null,
+        "city": "Baton Rouge",
+        "state": "LA",
+        "zip_code": "70894",
+        "email": "edixseeq@ca.gov",
+        "phone": "225-179-8863",
+        "birthday": "08/18",
+        "is_married": false,
+        "preferred_contact_method": "text",
+        "spouse_id": null,
+        "aliases": [
+          "Mylo Dixsee",
+          "Olym Dixsee"
+        ]
+      },
+      ...
+    ]
+  }
   */
   get: async (req, res) => {
-    const { data, error } = await supabase
+    let { limit = 15, page = 1 } = req.query;
+    limit = Number(limit);
+    page = Number(page);
+    const query = omit(['limit', 'page'], req.query);
+    const startRange = (page - 1) * limit;
+    const endRange = startRange + limit - 1;
+    const { data, error, count } = await supabase
       .from('partners')
-      .select()
-      .match(req.query);
+      .select('*', { count: 'exact' })
+      .match(query)
+      .range(startRange, endRange);
     if (data && isEmpty(data)) {
       res.status(404).send(`No partners found matching query:\n${JSON.stringify(req.query)}`);
     } else if (error) {
       res.status(400).send(error);
     } else {
-      res.status(200).json(data);
+      const pages = Math.ceil(count / limit);
+      const payload = {
+        limit,
+        page,
+        pages,
+        page_count: data.length,
+        total_count: count,
+        data,
+      };
+      res.status(200).json(payload);
     }
   },
 
