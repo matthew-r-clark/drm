@@ -6,7 +6,7 @@ const api = {
   /* GET minister by ID
   sample response:
   {
-    "id": "fd0bad71-d0e6-4b7a-ae45-93ccab7854f5",
+    "id": "c",
     "first_name": "Jon",
     "last_name": "Smith",
     "email": "jons@anyfocus.org",
