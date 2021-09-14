@@ -4,6 +4,7 @@ import { Button, List, ListItem } from '@material-ui/core';
 import Grid from './utils/Grid';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import colors from '../styles/colors';
+import LoginButton from './LoginButton';
 
 const Logo = styled.div`
   grid-column: 1/6;
@@ -101,7 +102,7 @@ export default function MenuButtons({ toggleMenu }) {
               ))}
             </Menu>
             <Profile>
-              <Link href="/">Log out</Link>
+              <LoginButton />
             </Profile>
           </Grid>
         </Container>
