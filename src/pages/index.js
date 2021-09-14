@@ -1,20 +1,316 @@
-/* eslint-disable max-len */
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { Button, Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
+import {
+  getMinisters,
+  getMinisterById,
+  updateMinisterById,
+  createMinister,
+  deleteMinisterById,
+} from '@@ministers';
+import { getPartners } from '@@partners';
+import {
+  forEach,
+  head,
+  pipe,
+  prop,
+} from 'ramda';
+import { Formik, Field, Form } from 'formik';
 
 const H1 = styled.h1`
   text-align: center;
+  padding: 0;
+  margin-top: 40px;
+  margin-bottom: 5px;
 `;
 
-export default function Index() {
+const Container = styled.div`
+  padding: 20px;
+  width: 100%;
+  border: 1px solid lightgray;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Alert = (props) => <MuiAlert elevation={6} variant="filled" {...props} />;
+
+const Pagination = ({ page, setPage, totalPages }) => (
+  <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+    <Button
+      variant="contained"
+      onClick={() => setPage(page - 1)}
+      disabled={page <= 1}
+    >
+      &#60;
+    </Button>
+    <span style={{ padding: '0 10px' }}>
+      Page {page}
+    </span>
+    <Button
+      variant="contained"
+      onClick={() => setPage(page + 1)}
+      disabled={page >= totalPages}
+    >
+      &#62;
+    </Button>
+  </div>
+);
+
+const Ministers = () => {
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(null);
+
+  const { data, isLoading, isError } = getMinisters({ page });
+
+  if (isError) return <div>Failed to load.</div>;
+  if (!isLoading && !totalPages) {
+    setTotalPages(prop('pages', data));
+  }
   return (
-    <div>
-      <H1>Home</H1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec turpis ligula, eleifend vel nunc id, porttitor eleifend ex. Proin auctor, orci a iaculis molestie, quam urna eleifend lectus, lacinia tempus diam sem et lorem. Mauris eleifend est non ligula egestas, vel vehicula mi consectetur. Donec sit amet tristique est. Cras placerat faucibus turpis, ut pretium leo euismod sed. Vivamus eu gravida nibh, ac egestas neque. Fusce pellentesque ultricies tincidunt. Vestibulum a turpis eget nisl aliquet varius quis nec ligula. Nam rhoncus ullamcorper orci. Ut quis mauris at elit dictum egestas id vitae sapien. In ut viverra purus. Donec suscipit sollicitudin mauris, id rutrum neque mollis id. Praesent malesuada nisl ante, et porttitor leo tincidunt id. In bibendum nec dolor nec posuere. Mauris malesuada nisl est, ut vestibulum odio sodales vel. In pulvinar dui at lacus lacinia pharetra vitae et arcu.</p>
-      <p>Cras accumsan ligula dolor, sed blandit libero condimentum non. In ut ligula ut sapien vestibulum auctor quis sed urna. Morbi blandit, felis eu luctus laoreet, nulla orci ullamcorper tellus, sit amet consectetur sem sem ut leo. Vestibulum laoreet lectus arcu, vel facilisis nisl pellentesque eu. Curabitur in varius nunc, eget viverra mi. Nullam eget posuere justo. Fusce interdum arcu vitae est consequat, sit amet consequat eros suscipit. In non urna imperdiet, viverra magna at, ultrices nibh.</p>
-      <p>Proin in accumsan nunc, ac fermentum felis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nam viverra eros nisi, sed semper dui commodo ut. Ut lacinia eleifend nunc, sed volutpat nisl porttitor id. Nullam eu tortor vel magna fringilla convallis. Ut sollicitudin magna ornare enim viverra vestibulum. Aenean fringilla ex eget dolor dictum ultricies. Morbi ut faucibus augue. Nulla scelerisque nisi faucibus mattis tincidunt. Phasellus tempor turpis turpis, a cursus odio imperdiet sed. Cras imperdiet tempus orci, a dignissim turpis tincidunt sit amet. Ut ut tellus vitae ante iaculis condimentum sed nec metus. Nunc placerat mattis ligula sed ultricies. Nunc congue ante dolor, vitae egestas urna aliquet ac. Duis ornare malesuada lectus sit amet blandit. In elit justo, tristique ac facilisis id, tempus ac felis.</p>
-      <p>Quisque porttitor fermentum dolor sed convallis. In hac habitasse platea dictumst. Phasellus vel ex vitae eros feugiat placerat euismod vitae massa. Nulla aliquam vitae tellus tincidunt fermentum. Suspendisse vel euismod nunc, quis facilisis ipsum. Proin dolor ante, aliquam non ipsum eu, sodales volutpat enim. Nullam condimentum velit id velit sollicitudin venenatis.</p>
-      <p>Mauris tempor pulvinar ex sed suscipit. Curabitur sed diam in tellus vulputate sagittis nec tempor nibh. Fusce mollis posuere ultrices. Nulla vel sagittis ante. Integer interdum cursus dolor, ac dictum mauris consequat sit amet. Nunc vitae dui in enim interdum hendrerit sed vitae tortor. Pellentesque porta ut augue in congue. Integer dolor orci, semper vitae vulputate ac, semper ut magna. Donec sit amet ultricies enim, sed bibendum sapien. Phasellus dignissim id odio nec auctor. Aenean non libero a felis dapibus pellentesque nec ut quam. Vestibulum elementum magna sit amet lacus volutpat hendrerit. Maecenas dictum lacus eget nisl consectetur, ornare luctus augue venenatis. Proin aliquet lacus a suscipit sodales. Donec et commodo felis.</p>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        height: 350,
+      }}
+    >
+      {isLoading
+        ? <div>...Loading</div>
+        : <ul>{data.data.map((m) => <li key={m.id}>{`${m.first_name} ${m.last_name}`}</li>)}</ul>}
+      <Pagination {...{ page, setPage, totalPages }} />
+    </div>
+  );
+};
+
+const Partners = () => {
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(null);
+
+  const { data, isLoading, isError } = getPartners({ page });
+
+  if (isError) return <div>Failed to load.</div>;
+  if (!isLoading && !totalPages) {
+    setTotalPages(prop('pages', data));
+  }
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        height: 350,
+      }}
+    >
+      {isLoading
+        ? <div>...Loading</div>
+        : <ul>{data.data.map((p) => <li key={p.id}>{`${p.nickname || p.aliases[0]}`}</li>)}</ul>}
+      <Pagination {...{ page, setPage, totalPages }} />
+    </div>
+  );
+};
+
+const Minister = ({ id }) => {
+  const { data, isLoading, isError } = getMinisterById(id);
+
+  if (isError) return <div>Failed to load.</div>;
+  if (isLoading) return <div>Loading...</div>;
+  return data ? (
+    <p>
+      {JSON.stringify(data, null, 4)}
+    </p>
+  ) : null;
+};
+
+export default function Index() {
+  const [updateSuccess, setUpdateSuccess] = useState(null);
+  const [updateFailure, setUpdateFailure] = useState(null);
+  const [createSuccess, setCreateSuccess] = useState(null);
+  const [createFailure, setCreateFailure] = useState(null);
+  const [deleteSuccess, setDeleteSuccess] = useState(null);
+  const [deleteFailure, setDeleteFailure] = useState(null);
+
+  const handleClose = () => {
+    forEach((func) => func(null), [
+      setUpdateSuccess,
+      setUpdateFailure,
+      setCreateSuccess,
+      setCreateFailure,
+      setDeleteSuccess,
+      setDeleteFailure,
+    ]);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Container>
+        <H1>Ministers</H1>
+        <Ministers />
+      </Container>
+
+      <Container>
+        <H1>Partners</H1>
+        <Partners />
+      </Container>
+
+      <Container>
+        <H1>Get Minister By ID</H1>
+        <Formik
+          initialValues={{ id: '19caa982-a77f-410c-a15b-e295bafdd0ca' }}
+        >
+          {({ values }) => (
+            <Form>
+              <Field
+                type="text"
+                name="id"
+                placeholder="Enter a minister's ID to search"
+                style={{
+                  width: 300,
+                }}
+              />
+              <Minister id={values.id} />
+            </Form>
+          )}
+        </Formik>
+      </Container>
+
+      <Container>
+        <H1>Update Minister By ID</H1>
+        <Formik
+          initialValues={{
+            id: '',
+            first_name: '',
+            last_name: '',
+          }}
+          onSubmit={(values) => {
+            const { id } = values;
+            updateMinisterById(id, values)
+              .then(setUpdateSuccess)
+              .catch(setUpdateFailure);
+          }}
+        >
+          {() => (
+            <Form>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <p>Minister ID</p>
+                <Field
+                  type="text"
+                  name="id"
+                />
+                <p>First Name:</p>
+                <Field
+                  type="text"
+                  name="first_name"
+                />
+                <p>Last Name:</p>
+                <Field
+                  type="text"
+                  name="last_name"
+                />
+                <Button type="submit" variant="contained" color="primary" style={{ marginTop: 20 }}>Update</Button>
+                {updateSuccess && (
+                  <Snackbar open={!!updateSuccess} autoHideDuration={10000} onClose={handleClose}>
+                    <Alert severity="success">Minister has successfully been updated.</Alert>
+                  </Snackbar>
+                )}
+                {updateFailure && (
+                  <Snackbar open={!!updateFailure} autoHideDuration={10000} onClose={handleClose}>
+                    <Alert severity="error">{updateFailure.message}</Alert>
+                  </Snackbar>
+                )}
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </Container>
+
+      <Container>
+        <H1>Create Minister</H1>
+        <Formik
+          initialValues={{
+            first_name: '',
+            last_name: '',
+            email: '',
+          }}
+          onSubmit={(values) => {
+            createMinister(values)
+              .then(setCreateSuccess)
+              .catch(setCreateFailure);
+          }}
+        >
+          {() => (
+            <Form>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <p>First Name:</p>
+                <Field
+                  type="text"
+                  name="first_name"
+                />
+                <p>Last Name:</p>
+                <Field
+                  type="text"
+                  name="last_name"
+                />
+                <p>Email:</p>
+                <Field
+                  type="text"
+                  name="email"
+                />
+                <Button type="submit" variant="contained" color="primary" style={{ marginTop: 20 }}>Create</Button>
+                {createSuccess && (
+                  <Snackbar open={!!createSuccess} autoHideDuration={10000} onClose={handleClose}>
+                    <Alert severity="success">Minister with id {pipe(head, prop('id'))(createSuccess)} has successfully been created.</Alert>
+                  </Snackbar>
+                )}
+                {createFailure && (
+                  <Snackbar open={!!createFailure} autoHideDuration={10000} onClose={handleClose}>
+                    <Alert severity="error">{createFailure.message}</Alert>
+                  </Snackbar>
+                )}
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </Container>
+
+      <Container>
+        <H1>Delete Minister</H1>
+        <Formik
+          initialValues={{
+            id: '',
+          }}
+          onSubmit={({ id }) => {
+            deleteMinisterById(id)
+              .then(() => setDeleteSuccess(true))
+              .catch(setDeleteFailure);
+          }}
+        >
+          {({ values }) => (
+            <Form>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <p>Minister ID:</p>
+                <Field
+                  type="text"
+                  name="id"
+                />
+                <Button type="submit" variant="contained" color="secondary" style={{ marginTop: 20 }}>Delete</Button>
+                {deleteSuccess && (
+                  <Snackbar open={!!deleteSuccess} autoHideDuration={10000} onClose={handleClose}>
+                    <Alert severity="success">Minister with id {values.id} has successfully been deleted.</Alert>
+                  </Snackbar>
+                )}
+                {deleteFailure && (
+                  <Snackbar open={!!deleteFailure} autoHideDuration={10000} onClose={handleClose}>
+                    <Alert severity="error">{JSON.stringify(deleteFailure)}</Alert>
+                  </Snackbar>
+                )}
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </Container>
     </div>
   );
 }
