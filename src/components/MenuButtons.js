@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import styled from '@emotion/styled';
 import { Button, List, ListItem } from '@material-ui/core';
-import Grid from './utils/Grid';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import colors from '../styles/colors';
 import LoginButton from './LoginButton';
@@ -9,6 +8,14 @@ import LoginButton from './LoginButton';
 const Logo = styled.div`
   grid-column: 1/6;
   font-size: 1.5rem;
+`;
+
+const Navigation = styled.div`
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  margin-left: 1rem;
+  align-items: center;
+  height: 50px;
 `;
 
 const Menu = styled.div`
@@ -88,11 +95,7 @@ export default function MenuButtons({ toggleMenu }) {
       {/* Desktop Menu */}
       <DesktopOnly>
         <Container>
-          <Grid
-            style={{ alignItems: 'center', height: '50px' }}
-            cols={12}
-            rows={1}
-          >
+          <Navigation>
             <Logo>Fundraising Tracker</Logo>
             <Menu>
               {links.map((link) => (
@@ -104,7 +107,7 @@ export default function MenuButtons({ toggleMenu }) {
             <Profile>
               <LoginButton />
             </Profile>
-          </Grid>
+          </Navigation>
         </Container>
       </DesktopOnly>
     </>
