@@ -1,54 +1,146 @@
 import { useRouter } from 'next/router';
-import Grid from '../../utils/Grid';
+import styled from '@emotion/styled';
+import {
+  pipe, join, length, path, prop,
+} from 'ramda';
+import Grid from '@material-ui/core/Grid';
+import { DesktopOnly, MobileOnly } from '../../components/MediaQuery';
 
 export default function Prospects() {
   const router = useRouter();
   const { userId } = router.query;
+  const joinOtherMinisters = pipe(prop('other_ministers'), join(', '));
+  const Container = styled.div`
+    h1 {
+      margin-left: 1rem;
+    }
+
+    .columns {
+      padding-left: 1rem;
+    }
+
+    .striped:nth-of-type(2n) {
+      background: #f5f5f5;
+    }
+
+    .numbers {
+      display: block;
+      width: 25px;
+      height: 25px;
+      text-align: center;
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 960px) {
+      text-align: center;
+
+      h1 {
+        margin-left: 0;
+      }
+
+      .columns {
+        padding: 0;
+      }
+    }
+  `;
 
   const prospects = [
     {
       id: 1,
-      first_name: 'Jon',
-      last_name: 'Smith',
-      notes: 'contacted on 5/17',
+      names: ['Jon smith'],
+      preferred_name: null,
+      status: 'contacted',
+      last_contacted: '07/13',
+      notes: ['Meeting up on 08/27', 'Left a voicemail', 'Emailed'],
+      other_ministers: ['Reagann Smith', 'Ryan Bristow'],
     },
     {
       id: 2,
-      first_name: 'Matt',
-      last_name: 'Clark',
-      notes: 'need to contact',
+      names: ['Matt Clark'],
+      preferred_name: null,
+      status: 'pledged, no amount',
+      last_contacted: '06/21',
+      notes: ['Need to follow up'],
+      other_ministers: ['Danielle Clark'],
     },
     {
       id: 3,
-      first_name: 'Mitchell',
-      last_name: 'Pavel',
-      notes: 'No contact list',
+      names: ['Mitchell Pavel'],
+      preferred_name: null,
+      status: 'contacted',
+      last_contacted: '06/30',
+      notes: ['Wants to donate, partnering with the wife'],
+      other_ministers: [],
     },
     {
       id: 4,
-      first_name: 'Bob',
-      last_name: 'Chin',
-      notes: 'contacted on 05/10',
+      names: ['Bob Chin'],
+      preferred_name: null,
+      status: 'No answer',
+      last_contacted: '07/01',
+      notes: ['Left voicemail', 'Attempted contact; No response.'],
+      other_ministers: [],
     },
   ];
 
   return (
-    <>
-      <h1 style={{ marginLeft: '1rem' }}>Prospects for {userId}</h1>
-      <Grid cols={3}>
-        <h3>First Name:</h3>
-        <h3>Last Name:</h3>
-        <h3>Notes:</h3>
+    <Container>
+      <h1>Prospects for {userId}</h1>
+      <Grid container spacing={0} className="columns">
+        <Grid item md={2} xs={3}>
+          <h4>Name</h4>
+        </Grid>
+        <Grid item md={2} xs={3}>
+          <h4>Status</h4>
+        </Grid>
+        <Grid item md={2} xs={3}>
+          <h4>Last Contacted</h4>
+        </Grid>
+        <DesktopOnly>
+          <Grid item md={3}>
+            <h4>Notes</h4>
+          </Grid>
+        </DesktopOnly>
+        <Grid item md={3} xs={3}>
+          <h4>Other Ministers</h4>
+        </Grid>
       </Grid>
-
       {prospects.map((prospect) => (
-        <Grid key={prospect.id} cols={3}>
-          <h4>{prospect.first_name}</h4>
-          <h4>{prospect.last_name}</h4>
-          <h4>{prospect.notes}</h4>
+        <Grid
+          container
+          spacing={1}
+          key={prospect.id}
+          className="striped columns"
+        >
+          <Grid item md={2} xs={3}>
+            <p>{path(['names', '0'], prospect)}</p>
+          </Grid>
+          <Grid item md={2} xs={3}>
+            <p>{prop('status', prospect)}</p>
+          </Grid>
+          <Grid item md={2} xs={3}>
+            <p>{prop('last_contacted', prospect)}</p>
+          </Grid>
+          <DesktopOnly>
+            <Grid item md={3}>
+              <p>{path(['notes', '0'], prospect)}</p>
+            </Grid>
+          </DesktopOnly>
+          <Grid item md={2} xs={3}>
+            <p>
+              <DesktopOnly>{joinOtherMinisters(prospect)}</DesktopOnly>
+              <MobileOnly>
+                <span className="numbers">
+                  {pipe(prop('other_ministers'), length)(prospect)}
+                </span>
+              </MobileOnly>
+            </p>
+          </Grid>
         </Grid>
       ))}
-
-    </>
+    </Container>
   );
 }

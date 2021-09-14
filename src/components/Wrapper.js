@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import {
-  Drawer,
   IconButton,
   SwipeableDrawer,
 } from '@material-ui/core';
-import { ChevronLeft, Menu } from '@material-ui/icons';
+import { Menu, ChevronLeft } from '@material-ui/icons';
 import styled from '@emotion/styled';
 import {
   last,
@@ -16,31 +15,18 @@ import {
 } from 'ramda';
 import { DesktopOnly, MobileOnly } from './MediaQuery';
 import MenuButtons from './MenuButtons';
-import Spacer from './Spacer';
-
-const drawerWidth = 142;
-const headerHeight = 50;
+import colors from '../styles/colors';
 
 const Header = styled.div`
   width: 100%;
-  height: ${headerHeight}px;
-  background-color: gray;
-  color: white;
+  height: 50px;
+  background-color:${colors.blue} ;
+  color: ${colors.white};
   font-size: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  @media (min-width: 960px) {
-    padding-left: ${drawerWidth}px;
-  }
-`;
-
-const Main = styled.main`
-  /* padding-top: ${headerHeight}px; */
-  @media (min-width: 960px) {
-    padding-left: ${drawerWidth}px;
-  }
 `;
 
 const capitalize = (text) => {
@@ -68,15 +54,16 @@ export default function Wrapper({ children }) {
       <Head>
         <title>{currentPage}</title>
       </Head>
-      <Header>
-        <DesktopOnly>Donor Relationship Management</DesktopOnly>
-        <MobileOnly>DRM</MobileOnly>
-      </Header>
+
+      <MobileOnly>
+        <Header>
+          Fundraising Tracker
+        </Header>
+      </MobileOnly>
+
       <nav>
         <DesktopOnly>
-          <Drawer variant="permanent" anchor="left" open>
-            <MenuButtons />
-          </Drawer>
+          <MenuButtons />
         </DesktopOnly>
         <MobileOnly>
           <IconButton
@@ -85,6 +72,7 @@ export default function Wrapper({ children }) {
               top: 0,
               left: 0,
               zIndex: 5000,
+              marginBottom: '1rem',
             }}
             onClick={toggleMenu}
           >
@@ -95,14 +83,15 @@ export default function Wrapper({ children }) {
             onClose={toggleMenuClosed}
             onOpen={toggleMenuOpened}
           >
-            <Spacer height={30} />
+
             <MenuButtons toggleMenu={toggleMenu} />
+
           </SwipeableDrawer>
         </MobileOnly>
       </nav>
-      <Main>
+      <main>
         {children}
-      </Main>
+      </main>
     </div>
   );
 }
