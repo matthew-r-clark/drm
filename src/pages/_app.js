@@ -1,7 +1,7 @@
-import '../styles/globals.css';
+import 'styles/globals.css';
 import { Provider } from 'react-redux';
-import store from '@@store';
-import Wrapper from '../components/Wrapper';
+import store from 'modules/store';
+import Wrapper from 'components/Wrapper';
 
 function MyApp({ Component, pageProps }) {
   return (

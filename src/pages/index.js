@@ -8,8 +8,8 @@ import {
   updateMinisterById,
   createMinister,
   deleteMinisterById,
-} from '@@ministers';
-import { getPartners } from '@@partners';
+} from 'modules/ministers';
+import { getPartners } from 'modules/partners';
 import {
   forEach,
   head,

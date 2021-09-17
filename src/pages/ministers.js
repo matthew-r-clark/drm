@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import CheckIcon from '@material-ui/icons/Check';
 import { prop } from 'ramda';
 import Grid from '@material-ui/core/Grid';
-import { DesktopOnly, MobileOnly } from '../components/MediaQuery';
+import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 
 const Container = styled.div`
   overflow-wrap: break-word;

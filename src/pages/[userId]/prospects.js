@@ -4,7 +4,7 @@ import {
   pipe, join, length, path, prop,
 } from 'ramda';
 import Grid from '@material-ui/core/Grid';
-import { DesktopOnly, MobileOnly } from '../../components/MediaQuery';
+import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 
 export default function Prospects() {
   const router = useRouter();
