@@ -113,9 +113,9 @@ const Partners = () => {
 };
 
 const Minister = ({ id }) => {
-  const { data, isLoading, isError } = getMinisterById(id);
+  const { data, isLoading, error } = getMinisterById(id);
 
-  if (isError) return <div>Failed to load.</div>;
+  if (error) return <div>{error}</div>;
   if (isLoading) return <div>Loading...</div>;
   return data ? (
     <p>
