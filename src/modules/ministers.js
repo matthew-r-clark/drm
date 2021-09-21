@@ -1,4 +1,4 @@
-import client from '@@api-client';
+import client from 'modules/api-client';
 
 export function getMinisters(query) {
   const searchParams = new URLSearchParams(query);
@@ -7,8 +7,8 @@ export function getMinisters(query) {
 }
 
 export function createMinister(minister) {
-  return client.post(`api/ministers`, minister);
-} 
+  return client.post('api/ministers', minister);
+}
 
 export function getMinisterById(id) {
   return client.get(`api/ministers/${id}`);

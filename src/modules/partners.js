@@ -1,4 +1,4 @@
-import client from '@@api-client';
+import client from 'modules/api-client';
 
 export function getProspects(ministerId) {
   return client.get(`/api/connections/prospects/${ministerId}`);
@@ -15,8 +15,8 @@ export function getPartners(query) {
 }
 
 export function createPartner(partner) {
-  return client.post(`api/partners`, partner);
-} 
+  return client.post('api/partners', partner);
+}
 
 export function getPartnerById(id) {
   return client.get(`api/partners/${id}`);

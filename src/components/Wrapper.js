@@ -13,9 +13,9 @@ import {
   prop,
   split,
 } from 'ramda';
-import { DesktopOnly, MobileOnly } from './MediaQuery';
-import MenuButtons from './MenuButtons';
-import colors from '../styles/colors';
+import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
+import MenuButtons from 'components/MenuButtons';
+import colors from 'styles/colors';
 
 const Header = styled.div`
   width: 100%;

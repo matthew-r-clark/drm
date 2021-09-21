@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import styled from '@emotion/styled';
 import { Button, List, ListItem } from '@material-ui/core';
-import { DesktopOnly, MobileOnly } from './MediaQuery';
-import colors from '../styles/colors';
-import LoginButton from './LoginButton';
+import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
+import colors from 'styles/colors';
+import LoginButton from 'components/LoginButton';
 
 const Logo = styled.div`
   grid-column: 1/6;

@@ -1,5 +1,5 @@
-import router from '@@router';
-import supabase from '@@supabase';
+import router from 'modules/router';
+import supabase from 'modules/supabase';
 import { isEmpty } from 'ramda';
 
 const api = {

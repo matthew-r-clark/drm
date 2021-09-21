@@ -27,4 +27,13 @@ module.exports = {
     'react/jsx-one-expression-per-line': 'off',
     'no-unused-vars': 'warn',
   },
+  settings: {
+    'import/resolver': {
+      alias: [
+        ['components', './src/components'],
+        ['modules', './src/modules'],
+        ['styles', './src/styles'],
+      ],
+    },
+  },
 };

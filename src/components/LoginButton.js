@@ -3,8 +3,8 @@ import { styled } from '@material-ui/core/styles';
 import React from 'react';
 import { path } from 'ramda';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, logout } from '@@store/authorization';
-import colors from '../styles/colors';
+import { login, logout } from 'modules/store/authorization';
+import colors from 'styles/colors';
 
 const WhiteBtn = styled(Button)({ color: colors.white });
 
