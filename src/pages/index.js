@@ -62,9 +62,9 @@ const Ministers = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null);
 
-  const { data, isLoading, isError } = getMinisters({ page });
+  const { data, isLoading, error } = getMinisters({ page });
 
-  if (isError) return <div>Failed to load.</div>;
+  if (error) return <div>Failed to load.</div>;
   if (!isLoading && !totalPages) {
     setTotalPages(prop('pages', data));
   }
