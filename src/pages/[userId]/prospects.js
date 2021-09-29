@@ -1,15 +1,14 @@
-import { useRouter } from 'next/router';
-import styled from '@emotion/styled';
-import {
-  pipe, join, length, path, prop,
-} from 'ramda';
-import Grid from '@material-ui/core/Grid';
-import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
+import { useRouter } from "next/router";
+import styled from "@emotion/styled";
+import { pipe, join, length, path, prop } from "ramda";
+import Grid from "@material-ui/core/Grid";
+import { DesktopOnly, MobileOnly } from "../../components/MediaQuery";
+import { getProspects } from "../../modules/partners";
 
 export default function Prospects() {
   const router = useRouter();
   const { userId } = router.query;
-  const joinOtherMinisters = pipe(prop('other_ministers'), join(', '));
+  const joinOtherMinisters = pipe(prop("other_ministers"), join(", "));
   const Container = styled.div`
     h1 {
       margin-left: 1rem;
@@ -47,49 +46,52 @@ export default function Prospects() {
     }
   `;
 
-  const prospects = [
-    {
-      id: 1,
-      names: ['Jon smith'],
-      preferred_name: null,
-      status: 'contacted',
-      last_contacted: '07/13',
-      notes: ['Meeting up on 08/27', 'Left a voicemail', 'Emailed'],
-      other_ministers: ['Reagann Smith', 'Ryan Bristow'],
-    },
-    {
-      id: 2,
-      names: ['Matt Clark'],
-      preferred_name: null,
-      status: 'pledged, no amount',
-      last_contacted: '06/21',
-      notes: ['Need to follow up'],
-      other_ministers: ['Danielle Clark'],
-    },
-    {
-      id: 3,
-      names: ['Mitchell Pavel'],
-      preferred_name: null,
-      status: 'contacted',
-      last_contacted: '06/30',
-      notes: ['Wants to donate, partnering with the wife'],
-      other_ministers: [],
-    },
-    {
-      id: 4,
-      names: ['Bob Chin'],
-      preferred_name: null,
-      status: 'No answer',
-      last_contacted: '07/01',
-      notes: ['Left voicemail', 'Attempted contact; No response.'],
-      other_ministers: [],
-    },
-  ];
+  const { data: prospects, isLoading, error } = getProspects(userId);
+
+  // const prospects = [
+  //   {
+  //     id: 1,
+  //     names: ["Jon smith"],
+  //     preferred_name: null,
+  //     status: "contacted",
+  //     last_contacted: "07/13",
+  //     notes: ["Meeting up on 08/27", "Left a voicemail", "Emailed"],
+  //     other_ministers: ["Reagann Smith", "Ryan Bristow"],
+  //   },
+  //   {
+  //     id: 2,
+  //     names: ["Matt Clark"],
+  //     preferred_name: null,
+  //     status: "pledged, no amount",
+  //     last_contacted: "06/21",
+  //     notes: ["Need to follow up"],
+  //     other_ministers: ["Danielle Clark"],
+  //   },
+  //   {
+  //     id: 3,
+  //     names: ["Mitchell Pavel"],
+  //     preferred_name: null,
+  //     status: "contacted",
+  //     last_contacted: "06/30",
+  //     notes: ["Wants to donate, partnering with the wife"],
+  //     other_ministers: [],
+  //   },
+  //   {
+  //     id: 4,
+  //     names: ["Bob Chin"],
+  //     preferred_name: null,
+  //     status: "No answer",
+  //     last_contacted: "07/01",
+  //     notes: ["Left voicemail", "Attempted contact; No response."],
+  //     other_ministers: [],
+  //   },
+  // ];
 
   return (
     <Container>
+      {prospects && console.log(prospects)}
       <h1>Prospects for {userId}</h1>
-      <Grid container spacing={0} className="columns">
+      <Grid container spacing={0} className='columns'>
         <Grid item md={2} xs={3}>
           <h4>Name</h4>
         </Grid>
@@ -108,39 +110,41 @@ export default function Prospects() {
           <h4>Other Ministers</h4>
         </Grid>
       </Grid>
-      {prospects.map((prospect) => (
-        <Grid
-          container
-          spacing={1}
-          key={prospect.id}
-          className="striped columns"
-        >
-          <Grid item md={2} xs={3}>
-            <p>{path(['names', '0'], prospect)}</p>
-          </Grid>
-          <Grid item md={2} xs={3}>
-            <p>{prop('status', prospect)}</p>
-          </Grid>
-          <Grid item md={2} xs={3}>
-            <p>{prop('last_contacted', prospect)}</p>
-          </Grid>
-          <DesktopOnly>
-            <Grid item md={3}>
-              <p>{path(['notes', '0'], prospect)}</p>
+      {isLoading && <h1>Loading data...</h1>}
+      {prospects &&
+        prospects.map((prospect) => (
+          <Grid
+            container
+            spacing={1}
+            key={prospect.id}
+            className='striped columns'
+          >
+            <Grid item md={2} xs={3}>
+              <p>{path(["names", "0"], prospect)}</p>
             </Grid>
-          </DesktopOnly>
-          <Grid item md={2} xs={3}>
-            <p>
-              <DesktopOnly>{joinOtherMinisters(prospect)}</DesktopOnly>
-              <MobileOnly>
-                <span className="numbers">
-                  {pipe(prop('other_ministers'), length)(prospect)}
-                </span>
-              </MobileOnly>
-            </p>
+            <Grid item md={2} xs={3}>
+              <p>{prop("status", prospect)}</p>
+            </Grid>
+            <Grid item md={2} xs={3}>
+              <p>{prop("last_contacted", prospect)}</p>
+            </Grid>
+            <DesktopOnly>
+              <Grid item md={3}>
+                <p>{path(["notes", "0"], prospect)}</p>
+              </Grid>
+            </DesktopOnly>
+            <Grid item md={2} xs={3}>
+              <p>
+                <DesktopOnly>{joinOtherMinisters(prospect)}</DesktopOnly>
+                <MobileOnly>
+                  <span className='numbers'>
+                    {pipe(prop("other_ministers"), length)(prospect)}
+                  </span>
+                </MobileOnly>
+              </p>
+            </Grid>
           </Grid>
-        </Grid>
-      ))}
+        ))}
     </Container>
   );
 }
