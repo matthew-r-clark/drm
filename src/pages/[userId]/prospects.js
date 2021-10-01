@@ -1,14 +1,12 @@
-import { useRouter } from 'next/router';
-import styled from '@emotion/styled';
-import {
-  pipe, join, length, path, prop, ifElse,
-} from 'ramda';
-import { format } from 'date-fns';
-import add from 'date-fns/add';
-import Grid from '@material-ui/core/Grid';
-import { DesktopOnly, MobileOnly } from '../../components/MediaQuery';
-import { getProspects } from '../../modules/partners';
-import { getMinisterById } from '../../modules/ministers';
+import { useRouter } from "next/router";
+import styled from "@emotion/styled";
+import { pipe, join, length, path, prop, ifElse } from "ramda";
+import { format } from "date-fns";
+import add from "date-fns/add";
+import Grid from "@material-ui/core/Grid";
+import { DesktopOnly, MobileOnly } from "../../components/MediaQuery";
+import { getProspects } from "../../modules/partners";
+import { getMinisterById } from "../../modules/ministers";
 
 export default function Prospects() {
   const router = useRouter();
@@ -23,11 +21,11 @@ export default function Prospects() {
     isLoading: isLoadingUser,
     error: userError,
   } = getMinisterById(`${userId}`);
-  const joinOtherMinisters = pipe(prop('other_ministers'), join(', '));
+  const joinOtherMinisters = pipe(prop("other_ministers"), join(", "));
   const getPreferredName = ifElse(
-    prop('nickname'),
-    prop('nickname'),
-    path(['aliases', 0]),
+    prop("nickname"),
+    prop("nickname"),
+    path(["aliases", 0])
   );
   const Container = styled.div`
     h1 {
@@ -70,7 +68,7 @@ export default function Prospects() {
     <Container>
       {isLoadingUser && <h1>Loading user...</h1>}
       {user && <h1>Prospects for {user.first_name}</h1>}
-      <Grid container spacing={0} className="columns">
+      <Grid container spacing={0} className='columns'>
         <Grid item md={2} xs={3}>
           <h4>Name</h4>
         </Grid>
@@ -90,40 +88,40 @@ export default function Prospects() {
         </Grid>
       </Grid>
       {isLoadingProspects && <h1>Loading data...</h1>}
-      {prospects
-        && prospects.map((prospect) => (
+      {prospects &&
+        prospects.map((prospect) => (
           <Grid
             container
             spacing={1}
             key={prospect.id}
-            className="striped columns"
+            className='striped columns'
           >
             <Grid item md={2} xs={3}>
               <p>{getPreferredName(prospect)}</p>
             </Grid>
             <Grid item md={2} xs={3}>
-              <p>{prop('status', prospect)}</p>
+              <p>{prop("status", prospect)}</p>
             </Grid>
             <Grid item md={2} xs={3}>
               <p>
                 {/* Days are showing a day behind what is in the DB. Adding a day to resolve it. */}
                 {format(
-                  add(new Date(prop('last_contacted', prospect)), { days: 1 }),
-                  'LLLL eo',
+                  add(new Date(prop("last_contacted", prospect)), { days: 1 }),
+                  "MMM eo"
                 )}
               </p>
             </Grid>
             <DesktopOnly>
               <Grid item md={3}>
-                <p>{path(['notes', 'prospect', '0'], prospect)}</p>
+                <p>{path(["notes", "prospect", "0"], prospect)}</p>
               </Grid>
             </DesktopOnly>
             <Grid item md={2} xs={3}>
               <p>
                 <DesktopOnly>{joinOtherMinisters(prospect)}</DesktopOnly>
                 <MobileOnly>
-                  <span className="numbers">
-                    {pipe(prop('other_ministers'), length)(prospect)}
+                  <span className='numbers'>
+                    {pipe(prop("other_ministers"), length)(prospect)}
                   </span>
                 </MobileOnly>
               </p>
