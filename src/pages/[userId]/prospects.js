@@ -3,14 +3,26 @@ import styled from '@emotion/styled';
 import {
   pipe, join, length, path, prop, ifElse,
 } from 'ramda';
+import { format } from 'date-fns';
+import add from 'date-fns/add';
 import Grid from '@material-ui/core/Grid';
 import { DesktopOnly, MobileOnly } from '../../components/MediaQuery';
 import { getProspects } from '../../modules/partners';
+import { getMinisterById } from '../../modules/ministers';
 
 export default function Prospects() {
   const router = useRouter();
   const { userId } = router.query;
-  const { data: prospects, isLoading, error } = getProspects(userId);
+  const {
+    data: prospects,
+    isLoading: isLoadingProspects,
+    error: prospectsError,
+  } = getProspects(userId);
+  const {
+    data: user,
+    isLoading: isLoadingUser,
+    error: userError,
+  } = getMinisterById(`${userId}`);
   const joinOtherMinisters = pipe(prop('other_ministers'), join(', '));
   const getPreferredName = ifElse(
     prop('nickname'),
@@ -56,7 +68,8 @@ export default function Prospects() {
 
   return (
     <Container>
-      <h1>Prospects for {userId}</h1>
+      {isLoadingUser && <h1>Loading user...</h1>}
+      {user && <h1>Prospects for {user.first_name}</h1>}
       <Grid container spacing={0} className="columns">
         <Grid item md={2} xs={3}>
           <h4>Name</h4>
@@ -76,7 +89,7 @@ export default function Prospects() {
           <h4>Other Ministers</h4>
         </Grid>
       </Grid>
-      {isLoading && <h1>Loading data...</h1>}
+      {isLoadingProspects && <h1>Loading data...</h1>}
       {prospects
         && prospects.map((prospect) => (
           <Grid
@@ -92,7 +105,13 @@ export default function Prospects() {
               <p>{prop('status', prospect)}</p>
             </Grid>
             <Grid item md={2} xs={3}>
-              <p>{prop('last_contacted', prospect)}</p>
+              <p>
+                {/* Days are showing a day behind what is in the DB. Adding a day to resolve it. */}
+                {format(
+                  add(new Date(prop('last_contacted', prospect)), { days: 1 }),
+                  'LLLL eo',
+                )}
+              </p>
             </Grid>
             <DesktopOnly>
               <Grid item md={3}>
