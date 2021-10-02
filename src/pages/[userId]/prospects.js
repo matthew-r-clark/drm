@@ -3,12 +3,55 @@ import styled from '@emotion/styled';
 import {
   pipe, join, length, path, prop, ifElse,
 } from 'ramda';
-import { format } from 'date-fns';
-import add from 'date-fns/add';
+import { format, parse } from 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import { DesktopOnly, MobileOnly } from '../../components/MediaQuery';
 import { getProspects } from '../../modules/partners';
 import { getMinisterById } from '../../modules/ministers';
+
+const joinOtherMinisters = pipe(prop('other_ministers'), join(', '));
+const getPreferredName = ifElse(
+  prop('nickname'),
+  prop('nickname'),
+  path(['aliases', 0]),
+);
+
+const Container = styled.div`
+  h1 {
+    margin-left: 1rem;
+  }
+
+  .columns {
+    padding-left: 1rem;
+  }
+
+  .striped:nth-of-type(2n) {
+    background: #f5f5f5;
+  }
+
+  .numbers {
+    display: block;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 960px) {
+    text-align: center;
+
+    h1 {
+      margin-left: 0;
+    }
+
+    .columns {
+      padding: 0;
+    }
+  }
+`;
 
 export default function Prospects() {
   const router = useRouter();
@@ -23,52 +66,11 @@ export default function Prospects() {
     isLoading: isLoadingUser,
     error: userError,
   } = getMinisterById(`${userId}`);
-  const joinOtherMinisters = pipe(prop('other_ministers'), join(', '));
-  const getPreferredName = ifElse(
-    prop('nickname'),
-    prop('nickname'),
-    path(['aliases', 0]),
-  );
-  const Container = styled.div`
-    h1 {
-      margin-left: 1rem;
-    }
-
-    .columns {
-      padding-left: 1rem;
-    }
-
-    .striped:nth-of-type(2n) {
-      background: #f5f5f5;
-    }
-
-    .numbers {
-      display: block;
-      width: 25px;
-      height: 25px;
-      text-align: center;
-      background-color: red;
-      color: white;
-      border-radius: 50%;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 960px) {
-      text-align: center;
-
-      h1 {
-        margin-left: 0;
-      }
-
-      .columns {
-        padding: 0;
-      }
-    }
-  `;
 
   return (
     <Container>
       {isLoadingUser && <h1>Loading user...</h1>}
+      {userError && <h1>Error loading minister information...</h1>}
       {user && <h1>Prospects for {user.first_name}</h1>}
       <Grid container spacing={0} className="columns">
         <Grid item md={2} xs={3}>
@@ -90,6 +92,7 @@ export default function Prospects() {
         </Grid>
       </Grid>
       {isLoadingProspects && <h1>Loading data...</h1>}
+      {prospectsError && <h1>Error loading prospects...</h1>}
       {prospects
         && prospects.map((prospect) => (
           <Grid
@@ -106,10 +109,13 @@ export default function Prospects() {
             </Grid>
             <Grid item md={2} xs={3}>
               <p>
-                {/* Days are showing a day behind what is in the DB. Adding a day to resolve it. */}
                 {format(
-                  add(new Date(prop('last_contacted', prospect)), { days: 1 }),
-                  'MMM eo',
+                  parse(
+                    prop('last_contacted', prospect),
+                    'yyyy-MM-dd',
+                    new Date(),
+                  ),
+                  'MMM do',
                 )}
               </p>
             </Grid>
