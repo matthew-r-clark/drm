@@ -145,10 +145,10 @@ export default function Index() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Container>
+      {/* <Container>
         <H1>Ministers</H1>
         <Ministers />
-      </Container>
+      </Container> */}
 
       {/* <Container>
         <H1>Partners</H1>
