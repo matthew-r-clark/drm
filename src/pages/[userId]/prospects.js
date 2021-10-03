@@ -65,12 +65,12 @@ export default function Prospects() {
     data: user,
     isLoading: isLoadingUser,
     error: userError,
-  } = getMinisterById(`${userId}`);
+  } = getMinisterById(userId);
 
   return (
     <Container>
-      {isLoadingUser && <h1>Loading user...</h1>}
-      {userError && <h1>Error loading minister information...</h1>}
+      {isLoadingUser && <p>Loading user...</p>}
+      {userError && <p>Error loading minister information...</p>}
       {user && <h1>Prospects for {user.first_name}</h1>}
       <Grid container spacing={0} className="columns">
         <Grid item md={2} xs={3}>
@@ -91,8 +91,9 @@ export default function Prospects() {
           <h4>Other Ministers</h4>
         </Grid>
       </Grid>
-      {isLoadingProspects && <h1>Loading data...</h1>}
-      {prospectsError && <h1>Error loading prospects...</h1>}
+      {isLoadingProspects && <p>Loading data...</p>}
+      {prospectsError && <p>Error loading prospects...</p>}
+      {prospects && prospects.length === 0 && <p>You have no current prospects.</p>}
       {prospects
         && prospects.map((prospect) => (
           <Grid
