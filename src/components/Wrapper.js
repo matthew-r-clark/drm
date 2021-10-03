@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import {
-  IconButton,
-  SwipeableDrawer,
-} from '@material-ui/core';
+import { IconButton, SwipeableDrawer } from '@material-ui/core';
 import { Menu, ChevronLeft } from '@material-ui/icons';
 import styled from '@emotion/styled';
 import {
@@ -14,12 +12,14 @@ import {
   prop,
   split,
 } from 'ramda';
+
 import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import MenuButtons from 'components/MenuButtons';
+import { updatePartners, emptyPartners } from 'modules/store/partners';
+import { updateMinisters, emptyMinisters } from 'modules/store/ministers';
+import { getPartners } from 'modules/partners';
+import { getMinisters } from 'modules/ministers';
 import colors from 'styles/colors';
-import { useSelector, useDispatch } from 'react-redux';
-import { updatePartners } from '../modules/store/partners';
-import { getPartners } from '../modules/partners';
 
 const Header = styled.div`
   width: 100%;
@@ -62,21 +62,36 @@ export default function Wrapper({ children }) {
     // isLoading: isLoadingPartnersList,
     error: partnersListError,
   } = getPartners();
+  const {
+    data: ministersList,
+    // isLoading: isLoadingMinistersList,
+    error: ministersListError,
+  } = getMinisters();
 
   useEffect(() => {
     if (isAuthorized && partnersList) {
       dispatch(updatePartners(partnersList));
     } else if (!isAuthorized) {
-      dispatch(updatePartners(null));
-      // router.replace('/login');
+      dispatch(emptyPartners());
     }
   }, [isAuthorized, partnersList]);
+
+  useEffect(() => {
+    if (isAuthorized && ministersList) {
+      dispatch(updateMinisters(ministersList));
+    } else if (!isAuthorized) {
+      dispatch(emptyMinisters());
+    }
+  }, [isAuthorized, ministersList]);
 
   useEffect(() => {
     if (partnersListError) {
       console.error('Error loading partners list:', partnersListError);
     }
-  }, [partnersListError]);
+    if (ministersListError) {
+      console.error('Error loading ministers list:', ministersListError);
+    }
+  }, [partnersListError, ministersListError]);
 
   return (
     <div>

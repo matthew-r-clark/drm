@@ -1,9 +1,7 @@
 import client from 'modules/api-client';
 
-export function getMinisters(query) {
-  const searchParams = new URLSearchParams(query);
-  const queryString = `?${searchParams.toString()}`;
-  return client.get(`/api/ministers${query && queryString}`);
+export function getMinisters() {
+  return client.get('/api/ministers');
 }
 
 export function createMinister(minister) {

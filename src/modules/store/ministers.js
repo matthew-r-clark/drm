@@ -2,21 +2,21 @@
 // param reassign can be used bc redux toolkit handles that under the hood
 import { createSlice } from '@reduxjs/toolkit';
 
-export const partnersSlice = createSlice({
-  name: 'partners',
+export const ministersSlice = createSlice({
+  name: 'ministers',
   initialState: {
     list: [],
   },
   reducers: {
-    updatePartners: (state, action) => {
+    updateMinisters: (state, action) => {
       state.list = action.payload;
     },
-    emptyPartners: (state) => {
+    emptyMinisters: (state) => {
       state.list = [];
     },
   },
 });
 
-export const { updatePartners, emptyPartners } = partnersSlice.actions;
+export const { updateMinisters, emptyMinisters } = ministersSlice.actions;
 
-export default partnersSlice.reducer;
+export default ministersSlice.reducer;
