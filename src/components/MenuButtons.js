@@ -68,7 +68,7 @@ export default function MenuButtons({ toggleMenu }) {
       text: 'Pledges',
     },
     {
-      href: '/ministry-partners',
+      href: '/partners',
       text: 'Partners',
     },
     {
