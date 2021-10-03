@@ -150,10 +150,10 @@ export default function Index() {
         <Ministers />
       </Container>
 
-      <Container>
+      {/* <Container>
         <H1>Partners</H1>
         <Partners />
-      </Container>
+      </Container> */}
 
       <Container>
         <H1>Get Minister By ID</H1>

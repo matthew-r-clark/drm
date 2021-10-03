@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import {
@@ -9,6 +9,7 @@ import { Menu, ChevronLeft } from '@material-ui/icons';
 import styled from '@emotion/styled';
 import {
   last,
+  path,
   pipe,
   prop,
   split,
@@ -16,6 +17,9 @@ import {
 import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import MenuButtons from 'components/MenuButtons';
 import colors from 'styles/colors';
+import { useSelector, useDispatch } from 'react-redux';
+import { updatePartners } from '../modules/store/partners';
+import { getPartners } from '../modules/partners';
 
 const Header = styled.div`
   width: 100%;
@@ -36,23 +40,48 @@ const capitalize = (text) => {
   return text;
 };
 
+const getCurrentPage = pipe(
+  prop('pathname'),
+  split('/'),
+  last,
+  capitalize,
+);
+
 export default function Wrapper({ children }) {
+  const dispatch = useDispatch();
   const router = useRouter();
-  const currentPage = pipe(
-    prop('pathname'),
-    split('/'),
-    last,
-    capitalize,
-  )(router);
   const [openMenu, setOpenMenu] = useState(false);
   const toggleMenu = () => setOpenMenu(!openMenu);
   const toggleMenuClosed = () => setOpenMenu(false);
   const toggleMenuOpened = () => setOpenMenu(true);
 
+  const isAuthorized = useSelector(path(['authorization', 'isAuthorized']));
+
+  const {
+    data: partnersList,
+    // isLoading: isLoadingPartnersList,
+    error: partnersListError,
+  } = getPartners();
+
+  useEffect(() => {
+    if (isAuthorized && partnersList) {
+      dispatch(updatePartners(partnersList));
+    } else if (!isAuthorized) {
+      dispatch(updatePartners(null));
+      // router.replace('/login');
+    }
+  }, [isAuthorized, partnersList]);
+
+  useEffect(() => {
+    if (partnersListError) {
+      console.error('Error loading partners list:', partnersListError);
+    }
+  }, [partnersListError]);
+
   return (
     <div>
       <Head>
-        <title>{currentPage}</title>
+        <title>{getCurrentPage(router)}</title>
       </Head>
 
       <MobileOnly>
