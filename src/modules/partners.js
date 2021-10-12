@@ -13,17 +13,17 @@ export function getPartners() {
 }
 
 export function createPartner(partner) {
-  return client.post('api/partners', partner);
+  return client.post('/api/partners', partner);
 }
 
 export function getPartnerById(id) {
-  return client.get(`api/partners/${id}`);
+  return client.get(`/api/partners/${id}`);
 }
 
 export function updatePartnerById(id, partner) {
-  return client.put(`api/partners/${id}`, partner);
+  return client.put(`/api/partners/${id}`, partner);
 }
 
 export function deletePartnerById(id) {
-  return client.delete(`api/partners/${id}`);
+  return client.delete(`/api/partners/${id}`);
 }
