@@ -1,6 +1,5 @@
 import { Button } from '@material-ui/core';
 import { styled } from '@material-ui/core/styles';
-import React from 'react';
 import { path } from 'ramda';
 import { useSelector, useDispatch } from 'react-redux';
 import { login, logout } from 'modules/store/authorization';

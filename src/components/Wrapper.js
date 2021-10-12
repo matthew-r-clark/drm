@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import {
-  IconButton,
-  SwipeableDrawer,
-} from '@material-ui/core';
+import { IconButton, SwipeableDrawer } from '@material-ui/core';
 import { Menu, ChevronLeft } from '@material-ui/icons';
 import styled from '@emotion/styled';
 import {
   last,
+  path,
   pipe,
   prop,
   split,
 } from 'ramda';
+
 import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import MenuButtons from 'components/MenuButtons';
+import { updatePartners, emptyPartners } from 'modules/store/partners';
+import { updateMinisters, emptyMinisters } from 'modules/store/ministers';
+import { getPartners } from 'modules/partners';
+import { getMinisters } from 'modules/ministers';
 import colors from 'styles/colors';
 
 const Header = styled.div`
@@ -36,23 +40,63 @@ const capitalize = (text) => {
   return text;
 };
 
+const getCurrentPage = pipe(
+  prop('pathname'),
+  split('/'),
+  last,
+  capitalize,
+);
+
 export default function Wrapper({ children }) {
+  const dispatch = useDispatch();
   const router = useRouter();
-  const currentPage = pipe(
-    prop('pathname'),
-    split('/'),
-    last,
-    capitalize,
-  )(router);
   const [openMenu, setOpenMenu] = useState(false);
   const toggleMenu = () => setOpenMenu(!openMenu);
   const toggleMenuClosed = () => setOpenMenu(false);
   const toggleMenuOpened = () => setOpenMenu(true);
 
+  const isAuthorized = useSelector(path(['authorization', 'isAuthorized']));
+
+  const {
+    data: partnersList,
+    // isLoading: isLoadingPartnersList,
+    error: partnersListError,
+  } = getPartners();
+  const {
+    data: ministersList,
+    // isLoading: isLoadingMinistersList,
+    error: ministersListError,
+  } = getMinisters();
+
+  useEffect(() => {
+    if (isAuthorized && partnersList) {
+      dispatch(updatePartners(partnersList));
+    } else if (!isAuthorized) {
+      dispatch(emptyPartners());
+    }
+  }, [isAuthorized, partnersList]);
+
+  useEffect(() => {
+    if (isAuthorized && ministersList) {
+      dispatch(updateMinisters(ministersList));
+    } else if (!isAuthorized) {
+      dispatch(emptyMinisters());
+    }
+  }, [isAuthorized, ministersList]);
+
+  useEffect(() => {
+    if (partnersListError) {
+      console.error('Error loading partners list:', partnersListError);
+    }
+    if (ministersListError) {
+      console.error('Error loading ministers list:', ministersListError);
+    }
+  }, [partnersListError, ministersListError]);
+
   return (
     <div>
       <Head>
-        <title>{currentPage}</title>
+        <title>{getCurrentPage(router)}</title>
       </Head>
 
       <MobileOnly>

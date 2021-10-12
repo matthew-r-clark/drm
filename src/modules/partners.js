@@ -8,10 +8,8 @@ export function getPledges(ministerId) {
   return client.get(`/api/connections/pledges/${ministerId}`);
 }
 
-export function getPartners(query) {
-  const searchParams = new URLSearchParams(query);
-  const queryString = `?${searchParams.toString()}`;
-  return client.get(`/api/partners${query && queryString}`);
+export function getPartners() {
+  return client.get('/api/partners');
 }
 
 export function createPartner(partner) {

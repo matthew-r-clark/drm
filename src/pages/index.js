@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Button, Snackbar } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -145,15 +145,15 @@ export default function Index() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Container>
+      {/* <Container>
         <H1>Ministers</H1>
         <Ministers />
-      </Container>
+      </Container> */}
 
-      <Container>
+      {/* <Container>
         <H1>Partners</H1>
         <Partners />
-      </Container>
+      </Container> */}
 
       <Container>
         <H1>Get Minister By ID</H1>
