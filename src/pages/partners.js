@@ -20,6 +20,7 @@ const GridHeaders = () => (
   <Grid container direction="row" justifyContent="space-evenly" alignItems="center" style={{fontWeight: 'bold'}}>
     <Grid item xs={4} style={{paddingLeft: 10}}>Name</Grid>
     <Grid item xs={4}>Email</Grid>
+    <Grid item xs={4}>Ministers</Grid>
   </Grid>
 );
 
@@ -39,7 +40,7 @@ const generateAkaString = pipe(
   ),
 );
 
-const Partner = ({ partner }) => (
+const Partner = ({ partner, ministers }) => (
   <Grid
     container
     component="li"
@@ -50,22 +51,25 @@ const Partner = ({ partner }) => (
       padding: '3px 0',
       borderRadius: 5
     }}
-    title={generateAkaString(partner)}
     onClick={() => {
       alert(JSON.stringify(partner, null, 2));
     }}
   >
-    <Grid item xs={4} style={{paddingLeft: 10}}>
+    <Grid item xs={4} style={{paddingLeft: 10}} title={generateAkaString(partner)}>
       {partner.aliases[0]}
     </Grid>
     <Grid item xs={4}>
       {partner.email}
+    </Grid>
+    <Grid item xs={4}>
+      {partner.connected_ministers.join(', ')}
     </Grid>
   </Grid>
 );
 
 export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));
+  const ministers = useSelector(path(['ministers', 'list']));
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [timeoutId, setTimeoutId] = useState(undefined);
@@ -131,7 +135,7 @@ export default function MinistryPartners() {
                 </p>
               ) : (
                 <>
-                  {partners.map((p) => <Partner partner={p} />)}
+                  {partners.map((p) => <Partner key={p.id} partner={p} ministers={ministers} />)}
                 </>
               )}
             </>
