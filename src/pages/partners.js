@@ -1,4 +1,6 @@
-import { always, concat, ifElse, join, length, lt, path, pipe, prop, tail } from 'ramda';
+import {
+  always, concat, ifElse, join, length, lt, path, pipe, prop, tail,
+} from 'ramda';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import Fuse from 'fuse.js';
@@ -17,8 +19,8 @@ const searchOptions = {
 const TIMEOUT_DELAY = 500;
 
 const GridHeaders = () => (
-  <Grid container direction="row" justifyContent="space-evenly" alignItems="center" style={{fontWeight: 'bold'}}>
-    <Grid item xs={4} style={{paddingLeft: 10}}>Name</Grid>
+  <Grid container direction="row" justifyContent="space-evenly" alignItems="center" style={{ fontWeight: 'bold' }}>
+    <Grid item xs={4} style={{ paddingLeft: 10 }}>Name</Grid>
     <Grid item xs={4}>Email</Grid>
   </Grid>
 );
@@ -48,14 +50,14 @@ const Partner = ({ partner }) => (
     alignItems="center"
     style={{
       padding: '3px 0',
-      borderRadius: 5
+      borderRadius: 5,
     }}
     title={generateAkaString(partner)}
     onClick={() => {
       alert(JSON.stringify(partner, null, 2));
     }}
   >
-    <Grid item xs={4} style={{paddingLeft: 10}}>
+    <Grid item xs={4} style={{ paddingLeft: 10 }}>
       {partner.aliases[0]}
     </Grid>
     <Grid item xs={4}>
@@ -71,7 +73,7 @@ export default function MinistryPartners() {
   const [timeoutId, setTimeoutId] = useState(undefined);
   const fuse = new Fuse(partners, searchOptions);
 
-  const handleSearch = ({query}) => {
+  const handleSearch = ({ query }) => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
@@ -98,9 +100,9 @@ export default function MinistryPartners() {
         >
           <Formik
             onSubmit={handleSearch}
-            initialValues={{query: ''}}
+            initialValues={{ query: '' }}
           >
-            {({handleChange, submitForm}) => (
+            {({ handleChange, submitForm }) => (
               <Form>
                 <Search
                   name="query"
@@ -116,7 +118,7 @@ export default function MinistryPartners() {
         </div>
       </div>
 
-      <div style={{margin: 15}}>
+      <div style={{ margin: 15 }}>
         <GridHeaders />
         <LineSeparatedList>
           {searchResults.length ? (

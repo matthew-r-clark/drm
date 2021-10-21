@@ -1,6 +1,5 @@
 import router from 'modules/router';
 import supabase from 'modules/supabase';
-import { isEmpty, omit } from 'ramda';
 
 const api = {
   /* GET all ministers
