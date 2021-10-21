@@ -86,7 +86,7 @@ export default function MinistryPartners() {
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <h1 style={{ marginLeft: '1rem' }}>Ministry Partner List</h1>
+        <h1 style={{ marginLeft: '1rem' }}>Ministry Partners</h1>
         <div
           style={{
             display: 'flex',
