@@ -1,6 +1,5 @@
 import router from 'modules/router';
 import supabase from 'modules/supabase';
-import { isEmpty, omit } from 'ramda';
 
 const api = {
   /* GET all partners
@@ -40,7 +39,7 @@ const api = {
   */
   get: async (req, res) => {
     const { data, error } = await supabase
-      .from('partners')
+      .from('partners_with_ministers')
       .select();
     if (error) {
       res.status(400).send(error);
