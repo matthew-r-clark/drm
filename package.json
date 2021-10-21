@@ -6,6 +6,7 @@
     "dev": "next dev",
     "debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
+    "lint": "npx eslint . --ext .js,.jsx",
     "start": "next start"
   },
   "dependencies": {
