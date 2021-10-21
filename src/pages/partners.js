@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import Fuse from 'fuse.js';
 import { Grid } from '@material-ui/core';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form } from 'formik';
 
 import { LineSeparatedList } from 'components/elements';
-import colors from 'styles/colors';
+import Search from 'components/Search';
 
 const searchOptions = {
   threshold: 0.5,
@@ -102,18 +102,12 @@ export default function MinistryPartners() {
           >
             {({handleChange, submitForm}) => (
               <Form>
-                <Field
+                <Search
                   name="query"
                   placeholder="Search..."
                   onChange={(e) => {
                     handleChange(e);
                     submitForm();
-                  }}
-                  style={{
-                    padding: 7,
-                    backgroundColor: colors.grayLight,
-                    border: 'none',
-                    borderRadius: 5,
                   }}
                 />
               </Form>
