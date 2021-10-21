@@ -40,7 +40,7 @@ const generateAkaString = pipe(
   ),
 );
 
-const Partner = ({ partner, ministers }) => (
+const Partner = ({ partner }) => (
   <Grid
     container
     component="li"
@@ -69,7 +69,6 @@ const Partner = ({ partner, ministers }) => (
 
 export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));
-  const ministers = useSelector(path(['ministers', 'list']));
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [timeoutId, setTimeoutId] = useState(undefined);
@@ -135,7 +134,7 @@ export default function MinistryPartners() {
                 </p>
               ) : (
                 <>
-                  {partners.map((p) => <Partner key={p.id} partner={p} ministers={ministers} />)}
+                  {partners.map((p) => <Partner key={p.id} partner={p} />)}
                 </>
               )}
             </>
