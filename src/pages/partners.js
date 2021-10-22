@@ -1,5 +1,5 @@
 import {
-  always, concat, ifElse, join, length, lt, path, pipe, prop, tail,
+  always, concat, ifElse, join, length, lt, path, pipe, prop, tail, keys, find, propEq,
 } from 'ramda';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
@@ -9,6 +9,7 @@ import { Formik, Form } from 'formik';
 
 import { LineSeparatedList } from 'components/elements';
 import Search from 'components/Search';
+import createCard from 'modules/card';
 
 const searchOptions = {
   threshold: 0.5,
@@ -42,6 +43,42 @@ const generateAkaString = pipe(
   ),
 );
 
+const FullPartner = ({ partner }) => (
+  <>
+    <h1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</h1>
+    <Grid container direction="row">
+      <Grid item xs={6}>
+        <Grid container direction="column">
+          <Grid item><h3>Other Names</h3></Grid>
+          <Grid item>{tail(partner.aliases).join(', ') || 'n/a'}</Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={6}>
+        <Grid container direction="column">
+          <Grid item><h3>Connected Ministers</h3></Grid>
+          <Grid item>{tail(partner.connected_ministers).join(', ') || 'n/a'}</Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+
+    {partner.spouse && (
+      <Grid container direction="column">
+        <Grid item><h3>Spouse</h3></Grid>
+        <Grid item>{partner.spouse}</Grid>
+      </Grid>
+    )}
+
+    {/* WIP! Still figuring out layout. */}
+    <br /><br /><br />
+    {keys(partner).map((key) => (
+      <Grid container direction="row">
+        <Grid item xs={2}>{key}: </Grid>
+        <Grid item xs={2}>{JSON.stringify(partner[key])}</Grid>
+      </Grid>
+    ))}
+  </>
+);
+
 const Partner = ({ partner }) => (
   <Grid
     container
@@ -54,7 +91,7 @@ const Partner = ({ partner }) => (
       borderRadius: 5,
     }}
     onClick={() => {
-      alert(JSON.stringify(partner, null, 2));
+      createCard(<FullPartner partner={partner} />);
     }}
   >
     <Grid item xs={4} style={{ paddingLeft: 10 }} title={generateAkaString(partner)}>
