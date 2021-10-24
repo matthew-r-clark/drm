@@ -2,7 +2,8 @@ import ReactDOM from 'react-dom';
 import Card from 'components/Card';
 
 export default function createCard(content) {
-  const rootNode = document.createElement('div');
+  const rootNode = document.getElementById('modal-root') || document.createElement('div');
+  rootNode.setAttribute('id', 'modal-root');
   const { body } = document;
   body.appendChild(rootNode);
 
