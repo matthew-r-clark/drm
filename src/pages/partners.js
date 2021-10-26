@@ -1,15 +1,16 @@
 import {
-  always, concat, ifElse, join, length, lt, path, pipe, prop, tail, keys, find, propEq,
+  always, concat, find, ifElse, join, length, lt, path, pipe, prop, propEq, tail,
 } from 'ramda';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import Fuse from 'fuse.js';
 import { Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
+import styled from '@emotion/styled';
 
 import { LineSeparatedList } from 'components/elements';
 import Search from 'components/Search';
-import createCard from 'modules/card';
+import Card from 'components/Card';
 
 const searchOptions = {
   threshold: 0.5,
@@ -43,43 +44,75 @@ const generateAkaString = pipe(
   ),
 );
 
-const FullPartner = ({ partner }) => (
-  <>
-    <h1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</h1>
-    <Grid container direction="row">
-      <Grid item xs={6}>
-        <Grid container direction="column">
-          <Grid item><h3>Other Names</h3></Grid>
-          <Grid item>{tail(partner.aliases).join(', ') || 'n/a'}</Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={6}>
-        <Grid container direction="column">
-          <Grid item><h3>Connected Ministers</h3></Grid>
-          <Grid item>{tail(partner.connected_ministers).join(', ') || 'n/a'}</Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+const GridItem = (props) => <Grid item {...props} />;
 
-    {partner.spouse && (
-      <Grid container direction="column">
-        <Grid item><h3>Spouse</h3></Grid>
-        <Grid item>{partner.spouse}</Grid>
-      </Grid>
-    )}
+const AddressLine = styled.p({
+  margin: 0,
+});
 
-    {/* WIP! Still figuring out layout. */}
-    <br /><br /><br />
-    {keys(partner).map((key) => (
-      <Grid container direction="row">
-        <Grid item xs={2}>{key}: </Grid>
-        <Grid item xs={2}>{JSON.stringify(partner[key])}</Grid>
-      </Grid>
-    ))}
-  </>
-);
+const FullPartner = ({ id }) => {
+  const partner = useSelector(pipe(
+    path(['partners', 'list']),
+    find(propEq('id', id)),
+  ));
 
-const Partner = ({ partner }) => (
+  return (
+    <>
+      <h1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</h1>
+      <Grid container direction="row" spacing={3}>
+        <GridItem xs={6}>
+          <h3>Other Names</h3>
+          {tail(partner.aliases).join(', ') || 'n/a'}
+        </GridItem>
+
+        <GridItem xs={6}>
+          <h3>Connected Ministers</h3>
+          {tail(partner.connected_ministers).join(', ') || 'n/a'}
+        </GridItem>
+
+        <GridItem xs={3}>
+          <h3>Preferred Contact Method</h3>
+          {partner.preferred_contact_method || 'n/a'}
+        </GridItem>
+
+        <GridItem xs={3}>
+          <h3>Email</h3>
+          {partner.email || 'n/a'}
+        </GridItem>
+
+        <GridItem xs={2}>
+          <h3>Phone</h3>
+          {partner.phone || 'n/a'}
+        </GridItem>
+
+        <GridItem xs={2}>
+          <h3>Birthday</h3>
+          {partner.birthday || 'n/a'}
+        </GridItem>
+
+        <GridItem xs={6}>
+          <h3>Spouse</h3>
+          {partner.spouse || 'n/a'}
+        </GridItem>
+
+        <GridItem xs={6}>
+          <h3>Address</h3>
+          {partner.address_line_1 ? (
+            <>
+              <AddressLine>{partner.address_line_1}</AddressLine>
+              {partner.address_line_2 && <AddressLine>{partner.address_line_2}</AddressLine>}
+              <AddressLine>
+                {`${partner.city}, ${partner.state} ${partner.zipCode}`}
+              </AddressLine>
+            </>
+          ) : 'n/a'}
+        </GridItem>
+      </Grid>
+    </>
+  );
+};
+
+const Partner = ({ partner, setIsModalOpen, setSelectedPartner }) => (
   <Grid
     container
     component="li"
@@ -91,7 +124,8 @@ const Partner = ({ partner }) => (
       borderRadius: 5,
     }}
     onClick={() => {
-      createCard(<FullPartner partner={partner} />);
+      setIsModalOpen(true);
+      setSelectedPartner(partner);
     }}
   >
     <Grid item xs={4} style={{ paddingLeft: 10 }} title={generateAkaString(partner)}>
@@ -111,6 +145,8 @@ export default function MinistryPartners() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [timeoutId, setTimeoutId] = useState(undefined);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPartner, setSelectedPartner] = useState();
   const fuse = new Fuse(partners, searchOptions);
 
   const handleSearch = ({ query }) => {
@@ -163,7 +199,14 @@ export default function MinistryPartners() {
         <LineSeparatedList>
           {searchResults.length ? (
             <>
-              {searchResults.map((r) => <Partner partner={r.item} />)}
+              {searchResults.map((r) => (
+                <Partner
+                  key={r.item.id}
+                  partner={r.item}
+                  setIsModalOpen={setIsModalOpen}
+                  setSelectedPartner={setSelectedPartner}
+                />
+              ))}
             </>
           ) : (
             <>
@@ -173,13 +216,27 @@ export default function MinistryPartners() {
                 </p>
               ) : (
                 <>
-                  {partners.map((p) => <Partner key={p.id} partner={p} />)}
+                  {partners.map((p) => (
+                    <Partner
+                      key={p.id}
+                      partner={p}
+                      setIsModalOpen={setIsModalOpen}
+                      setSelectedPartner={setSelectedPartner}
+                    />
+                  ))}
                 </>
               )}
             </>
           )}
         </LineSeparatedList>
       </div>
+
+      <Card
+        isOpen={isModalOpen}
+        close={() => setIsModalOpen(false)}
+      >
+        <FullPartner id={selectedPartner.id} />
+      </Card>
     </>
   );
 }
