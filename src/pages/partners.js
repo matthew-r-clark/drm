@@ -1,14 +1,14 @@
 import {
-  always, concat, find, ifElse, join, length, lt, path, pipe, prop, propEq, tail,
+  always, concat, ifElse, join, length, lt, path, pipe, prop, tail,
 } from 'ramda';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import Fuse from 'fuse.js';
 import { Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
-import styled from '@emotion/styled';
 
-import { LineSeparatedList } from 'components/elements';
+import { LineSeparatedList } from 'components/lists';
+import FullPartner from 'components/FullPartner';
 import Search from 'components/Search';
 import Card from 'components/Card';
 
@@ -43,74 +43,6 @@ const generateAkaString = pipe(
     always(''),
   ),
 );
-
-const GridItem = (props) => <Grid item {...props} />;
-
-const AddressLine = styled.p({
-  margin: 0,
-});
-
-const FullPartner = ({ id }) => {
-  const partner = useSelector(pipe(
-    path(['partners', 'list']),
-    find(propEq('id', id)),
-  ));
-
-  return (
-    <>
-      <h1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</h1>
-      <Grid container direction="row" spacing={3}>
-        <GridItem xs={6}>
-          <h3>Other Names</h3>
-          {tail(partner.aliases).join(', ') || 'n/a'}
-        </GridItem>
-
-        <GridItem xs={6}>
-          <h3>Connected Ministers</h3>
-          {tail(partner.connected_ministers).join(', ') || 'n/a'}
-        </GridItem>
-
-        <GridItem xs={3}>
-          <h3>Preferred Contact Method</h3>
-          {partner.preferred_contact_method || 'n/a'}
-        </GridItem>
-
-        <GridItem xs={3}>
-          <h3>Email</h3>
-          {partner.email || 'n/a'}
-        </GridItem>
-
-        <GridItem xs={2}>
-          <h3>Phone</h3>
-          {partner.phone || 'n/a'}
-        </GridItem>
-
-        <GridItem xs={2}>
-          <h3>Birthday</h3>
-          {partner.birthday || 'n/a'}
-        </GridItem>
-
-        <GridItem xs={6}>
-          <h3>Spouse</h3>
-          {partner.spouse || 'n/a'}
-        </GridItem>
-
-        <GridItem xs={6}>
-          <h3>Address</h3>
-          {partner.address_line_1 ? (
-            <>
-              <AddressLine>{partner.address_line_1}</AddressLine>
-              {partner.address_line_2 && <AddressLine>{partner.address_line_2}</AddressLine>}
-              <AddressLine>
-                {`${partner.city}, ${partner.state} ${partner.zipCode}`}
-              </AddressLine>
-            </>
-          ) : 'n/a'}
-        </GridItem>
-      </Grid>
-    </>
-  );
-};
 
 const Partner = ({ partner, setIsModalOpen, setSelectedPartner }) => (
   <Grid
@@ -231,12 +163,14 @@ export default function MinistryPartners() {
         </LineSeparatedList>
       </div>
 
-      <Card
-        isOpen={isModalOpen}
-        close={() => setIsModalOpen(false)}
-      >
-        <FullPartner id={selectedPartner.id} />
-      </Card>
+      {selectedPartner && (
+        <Card
+          isOpen={isModalOpen && selectedPartner}
+          close={() => setIsModalOpen(false)}
+        >
+          <FullPartner id={selectedPartner.id} />
+        </Card>
+      )}
     </>
   );
 }
