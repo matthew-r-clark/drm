@@ -8,9 +8,8 @@ import { Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 
 import { LineSeparatedList } from 'components/lists';
-import FullPartner from 'components/FullPartner';
+import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
-import Card from 'components/Card';
 
 const searchOptions = {
   threshold: 0.5,
@@ -164,12 +163,11 @@ export default function MinistryPartners() {
       </div>
 
       {selectedPartner && (
-        <Card
+        <PartnerCard
+          id={selectedPartner.id}
           isOpen={isModalOpen && selectedPartner}
           close={() => setIsModalOpen(false)}
-        >
-          <FullPartner id={selectedPartner.id} />
-        </Card>
+        />
       )}
     </>
   );

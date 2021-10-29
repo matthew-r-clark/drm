@@ -6,6 +6,7 @@ import {
 } from 'ramda';
 
 import { H1, H3 } from 'components/headers';
+import Card from 'components/Card';
 
 const GridItem = styled((props) => <Grid item {...props} />)({
   minWidth: 250,
@@ -17,14 +18,17 @@ const AddressLine = styled.p({
 
 const formatNamesList = map((name) => <>{name}<br /></>);
 
-export default function FullPartner({ id }) {
+export default function PartnerCard({ id, isOpen, close }) {
   const partner = useSelector(pipe(
     path(['partners', 'list']),
     find(propEq('id', id)),
   ));
 
   return (
-    <>
+    <Card
+      isOpen={isOpen}
+      close={close}
+    >
       <H1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</H1>
       <Grid container direction="row" spacing={10}>
         <GridItem xs={6}>
@@ -65,6 +69,6 @@ export default function FullPartner({ id }) {
           {formatNamesList(partner.connected_ministers) || 'n/a'}
         </GridItem>
       </Grid>
-    </>
+    </Card>
   );
 }
