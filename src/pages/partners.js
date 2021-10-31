@@ -10,14 +10,13 @@ import { Formik, Form } from 'formik';
 import { LineSeparatedList } from 'components/lists';
 import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
+import debounce from 'modules/debounce';
 
 const searchOptions = {
   threshold: 0.5,
   includeMatches: true,
   keys: ['aliases'],
 };
-
-const TIMEOUT_DELAY = 500;
 
 const GridHeaders = () => (
   <Grid container direction="row" justifyContent="space-evenly" alignItems="center" style={{ fontWeight: 'bold' }}>
@@ -75,21 +74,17 @@ export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [timeoutId, setTimeoutId] = useState(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState();
-  const fuse = new Fuse(partners, searchOptions);
+  const searchIndex = Fuse.createIndex(searchOptions.keys, partners);
+  const fuse = new Fuse(partners, searchOptions, searchIndex);
 
   const handleSearch = ({ query }) => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    const id = setTimeout(async () => {
+    debounce(() => {
       const result = fuse.search(query);
       setSearchResults(result);
       setSearchQuery(query);
-    }, TIMEOUT_DELAY);
-    setTimeoutId(id);
+    }, 500);
   };
 
   return (
