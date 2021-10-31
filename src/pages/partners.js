@@ -10,7 +10,7 @@ import { Formik, Form } from 'formik';
 import { LineSeparatedList } from 'components/lists';
 import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
-import debounce from '../modules/debounce';
+import debounce from 'modules/debounce';
 
 const searchOptions = {
   threshold: 0.5,
