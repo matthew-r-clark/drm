@@ -1,12 +1,14 @@
 import { Button, Grid } from '@material-ui/core';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, Field as FormikField } from 'formik';
 import {
   find, map, path, pipe, propEq, tail,
 } from 'ramda';
 
+import { deletePartnerById } from 'modules/partners';
+import { deletePartner as deletePartnerFromState } from 'modules/store/partners';
 import { H1, H3 } from 'components/headers';
 import Card from 'components/Card';
 import {
@@ -41,6 +43,7 @@ const formatNamesList = map((name) => <>{name}<br /></>);
 
 export default function PartnerCard({ id, isOpen, close }) {
   const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useDispatch();
   const partner = useSelector(pipe(
     path(['partners', 'list']),
     find(propEq('id', id)),
@@ -53,7 +56,10 @@ export default function PartnerCard({ id, isOpen, close }) {
   return (
     <Card
       isOpen={isOpen}
-      close={close}
+      close={() => {
+        setIsEditing(false);
+        close();
+      }}
     >
       <H1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</H1>
       {isEditing ? (
@@ -162,7 +168,13 @@ export default function PartnerCard({ id, isOpen, close }) {
               <EditButton onClick={() => setIsEditing(true)} />
             </Grid>
             <Grid item>
-              <DeleteButton />
+              <DeleteButton
+                onClick={() => {
+                  deletePartnerById(partner.id);
+                  dispatch(deletePartnerFromState(partner.id));
+                  close();
+                }}
+              />
             </Grid>
           </>
         )}
