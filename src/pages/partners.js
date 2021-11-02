@@ -2,7 +2,7 @@ import {
   always, concat, ifElse, join, length, lt, path, pipe, prop, tail,
 } from 'ramda';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 import { Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
@@ -78,6 +78,11 @@ export default function MinistryPartners() {
   const [selectedPartner, setSelectedPartner] = useState();
   const searchIndex = Fuse.createIndex(searchOptions.keys, partners);
   const fuse = new Fuse(partners, searchOptions, searchIndex);
+
+  useEffect(() => {
+    const result = fuse.search(searchQuery);
+    setSearchResults(result);
+  }, [partners]);
 
   const handleSearch = ({ query }) => {
     debounce(() => {
