@@ -42,33 +42,39 @@ const generateAkaString = pipe(
   ),
 );
 
-const Partner = ({ partner, setIsModalOpen, setSelectedPartner }) => (
-  <Grid
-    container
-    component="li"
-    direction="row"
-    justifyContent="space-evenly"
-    alignItems="center"
-    style={{
-      padding: '3px 0',
-      borderRadius: 5,
-    }}
-    onClick={() => {
-      setIsModalOpen(true);
-      setSelectedPartner(partner);
-    }}
-  >
-    <Grid item xs={4} style={{ paddingLeft: 10 }} title={generateAkaString(partner)}>
-      {partner.aliases[0]}
+const Partner = ({ partner, setIsModalOpen, setSelectedPartner }) => {
+  if (!partner) {
+    return null;
+  }
+
+  return (
+    <Grid
+      container
+      component="li"
+      direction="row"
+      justifyContent="space-evenly"
+      alignItems="center"
+      style={{
+        padding: '3px 0',
+        borderRadius: 5,
+      }}
+      onClick={() => {
+        setIsModalOpen(true);
+        setSelectedPartner(partner);
+      }}
+    >
+      <Grid item xs={4} style={{ paddingLeft: 10 }} title={generateAkaString(partner)}>
+        {partner.aliases[0]}
+      </Grid>
+      <Grid item xs={4}>
+        {partner.email}
+      </Grid>
+      <Grid item xs={4}>
+        {partner.connected_ministers.join(', ')}
+      </Grid>
     </Grid>
-    <Grid item xs={4}>
-      {partner.email}
-    </Grid>
-    <Grid item xs={4}>
-      {partner.connected_ministers.join(', ')}
-    </Grid>
-  </Grid>
-);
+  );
+};
 
 export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));

@@ -46,6 +46,10 @@ export default function PartnerCard({ id, isOpen, close }) {
     find(propEq('id', id)),
   ));
 
+  if (!partner) {
+    return null;
+  }
+
   return (
     <Card
       isOpen={isOpen}
