@@ -1,9 +1,9 @@
 import Link from 'next/link';
+import { signOut } from 'next-auth/client'
 import styled from '@emotion/styled';
 import { Button, List, ListItem } from '@material-ui/core';
 import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import colors from 'styles/colors';
-import LoginButton from 'components/LoginButton';
 
 const Logo = styled.div`
   grid-column: 1/6;
@@ -30,6 +30,8 @@ const Profile = styled.div`
   font-size: 0.75rem;
   justify-self: end;
 `;
+
+const SignOutButton = styled(Button)({ color: colors.white });
 
 const Container = styled.div`
   background: ${colors.blue};
@@ -105,7 +107,9 @@ export default function MenuButtons({ toggleMenu }) {
               ))}
             </Menu>
             <Profile>
-              <LoginButton />
+              <SignOutButton onClick={signOut}>
+                Sign Out
+              </SignOutButton>
             </Profile>
           </Navigation>
         </Container>

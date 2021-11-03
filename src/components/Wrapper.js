@@ -12,6 +12,7 @@ import {
   prop,
   split,
 } from 'ramda';
+import { useSession } from 'next-auth/client'
 
 import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import MenuButtons from 'components/MenuButtons';
@@ -20,6 +21,7 @@ import { updateMinisters, emptyMinisters } from 'modules/store/ministers';
 import { getPartners } from 'modules/partners';
 import { getMinisters } from 'modules/ministers';
 import colors from 'styles/colors';
+import Auth from './Auth';
 
 const Header = styled.div`
   width: 100%;
@@ -55,7 +57,8 @@ export default function Wrapper({ children }) {
   const toggleMenuClosed = () => setOpenMenu(false);
   const toggleMenuOpened = () => setOpenMenu(true);
 
-  const isAuthorized = useSelector(path(['authorization', 'isAuthorized']));
+  const [ session, loading ] = useSession()
+  const isAuthorized = session && !loading
 
   const {
     data: partnersList,
@@ -133,9 +136,11 @@ export default function Wrapper({ children }) {
           </SwipeableDrawer>
         </MobileOnly>
       </nav>
-      <main>
-        {children}
-      </main>
+      <Auth>
+        <main>
+          {children}
+        </main>
+      </Auth>
     </div>
   );
 }
