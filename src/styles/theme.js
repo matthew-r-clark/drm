@@ -1,12 +1,13 @@
 import { createTheme } from '@material-ui/core';
+import colors from 'styles/colors';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#0079D3',
+      main: colors.blue,
     },
     secondary: {
-      main: '#f50057',
+      main: colors.red,
     },
   },
 });
