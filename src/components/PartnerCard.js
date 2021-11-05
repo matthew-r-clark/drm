@@ -142,7 +142,8 @@ export default function PartnerCard({ id, isOpen, close }) {
                         {values.aliases.map((alias, index) => (
                           <Grid container direction="row">
                             <Field name={`aliases.${index}`} style={{ width: '85%' }} />
-                            <CloseButton onClick={() => arrayHelpers.remove(index)} />
+                            {index > 0
+                              && <CloseButton onClick={() => arrayHelpers.remove(index)} />}
                           </Grid>
                         ))}
                         <Grid container direction="row">
@@ -216,13 +217,17 @@ export default function PartnerCard({ id, isOpen, close }) {
               <H3>Spouse</H3>
               {partner.spouse || 'n/a'}
 
-              <H3>Also Known As</H3>
-              {partner.aliases.length > 1
-                ? formatNamesList(tail(partner.aliases))
-                : 'n/a'}
+              {partner.aliases.length > 1 && (
+                <>
+                  <H3>Also Known As</H3>
+                  {formatNamesList(tail(partner.aliases))}
+                </>
+              )}
 
               <H3>Connected Ministers</H3>
-              {formatNamesList(partner.connected_ministers) || 'n/a'}
+              {partner.connected_ministers.length > 1
+                ? formatNamesList(partner.connected_ministers)
+                : 'n/a'}
             </GridItem>
           </Grid>
           <Grid container direction="row" justify="space-evenly" spacing={5}>
