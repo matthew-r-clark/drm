@@ -35,18 +35,6 @@ const CloseButton = styled(CloseIcon)({
   },
 });
 
-const Field = styled(FormikField)({
-  border: 'none',
-  borderRadius: 5,
-  backgroundColor: colors.grayLight,
-  fontSize: 16,
-  paddingLeft: 5,
-  paddingRight: 5,
-  marginBottom: 2,
-  display: 'block',
-  // width: '100%',
-});
-
 const GridItem = styled((props) => <Grid item {...props} />)({
   minWidth: 250,
 });
@@ -127,7 +115,6 @@ export default function PartnerCard({ id, isOpen, close }) {
         close();
       }}
     >
-      <H1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</H1>
       {isEditing ? (
         <Formik
           initialValues={{
@@ -140,6 +127,28 @@ export default function PartnerCard({ id, isOpen, close }) {
             values, handleChange, touched, errors, setFieldValue,
           }) => (
             <Form>
+              <H1 style={{ textAlign: 'center' }}>
+                <FormControl fullWidth>
+                  <InputLabel id="primaryNameIndex">Primary Name</InputLabel>
+                  <Select
+                    id="primaryNameIndex"
+                    name="primaryNameIndex"
+                    labelId="primaryNameIndex"
+                    value={values.primaryNameIndex}
+                    onChange={handleChange}
+                    error={touched.primaryNameIndex && Boolean(errors.primaryNameIndex)}
+                    helperText={touched.primaryNameIndex && errors.primaryNameIndex}
+                    style={{ fontSize: 30, fontWeight: 'bold' }}
+                  >
+                    {values.aliases.map((alias, index) => (
+                      <MenuItem value={index}>
+                        {alias}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </H1>
+
               <Grid container direction="row" spacing={10}>
                 <GridItem xs={6}>
                   <H3>Contact</H3>
@@ -178,7 +187,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                         helperText={touched.preferred_contact_method
                           && errors.preferred_contact_method}
                       >
-                        <MenuItem value="">Select...</MenuItem>
                         <MenuItem value="phone">phone</MenuItem>
                         <MenuItem value="text">text</MenuItem>
                         <MenuItem value="email">email</MenuItem>
@@ -246,6 +254,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                 <GridItem xs={6}>
                   <H3>Personal</H3>
                   <TextField
+                    fullWidth
                     id="birthday"
                     name="birthday"
                     label="Birthday (mm/dd)"
@@ -263,6 +272,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                   />
 
                   <TextField
+                    fullWidth
                     id="spouse"
                     name="spouse"
                     label="Spouse"
@@ -272,52 +282,34 @@ export default function PartnerCard({ id, isOpen, close }) {
                     helperText={touched.spouse && errors.spouse}
                   />
 
-                  <H3>Add/Remove Names</H3>
                   <FieldArray
                     name="aliases"
                     render={(arrayHelpers) => (
                       <>
-                        {values.aliases.map((alias, index) => (
-                          <Grid container direction="row">
-                            <TextField
-                              name={`aliases.${index}`}
-                              value={values.aliases[index]}
-                              onChange={handleChange}
-                            />
-                            {values.aliases.length > 1
-                              && <CloseButton onClick={() => arrayHelpers.remove(index)} />}
-                          </Grid>
-                        ))}
-                        <Grid container direction="row">
+                        <H3>
+                          Add/Remove Names
                           <Button
                             type="button"
                             onClick={() => arrayHelpers.push('')}
                           >
                             Add
                           </Button>
-                        </Grid>
+                        </H3>
+                        {values.aliases.map((alias, index) => (
+                          <div style={{ position: 'relative' }}>
+                            <TextField
+                              fullWidth
+                              name={`aliases.${index}`}
+                              value={values.aliases[index]}
+                              onChange={handleChange}
+                            />
+                            {values.aliases.length > 1
+                              && <CloseButton onClick={() => arrayHelpers.remove(index)} style={{ position: 'absolute', top: 5, right: 0 }} />}
+                          </div>
+                        ))}
                       </>
                     )}
                   />
-
-                  <FormControl>
-                    <InputLabel id="primaryNameIndex">Primary Name</InputLabel>
-                    <Select
-                      id="primaryNameIndex"
-                      name="primaryNameIndex"
-                      labelId="primaryNameIndex"
-                      value={values.primaryNameIndex}
-                      onChange={handleChange}
-                      error={touched.primaryNameIndex && Boolean(errors.primaryNameIndex)}
-                      helperText={touched.primaryNameIndex && errors.primaryNameIndex}
-                    >
-                      {values.aliases.map((alias, index) => (
-                        <MenuItem value={index}>
-                          {alias}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
 
                   {/* <H3>Connected Ministers</H3>
                   {formatNamesList(partner.connected_ministers) || 'n/a'} */}
@@ -336,6 +328,7 @@ export default function PartnerCard({ id, isOpen, close }) {
         </Formik>
       ) : (
         <>
+          <H1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</H1>
           <Grid container direction="row" spacing={10}>
             <GridItem xs={6}>
               <H3>Email</H3>
