@@ -5,9 +5,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Formik, Form, Field as FormikField, FieldArray,
-} from 'formik';
+import { Formik, Form, FieldArray } from 'formik';
 import {
   clone,
   find, last, map, path, pipe, propEq, tail,
@@ -88,18 +86,22 @@ const onBirthdateChange = (e) => {
 
 export default function PartnerCard({ id, isOpen, close }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const dispatch = useDispatch();
   const partner = useSelector(pipe(
     path(['partners', 'list']),
     find(propEq('id', id)),
   ));
 
-  const handleSubmit = (values) => {
-    setIsEditing(false);
+  const handleSubmit = async (values) => {
+    setIsUpdating(true);
     const payload = clone(values);
     payload.aliases = setPrimaryAlias(payload.aliases, payload.primaryNameIndex);
     delete payload.primaryNameIndex;
-    updatePartnerById(payload.id, payload);
+    await updatePartnerById(payload.id, payload);
+    setIsEditing(false);
+    setIsUpdating(false);
     dispatch(updatePartnerInState(payload));
   };
 
@@ -317,7 +319,7 @@ export default function PartnerCard({ id, isOpen, close }) {
               </Grid>
               <Grid container direction="row" justify="space-evenly" spacing={5}>
                 <Grid item>
-                  <SaveButton type="submit" />
+                  <SaveButton type="submit" loading={isUpdating} />
                 </Grid>
                 <Grid item>
                   <CancelButton onClick={() => setIsEditing(false)} />
@@ -378,11 +380,14 @@ export default function PartnerCard({ id, isOpen, close }) {
             </Grid>
             <Grid item>
               <DeleteButton
-                onClick={() => {
-                  deletePartnerById(partner.id);
+                onClick={async () => {
+                  setIsDeleting(true);
+                  await deletePartnerById(partner.id);
+                  setIsDeleting(false);
                   dispatch(deletePartnerFromState(partner.id));
                   close();
                 }}
+                loading={isDeleting}
               />
             </Grid>
           </Grid>
