@@ -4,6 +4,23 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import colors from 'styles/colors';
 
+const CenteredModal = styled(Modal)({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const Container = styled.div({
+  margin: 50,
+  maxWidth: '100vw',
+  position: 'absolute',
+  backgroundColor: colors.white,
+  border: `1px solid ${colors.grayLight}`,
+  borderRadius: 10,
+  boxShadow: '1px 1px 2px 0px rgb(0 0 0 / 50%)',
+  padding: 25,
+});
+
 const CloseButton = styled(CloseIcon)({
   cursor: 'pointer',
   position: 'absolute',
@@ -17,26 +34,14 @@ const CloseButton = styled(CloseIcon)({
 
 export default function Card({ children, isOpen, close }) {
   return (
-    <Modal
+    <CenteredModal
       open={isOpen}
-      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
       onClose={close}
     >
-      <div
-        style={{
-          margin: 50,
-          maxWidth: '100vw',
-          position: 'absolute',
-          backgroundColor: colors.white,
-          border: `1px solid ${colors.grayLight}`,
-          borderRadius: 10,
-          boxShadow: '1px 1px 2px 0px rgb(0 0 0 / 50%)',
-          padding: 25,
-        }}
-      >
+      <Container>
         <CloseButton onClick={close} />
         {children}
-      </div>
-    </Modal>
+      </Container>
+    </CenteredModal>
   );
 }
