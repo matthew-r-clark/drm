@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, FieldArray } from 'formik';
 import {
-  clone, curry, filter, find, identity, last, map, path, pipe, propEq, tail, trim, uniq,
+  clone, curry, filter, find, head, identity, last, map, path, pipe, propEq, tail, trim, uniq,
 } from 'ramda';
 
 import { deletePartnerById, updatePartnerById } from 'modules/partners';
@@ -18,6 +18,7 @@ import {
 import { setGlobalError, setGlobalSuccess } from 'modules/store/alerts';
 import { H1, H3 } from 'components/headers';
 import Card from 'components/Card';
+import ConfirmationDialog from 'components/ConfirmationDialog';
 import {
   CancelButton,
   DeleteButton,
@@ -102,6 +103,7 @@ export default function PartnerCard({ id, isOpen, close }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
   const dispatch = useDispatch();
   const partner = useSelector(pipe(
     path(['partners', 'list']),
@@ -410,7 +412,14 @@ export default function PartnerCard({ id, isOpen, close }) {
               </Grid>
               <Grid item>
                 <DeleteButton
-                  onClick={async () => {
+                  onClick={() => setIsDeleteConfirmationOpen(true)}
+                  loading={isDeleting}
+                />
+                <ConfirmationDialog
+                  title="Are you sure?"
+                  open={isDeleteConfirmationOpen}
+                  handleClose={() => setIsDeleteConfirmationOpen(false)}
+                  handleConfirm={async () => {
                     setIsDeleting(true);
                     try {
                       await deletePartnerById(partner.id);
@@ -422,8 +431,9 @@ export default function PartnerCard({ id, isOpen, close }) {
                     }
                     setIsDeleting(false);
                   }}
-                  loading={isDeleting}
-                />
+                >
+                  Clicking confirm will delete {head(partner.aliases)}.
+                </ConfirmationDialog>
               </Grid>
             </Grid>
           </>
