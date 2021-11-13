@@ -25,7 +25,7 @@ export default function Card({ children, isOpen, close }) {
       <div
         style={{
           margin: 50,
-          maxWidth: '100vw',
+          maxWidth: '600px',
           position: 'absolute',
           backgroundColor: colors.white,
           border: `1px solid ${colors.grayLight}`,
