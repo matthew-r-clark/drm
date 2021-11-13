@@ -13,6 +13,7 @@ import {
   split,
 } from 'ramda';
 
+import { GlobalError, GlobalSuccess } from 'components/Alert';
 import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import MenuButtons from 'components/MenuButtons';
 import { updatePartners, emptyPartners } from 'modules/store/partners';
@@ -134,6 +135,8 @@ export default function Wrapper({ children }) {
         </MobileOnly>
       </nav>
       <main>
+        <GlobalSuccess />
+        <GlobalError />
         {children}
       </main>
     </div>
