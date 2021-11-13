@@ -97,7 +97,7 @@ const formatAliases = (primaryNameIndex, aliases) => pipe(
   uniq,
 )(aliases);
 
-const formatNamesList = map((name) => <>{name}<br /></>);
+const formatNamesList = map((name) => <div key={name}>{name}</div>);
 
 export default function PartnerCard({ id, isOpen, close }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -165,7 +165,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                       style={{ fontSize: 30, fontWeight: 'bold' }}
                     >
                       {values.aliases.map((alias, index) => (
-                        <MenuItem value={index}>
+                        <MenuItem key={index} value={index}>
                           {alias}
                         </MenuItem>
                       ))}
@@ -312,7 +312,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                         <>
                           <H3>Add/Remove Names</H3>
                           {values.aliases.map((alias, index) => (
-                            <div style={{ position: 'relative' }}>
+                            <div key={index} style={{ position: 'relative' }}>
                               <TextField
                                 fullWidth
                                 name={`aliases.${index}`}
