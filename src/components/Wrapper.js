@@ -102,7 +102,7 @@ export default function Wrapper({ children }) {
 
       <MobileOnly>
         <Header>
-          Fundraising Tracker
+          Fundraising
         </Header>
       </MobileOnly>
 

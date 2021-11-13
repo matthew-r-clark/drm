@@ -89,6 +89,9 @@ export default function MenuButtons({ toggleMenu }) {
                 </Link>
               </ListItem>
             ))}
+            <ListItem>
+              <LoginButton />
+            </ListItem>
           </List>
         </MobileContainer>
       </MobileOnly>
