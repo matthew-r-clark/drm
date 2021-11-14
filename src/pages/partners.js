@@ -33,9 +33,9 @@ const setPrimaryName = (partner) => {
   return assoc('name', name, partner);
 };
 const mapPrimaryName = map(setPrimaryName);
-const mapSearchScoreToItem = (searchItem) => {
+const addScoreToSearchItem = (searchItem) => {
   const score = prop('score', searchItem);
-  return assocPath(['item', 'score'], score, searchItem.item);
+  return assocPath(['item', 'score'], score, searchItem);
 };
 
 const tableHeaders = [
@@ -124,7 +124,7 @@ export default function MinistryPartners() {
               headers={tableHeaders}
               mobileHeaders={tableHeadersMobile}
               rows={map(pipe(
-                mapSearchScoreToItem,
+                addScoreToSearchItem,
                 prop('item'),
                 setPrimaryName,
               ), searchResults)}
