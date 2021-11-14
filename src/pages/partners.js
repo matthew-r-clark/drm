@@ -1,5 +1,6 @@
 import {
   assoc,
+  assocPath,
   map,
   path,
   pipe,
@@ -30,8 +31,7 @@ const setPrimaryName = (partner) => {
 const mapPrimaryName = map(setPrimaryName);
 const mapSearchScoreToItem = (searchItem) => {
   const score = prop('score', searchItem);
-  searchItem.item = assoc('score', score, searchItem.item);
-  return searchItem;
+  return assocPath(['item', 'score'], score, searchItem.item);
 };
 
 const tableHeaders = [

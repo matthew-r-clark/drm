@@ -165,7 +165,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                       style={{ fontSize: 30, fontWeight: 'bold' }}
                     >
                       {values.aliases.map((alias, index) => (
-                        <MenuItem key={index} value={index}>
+                        <MenuItem key={alias} value={index}>
                           {alias}
                         </MenuItem>
                       ))}
@@ -312,7 +312,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                         <>
                           <H3>Add/Remove Names</H3>
                           {values.aliases.map((alias, index) => (
-                            <div key={index} style={{ position: 'relative' }}>
+                            <div key={alias} style={{ position: 'relative' }}>
                               <TextField
                                 fullWidth
                                 name={`aliases.${index}`}
