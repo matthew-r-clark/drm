@@ -190,9 +190,6 @@ export default function EnhancedTable({
                         join(', '),
                       )(row.connected_ministers)}
                     </TableCell>
-                    <TableCell align="left">
-                      {row.score}
-                    </TableCell>
                   </TableRow>
                 );
               })}

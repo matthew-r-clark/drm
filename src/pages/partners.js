@@ -38,7 +38,6 @@ const tableHeaders = [
   { id: 'name', numeric: false, label: 'Name' },
   { id: 'email', numeric: false, label: 'Email' },
   { id: 'connected_ministers', numeric: false, label: 'Connected Ministers' },
-  { id: 'score', numeric: true, label: 'Score' },
 ];
 
 export default function MinistryPartners() {
