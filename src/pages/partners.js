@@ -75,6 +75,11 @@ const ClearSearchButton = styled((props) => <CloseIcon fontSize="small" {...prop
   right: 0,
   top: 4,
   color: colors.gray,
+  borderRadius: '50%',
+  '&:hover': {
+    cursor: 'pointer',
+    backgroundColor: colors.grayLight,
+  },
 });
 
 export default function MinistryPartners() {
