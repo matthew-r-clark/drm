@@ -356,7 +356,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                     {formatNamesList(partner.connected_ministers) || 'n/a'} */}
                   </GridItem>
                 </Grid>
-                <Grid container direction="row" justify="space-evenly" spacing={5}>
+                <Grid container direction="row" justifyContent="space-evenly" spacing={5}>
                   <Grid item>
                     <SaveButton type="submit" loading={isUpdating} />
                   </Grid>
@@ -413,7 +413,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                   : 'n/a'}
               </GridItem>
             </Grid>
-            <Grid container direction="row" justify="space-evenly" spacing={5}>
+            <Grid container direction="row" justifyContent="space-evenly" spacing={5}>
               <Grid item>
                 <EditButton
                   onClick={() => {
