@@ -38,7 +38,12 @@ const CloseButton = styled(CloseIcon)({
   },
 });
 
-export default function Card({ children, isOpen, close, innerRef }) {
+export default function Card({
+  children,
+  isOpen,
+  close,
+  innerRef,
+}) {
   return (
     <ModalBackground
       open={isOpen}
