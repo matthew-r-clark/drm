@@ -3,7 +3,7 @@ import {
 } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, FieldArray } from 'formik';
 import {
@@ -104,7 +104,11 @@ export default function PartnerCard({ id, isOpen, close }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
+  const [isNameAdded, setIsNameAdded] = useState(false);
   const dispatch = useDispatch();
+
+  const modalRef = useRef();
+
   const partner = useSelector(pipe(
     path(['partners', 'list']),
     find(propEq('id', id)),
@@ -136,8 +140,10 @@ export default function PartnerCard({ id, isOpen, close }) {
         isOpen={isOpen}
         close={() => {
           setIsEditing(false);
+          setIsNameAdded(false);
           close();
         }}
+        innerRef={modalRef}
       >
         {isEditing ? (
           <Formik
@@ -174,7 +180,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                 </H1>
 
                 <Grid container direction="row" spacing={10}>
-                  <GridItem xs={6}>
+                  <GridItem xs="auto" sm={6}>
                     <H3>Contact</H3>
                     <Grid container direction="column">
                       <TextField
@@ -275,7 +281,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                     </Grid>
                   </GridItem>
 
-                  <GridItem xs={6}>
+                  <GridItem xs="auto" sm={6}>
                     <H3>Personal</H3>
                     <TextField
                       fullWidth
@@ -318,7 +324,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                                 name={`aliases.${index}`}
                                 value={values.aliases[index]}
                                 onChange={handleChange}
-                                autoFocus={index === values.aliases.length - 1}
+                                autoFocus={isNameAdded && index === values.aliases.length - 1}
                               />
                               {values.aliases.length > 1
                                 && (
@@ -326,6 +332,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                                     onClick={() => {
                                       if (index === values.aliases.length - 1) {
                                         setFieldValue('primaryNameIndex', 0);
+                                        setIsNameAdded(true);
                                       }
                                       arrayHelpers.remove(index);
                                     }}
@@ -408,7 +415,15 @@ export default function PartnerCard({ id, isOpen, close }) {
             </Grid>
             <Grid container direction="row" justify="space-evenly" spacing={5}>
               <Grid item>
-                <EditButton onClick={() => setIsEditing(true)} />
+                <EditButton
+                  onClick={() => {
+                    setIsEditing(true);
+                    modalRef.current.scrollTo({
+                      top: 0,
+                      behavior: 'smooth',
+                    });
+                  }}
+                />
               </Grid>
               <Grid item>
                 <DeleteButton
