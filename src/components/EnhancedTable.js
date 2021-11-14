@@ -24,6 +24,7 @@ import {
 } from 'ramda';
 import styled from '@emotion/styled';
 
+import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import colors from 'styles/colors';
 
 const TableRow = styled(MuiTableRow)({
@@ -68,16 +69,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// function stableSort(array, comparator) {
-//   const stabilizedThis = array.map((el, index) => [el, index]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) return order;
-//     return a[1] - b[1];
-//   });
-//   return stabilizedThis.map((el) => el[0]);
-// }
-
 const getInitialCharCode = (word) => word.toLowerCase().charCodeAt();
 const alphaSortName = (a, b) => getInitialCharCode(a) - getInitialCharCode(b);
 
@@ -98,7 +89,6 @@ const EnhancedTableHead = ({
           <TableCell
             key={header.id}
             align="left"
-            padding="normal"
             sortDirection={orderBy === header.id ? order : false}
           >
             <TableSortLabel
@@ -118,6 +108,7 @@ const EnhancedTableHead = ({
 
 export default function EnhancedTable({
   headers,
+  mobileHeaders,
   rows,
   setIsModalOpen,
   setSelectedPartnerId,
@@ -159,13 +150,23 @@ export default function EnhancedTable({
   return (
     <div>
       <TableContainer style={{ marginBottom: 53 }}>
-        <Table size="small">
-          <EnhancedTableHead
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleRequestSort}
-            headers={headers}
-          />
+        <Table size="small" padding="checkbox">
+          <DesktopOnly>
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+              headers={headers}
+            />
+          </DesktopOnly>
+          <MobileOnly>
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+              headers={mobileHeaders}
+            />
+          </MobileOnly>
           <TableBody>
             {sort(getComparator(order, orderBy), rows)
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -180,10 +181,13 @@ export default function EnhancedTable({
                     key={row.id}
                     title={generateAkaString(row)}
                   >
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                    <TableCell component="th" id={labelId} scope="row">
                       {path(['aliases', '0'], row)}
                     </TableCell>
-                    <TableCell align="left">{row.email}</TableCell>
+                    <DesktopOnly>
+                      <TableCell align="left">{row.phone}</TableCell>
+                      <TableCell align="left">{row.email}</TableCell>
+                    </DesktopOnly>
                     <TableCell align="left">
                       {row.connected_ministers && pipe(
                         sort(alphaSortName),

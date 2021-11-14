@@ -10,12 +10,16 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 import { Formik, Form } from 'formik';
+import styled from '@emotion/styled';
 
+import { DesktopOnly } from 'components/MediaQuery';
+import { H1 } from 'components/headers';
 import { LineSeparatedList } from 'components/lists';
 import EnhancedTable from 'components/EnhancedTable';
 import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
 import debounce from 'modules/debounce';
+import { getBreakpoint } from 'styles/theme';
 
 const searchOptions = {
   threshold: 0.5,
@@ -37,8 +41,32 @@ const mapSearchScoreToItem = (searchItem) => {
 const tableHeaders = [
   { id: 'name', numeric: false, label: 'Name' },
   { id: 'email', numeric: false, label: 'Email' },
+  { id: 'phone', numeric: false, label: 'Phone' },
   { id: 'connected_ministers', numeric: false, label: 'Connected Ministers' },
 ];
+
+const tableHeadersMobile = [
+  { id: 'name', numeric: false, label: 'Name' },
+  { id: 'connected_ministers', numeric: false, label: 'Ministers' },
+];
+
+const Heading = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  margin: '0 1rem',
+  [`@media (max-width: ${getBreakpoint('sm')}px)`]: {
+    justifyContent: 'center',
+    marginTop: 25,
+  },
+});
+
+const SearchContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
 
 export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));
@@ -64,17 +92,11 @@ export default function MinistryPartners() {
 
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <h1 style={{ marginLeft: '1rem' }}>Ministry Partners</h1>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: '1rem',
-          }}
-        >
+      <Heading>
+        <DesktopOnly>
+          <H1>Ministry Partners</H1>
+        </DesktopOnly>
+        <SearchContainer>
           <Formik
             onSubmit={handleSearch}
             initialValues={{ query: '' }}
@@ -92,14 +114,15 @@ export default function MinistryPartners() {
               </Form>
             )}
           </Formik>
-        </div>
-      </div>
+        </SearchContainer>
+      </Heading>
 
       <div style={{ margin: 15 }}>
         <LineSeparatedList>
           {searchResults.length ? (
             <EnhancedTable
               headers={tableHeaders}
+              mobileHeaders={tableHeadersMobile}
               rows={map(pipe(
                 mapSearchScoreToItem,
                 prop('item'),
@@ -119,6 +142,7 @@ export default function MinistryPartners() {
               ) : (
                 <EnhancedTable
                   headers={tableHeaders}
+                  mobileHeaders={tableHeadersMobile}
                   rows={mapPrimaryName(partners)}
                   setIsModalOpen={setIsModalOpen}
                   setSelectedPartnerId={setSelectedPartnerId}
