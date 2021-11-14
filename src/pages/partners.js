@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 import { Formik, Form } from 'formik';
 import styled from '@emotion/styled';
+import CloseIcon from '@material-ui/icons/Close';
 
 import { DesktopOnly } from 'components/MediaQuery';
 import { H1 } from 'components/headers';
@@ -20,6 +21,7 @@ import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
 import debounce from 'modules/debounce';
 import { getBreakpoint } from 'styles/theme';
+import colors from 'styles/colors';
 
 const searchOptions = {
   threshold: 0.5,
@@ -68,6 +70,13 @@ const SearchContainer = styled.div({
   alignItems: 'center',
 });
 
+const ClearSearchButton = styled((props) => <CloseIcon fontSize="small" {...props} />)({
+  position: 'absolute',
+  right: 0,
+  top: 4,
+  color: colors.gray,
+});
+
 export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));
   const [searchResults, setSearchResults] = useState([]);
@@ -101,13 +110,24 @@ export default function MinistryPartners() {
             onSubmit={handleSearch}
             initialValues={{ query: '' }}
           >
-            {({ handleChange, submitForm }) => (
-              <Form>
+            {({ handleChange, submitForm, setFieldValue }) => (
+              <Form style={{ position: 'relative' }}>
                 <Search
                   name="query"
-                  placeholder="Search..."
                   onChange={(e) => {
                     handleChange(e);
+                    submitForm();
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setFieldValue('query', '');
+                      submitForm();
+                    }
+                  }}
+                />
+                <ClearSearchButton
+                  onClick={() => {
+                    setFieldValue('query', '');
                     submitForm();
                   }}
                 />
