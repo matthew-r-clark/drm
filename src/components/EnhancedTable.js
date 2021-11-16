@@ -77,6 +77,7 @@ const EnhancedTableHead = ({
   orderBy,
   onRequestSort,
   headers,
+  sortDisabled,
 }) => {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -91,14 +92,18 @@ const EnhancedTableHead = ({
             align="left"
             sortDirection={orderBy === header.id ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === header.id}
-              direction={orderBy === header.id ? order : 'asc'}
-              onClick={createSortHandler(header.id)}
-              style={{ fontWeight: 'bold' }}
-            >
-              {header.label}
-            </TableSortLabel>
+            {sortDisabled
+              ? header.label
+              : (
+                <TableSortLabel
+                  active={orderBy === header.id}
+                  direction={orderBy === header.id ? order : 'asc'}
+                  onClick={createSortHandler(header.id)}
+                  style={{ fontWeight: 'bold' }}
+                >
+                  {header.label}
+                </TableSortLabel>
+              )}
           </TableCell>
         ))}
       </TableRow>
@@ -112,7 +117,9 @@ export default function EnhancedTable({
   rows,
   setIsModalOpen,
   setSelectedPartnerId,
+  defaultOrder,
   defaultOrderBy,
+  sortDisabled,
 }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -124,7 +131,14 @@ export default function EnhancedTable({
   }, [defaultOrderBy]);
 
   useEffect(() => {
+    setOrder(defaultOrder);
+  }, [defaultOrder]);
+
+  useEffect(() => {
     setPage(0);
+    if (sortDisabled) {
+      setOrder(defaultOrder);
+    }
   }, [rows]);
 
   const handleRequestSort = (event, property) => {
@@ -157,6 +171,7 @@ export default function EnhancedTable({
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               headers={headers}
+              sortDisabled={sortDisabled}
             />
           </DesktopOnly>
           <MobileOnly>
@@ -165,6 +180,7 @@ export default function EnhancedTable({
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               headers={mobileHeaders}
+              sortDisabled={sortDisabled}
             />
           </MobileOnly>
           <TableBody>

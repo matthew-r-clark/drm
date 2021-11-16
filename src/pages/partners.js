@@ -155,8 +155,9 @@ export default function MinistryPartners() {
               ), searchResults)}
               setIsModalOpen={setIsModalOpen}
               setSelectedPartnerId={setSelectedPartnerId}
-              defaultOrder="desc"
+              defaultOrder="asc"
               defaultOrderBy="score"
+              sortDisabled
             />
           ) : (
             <>
