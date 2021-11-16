@@ -143,41 +143,39 @@ export default function MinistryPartners() {
       </Heading>
 
       <div style={{ margin: 15 }}>
-        <LineSeparatedList>
-          {searchResults.length ? (
-            <EnhancedTable
-              headers={tableHeaders}
-              mobileHeaders={tableHeadersMobile}
-              rows={map(pipe(
-                addScoreToSearchItem,
-                prop('item'),
-                setPrimaryName,
-              ), searchResults)}
-              setIsModalOpen={setIsModalOpen}
-              setSelectedPartnerId={setSelectedPartnerId}
-              defaultOrder="asc"
-              defaultOrderBy="score"
-              sortDisabled
-            />
-          ) : (
-            <>
-              {searchQuery ? (
-                <p>
-                  {`No partners match "${searchQuery}"`}
-                </p>
-              ) : (
-                <EnhancedTable
-                  headers={tableHeaders}
-                  mobileHeaders={tableHeadersMobile}
-                  rows={mapPrimaryName(partners)}
-                  setIsModalOpen={setIsModalOpen}
-                  setSelectedPartnerId={setSelectedPartnerId}
-                  defaultOrderBy="name"
-                />
-              )}
-            </>
-          )}
-        </LineSeparatedList>
+        {searchResults.length ? (
+          <EnhancedTable
+            headers={tableHeaders}
+            mobileHeaders={tableHeadersMobile}
+            rows={map(pipe(
+              addScoreToSearchItem,
+              prop('item'),
+              setPrimaryName,
+            ), searchResults)}
+            setIsModalOpen={setIsModalOpen}
+            setSelectedPartnerId={setSelectedPartnerId}
+            defaultOrder="asc"
+            defaultOrderBy="score"
+            sortDisabled
+          />
+        ) : (
+          <>
+            {searchQuery ? (
+              <p>
+                {`No partners match "${searchQuery}"`}
+              </p>
+            ) : (
+              <EnhancedTable
+                headers={tableHeaders}
+                mobileHeaders={tableHeadersMobile}
+                rows={mapPrimaryName(partners)}
+                setIsModalOpen={setIsModalOpen}
+                setSelectedPartnerId={setSelectedPartnerId}
+                defaultOrderBy="name"
+              />
+            )}
+          </>
+        )}
       </div>
 
       {selectedPartnerId && (
