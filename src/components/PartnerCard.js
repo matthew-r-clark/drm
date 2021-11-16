@@ -332,7 +332,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                                     onClick={() => {
                                       if (index === values.aliases.length - 1) {
                                         setFieldValue('primaryNameIndex', 0);
-                                        setIsNameAdded(true);
                                       }
                                       arrayHelpers.remove(index);
                                     }}
@@ -344,7 +343,10 @@ export default function PartnerCard({ id, isOpen, close }) {
                             color="primary"
                             size="small"
                             style={{ marginTop: 5 }}
-                            onClick={() => arrayHelpers.push('')}
+                            onClick={() => {
+                              arrayHelpers.push('');
+                              setIsNameAdded(true);
+                            }}
                           >
                             Add a name
                           </Button>
@@ -418,6 +420,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                 <EditButton
                   onClick={() => {
                     setIsEditing(true);
+                    setIsNameAdded(false);
                     modalRef.current.scrollTo({
                       top: 0,
                       behavior: 'smooth',
