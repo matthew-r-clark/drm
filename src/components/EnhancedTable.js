@@ -27,12 +27,12 @@ import styled from '@emotion/styled';
 import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import colors from 'styles/colors';
 
-const TableRow = styled(MuiTableRow)({
+const TableRow = styled(MuiTableRow)(({ noHover }) => ({
   height: 33,
   '&:hover': {
-    cursor: 'pointer',
+    cursor: noHover ? 'auto' : 'pointer',
   },
-});
+}));
 
 const generateAkaString = pipe(
   prop('aliases'),
@@ -85,12 +85,13 @@ const EnhancedTableHead = ({
 
   return (
     <TableHead>
-      <TableRow>
+      <TableRow noHover={sortDisabled}>
         {headers.map((header) => (
           <TableCell
             key={header.id}
             align="left"
             sortDirection={orderBy === header.id ? order : false}
+            style={{ fontWeight: 'bold' }}
           >
             {sortDisabled
               ? header.label
@@ -99,7 +100,6 @@ const EnhancedTableHead = ({
                   active={orderBy === header.id}
                   direction={orderBy === header.id ? order : 'asc'}
                   onClick={createSortHandler(header.id)}
-                  style={{ fontWeight: 'bold' }}
                 >
                   {header.label}
                 </TableSortLabel>
