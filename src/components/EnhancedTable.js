@@ -185,8 +185,8 @@ export default function EnhancedTable({
                       {path(['aliases', '0'], row)}
                     </TableCell>
                     <DesktopOnly>
-                      <TableCell align="left">{row.phone}</TableCell>
                       <TableCell align="left">{row.email}</TableCell>
+                      <TableCell align="left">{row.phone}</TableCell>
                     </DesktopOnly>
                     <TableCell align="left">
                       {row.connected_ministers && pipe(
