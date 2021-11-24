@@ -15,7 +15,6 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import { DesktopOnly } from 'components/MediaQuery';
 import { H1 } from 'components/headers';
-import { LineSeparatedList } from 'components/lists';
 import EnhancedTable from 'components/EnhancedTable';
 import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
@@ -24,7 +23,8 @@ import { getBreakpoint } from 'styles/theme';
 import colors from 'styles/colors';
 
 const searchOptions = {
-  threshold: 0.5,
+  threshold: 0.15,
+  ignoreLocation: true,
   includeMatches: true,
   includeScore: true,
   keys: ['aliases'],
