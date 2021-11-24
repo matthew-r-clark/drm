@@ -79,6 +79,23 @@ const onBirthdateChange = (e) => {
   return e;
 };
 
+const onPhoneChange = (e) => {
+  if (!/[\d]/.test(e.target.value)) {
+    e.target.value = '';
+    return e;
+  }
+  const phone = e.target.value
+    .replace(/[^\d]/g, '')
+    .replace(/(?:1?)/, '')
+    .substring(0, 10);
+  const convert = (match, p1 = '', p2 = '', p3 = '') => `${p1}${p2 && p2.length ? '-' : ''}${p2}${p3 && p3.length ? '-' : ''}${p3}`;
+  e.target.value = phone.replace(
+    /([0-9]{1,3})([0-9]{1,3})?([0-9]{1,4}$)?/,
+    convert,
+  );
+  return e;
+};
+
 const setPrimaryAlias = curry((index, aliases) => {
   const tempAliases = clone(aliases);
   if (index) {
@@ -199,7 +216,9 @@ export default function PartnerCard({ id, isOpen, close }) {
                         name="phone"
                         label="Phone"
                         value={values.phone}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          handleChange(onPhoneChange(e));
+                        }}
                         error={touched.phone && Boolean(errors.phone)}
                         helperText={touched.phone && errors.phone}
                       />
