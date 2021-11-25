@@ -379,10 +379,10 @@ export default function PartnerCard({ id, isOpen, close }) {
                 </Grid>
                 <Grid container direction="row" justifyContent="space-evenly" spacing={5}>
                   <Grid item>
-                    <SaveButton type="submit" loading={isUpdating} />
+                    <CancelButton onClick={() => setIsEditing(false)} />
                   </Grid>
                   <Grid item>
-                    <CancelButton onClick={() => setIsEditing(false)} />
+                    <SaveButton type="submit" loading={isUpdating} />
                   </Grid>
                 </Grid>
               </Form>
