@@ -24,7 +24,6 @@ import colors from 'styles/colors';
 
 const searchOptions = {
   threshold: 0.15,
-  ignoreLocation: true,
   includeMatches: true,
   includeScore: true,
   keys: ['aliases'],
