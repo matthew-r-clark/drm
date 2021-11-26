@@ -180,7 +180,7 @@ export default function MinistryPartners() {
       {selectedPartnerId && (
         <PartnerCard
           id={selectedPartnerId}
-          isOpen={isModalOpen && selectedPartnerId}
+          isOpen={isModalOpen && Boolean(selectedPartnerId)}
           close={() => setIsModalOpen(false)}
         />
       )}
