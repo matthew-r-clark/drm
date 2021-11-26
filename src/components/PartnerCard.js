@@ -7,7 +7,22 @@ import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, FieldArray } from 'formik';
 import {
-  clone, curry, filter, find, head, identity, last, map, path, pipe, propEq, tail, trim, uniq,
+  clone,
+  curry,
+  filter,
+  find,
+  head,
+  identity,
+  last,
+  map,
+  path,
+  pipe,
+  prop,
+  propEq,
+  split,
+  tail,
+  trim,
+  uniq,
 } from 'ramda';
 
 import { deletePartnerById, updatePartnerById } from 'modules/partners';
@@ -26,6 +41,37 @@ import {
   SaveButton,
 } from 'components/buttons';
 import colors from 'styles/colors';
+
+const MONTHS = [
+  { name: 'Jan', day: '01' },
+  { name: 'Feb', day: '02' },
+  { name: 'Mar', day: '03' },
+  { name: 'Apr', day: '04' },
+  { name: 'May', day: '05' },
+  { name: 'Jun', day: '06' },
+  { name: 'Jul', day: '07' },
+  { name: 'Aug', day: '08' },
+  { name: 'Sep', day: '09' },
+  { name: 'Oct', day: '10' },
+  { name: 'Nov', day: '11' },
+  { name: 'Dec', day: '12' },
+];
+
+const getMaxDaysInMonth = (month) => new Date(2020, month, 0).getDate();
+const daysInMonth = (month) => {
+  const maxDays = getMaxDaysInMonth(month);
+  return Array(maxDays).fill(0).map((_, i) => String(i + 1).padStart(2, '0'));
+};
+const getDayOfBirth = pipe(
+  prop('birthday'),
+  split('/'),
+  last,
+);
+const getMonthOfBirth = pipe(
+  prop('birthday'),
+  split('/'),
+  head,
+);
 
 const CloseButton = styled(CloseIcon)({
   color: colors.red,
@@ -46,38 +92,6 @@ const GridItem = styled((props) => <Grid item {...props} />)({
 const AddressLine = styled.p({
   margin: 0,
 });
-
-const onBirthdateChange = (e) => {
-  if (!/[\d]/.test(e.target.value)) {
-    e.target.value = '';
-    return e;
-  }
-  const birthdate = e.target.value
-    .replace(/[\D+]/g, '')
-    .substring(0, 4);
-  const convert = (match, month = '', day = '') => {
-    if (Number(month[0]) > 1) {
-      return `0${month}/`;
-    }
-    if (Number(month) > 12 || month.length === 1) {
-      return month[0];
-    }
-    const maxDaysInMonth = new Date(2020, month, 0).getDate();
-    const maxDaysInMonthFirstDigit = Number(String(maxDaysInMonth)[0]);
-    if (Number(day[0]) > maxDaysInMonthFirstDigit) {
-      return `${month}/0${day}`;
-    }
-    if (Number(day) > maxDaysInMonth || day.length === 1) {
-      return `${month}/${day[0]}`;
-    }
-    return `${month}/${day}`;
-  };
-  e.target.value = birthdate.replace(
-    /([0-9]{1,2})([0-9]{1,2})?/,
-    convert,
-  );
-  return e;
-};
 
 const onPhoneChange = (e) => {
   if (!/[\d]/.test(e.target.value)) {
@@ -167,6 +181,8 @@ export default function PartnerCard({ id, isOpen, close }) {
             initialValues={{
               ...partner,
               primaryNameIndex: 0,
+              monthOfBirth: getMonthOfBirth(partner),
+              dayOfBirth: getDayOfBirth(partner),
             }}
             onSubmit={handleSubmit}
           >
@@ -303,23 +319,49 @@ export default function PartnerCard({ id, isOpen, close }) {
 
                   <GridItem xs="auto" sm={6}>
                     <H3>Personal</H3>
-                    <TextField
-                      fullWidth
-                      id="birthday"
-                      name="birthday"
-                      label="Birthday (mm/dd)"
-                      value={values.birthday}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Backspace' && last(values.birthday) === '/') {
-                          setFieldValue('birthday', values.birthday.slice(0, 2));
-                        }
-                      }}
-                      onChange={(e) => {
-                        handleChange(onBirthdateChange(e));
-                      }}
-                      error={touched.birthday && Boolean(errors.birthday)}
-                      helperText={touched.birthday && errors.birthday}
-                    />
+                    <InputLabel shrink htmlFor="monthOfBirth">
+                      Birthday
+                    </InputLabel>
+                    <Grid container direction="row" justifyContent="space-between">
+                      <Select
+                        id="monthOfBirth"
+                        name="monthOfBirth"
+                        value={values.monthOfBirth}
+                        onChange={(e) => {
+                          handleChange(e);
+                          const month = e.target.value;
+                          const day = getDayOfBirth(values);
+                          setFieldValue('birthday', `${month}/${day}`);
+                        }}
+                        error={touched.monthOfBirth && Boolean(errors.monthOfBirth)}
+                        helperText={touched.monthOfBirth && errors.monthOfBirth}
+                        style={{ width: '45%' }}
+                      >
+                        {MONTHS.map((month) => (
+                          <option selected={month === '01'} key={month.day} value={month.day}>
+                            {month.name}
+                          </option>
+                        ))}
+                      </Select>
+                      <Select
+                        id="dayOfBirth"
+                        name="dayOfBirth"
+                        value={values.dayOfBirth}
+                        onChange={(e) => {
+                          handleChange(e);
+                          const day = e.target.value;
+                          const month = getMonthOfBirth(values);
+                          setFieldValue('birthday', `${month}/${day}`);
+                        }}
+                        error={touched.dayOfBirth && Boolean(errors.dayOfBirth)}
+                        helperText={touched.dayOfBirth && errors.dayOfBirth}
+                        style={{ width: '45%' }}
+                      >
+                        {daysInMonth(Number(values.monthOfBirth)).map((day) => (
+                          <option selected={day === '01'} key={day} value={day}>{day}</option>
+                        ))}
+                      </Select>
+                    </Grid>
 
                     <TextField
                       fullWidth
