@@ -27,10 +27,10 @@ import styled from '@emotion/styled';
 import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import colors from 'styles/colors';
 
-const TableRow = styled(MuiTableRow)(({ noHover }) => ({
+const TableRow = styled(MuiTableRow)(({ nohover }) => ({
   height: 33,
   '&:hover': {
-    cursor: noHover ? 'auto' : 'pointer',
+    cursor: nohover ? 'auto' : 'pointer',
   },
 }));
 
@@ -85,7 +85,7 @@ const EnhancedTableHead = ({
 
   return (
     <TableHead>
-      <TableRow noHover={sortDisabled}>
+      <TableRow nohover={sortDisabled}>
         {headers.map((header) => (
           <TableCell
             key={header.id}
