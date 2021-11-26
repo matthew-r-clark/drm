@@ -215,6 +215,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                         id="phone"
                         name="phone"
                         label="Phone"
+                        type="tel"
                         value={values.phone}
                         onChange={(e) => {
                           handleChange(onPhoneChange(e));
