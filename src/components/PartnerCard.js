@@ -7,6 +7,8 @@ import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, FieldArray } from 'formik';
 import {
+  always,
+  applySpec,
   clone,
   curry,
   filter,
@@ -19,6 +21,7 @@ import {
   pipe,
   prop,
   propEq,
+  propOr,
   split,
   tail,
   trim,
@@ -43,18 +46,18 @@ import {
 import colors from 'styles/colors';
 
 const MONTHS = [
-  { name: 'Jan', day: '01' },
-  { name: 'Feb', day: '02' },
-  { name: 'Mar', day: '03' },
-  { name: 'Apr', day: '04' },
-  { name: 'May', day: '05' },
-  { name: 'Jun', day: '06' },
-  { name: 'Jul', day: '07' },
-  { name: 'Aug', day: '08' },
-  { name: 'Sep', day: '09' },
-  { name: 'Oct', day: '10' },
-  { name: 'Nov', day: '11' },
-  { name: 'Dec', day: '12' },
+  { name: 'January', number: '01' },
+  { name: 'February', number: '02' },
+  { name: 'March', number: '03' },
+  { name: 'April', number: '04' },
+  { name: 'May', number: '05' },
+  { name: 'June', number: '06' },
+  { name: 'July', number: '07' },
+  { name: 'August', number: '08' },
+  { name: 'September', number: '09' },
+  { name: 'October', number: '10' },
+  { name: 'November', number: '11' },
+  { name: 'December', number: '12' },
 ];
 
 const getMaxDaysInMonth = (month) => new Date(2020, month, 0).getDate();
@@ -63,12 +66,12 @@ const daysInMonth = (month) => {
   return Array(maxDays).fill(0).map((_, i) => String(i + 1).padStart(2, '0'));
 };
 const getDayOfBirth = pipe(
-  prop('birthday'),
+  propOr('/', 'birthday'),
   split('/'),
   last,
 );
 const getMonthOfBirth = pipe(
-  prop('birthday'),
+  propOr('/', 'birthday'),
   split('/'),
   head,
 );
@@ -83,10 +86,6 @@ const CloseButton = styled(CloseIcon)({
     cursor: 'pointer',
     backgroundColor: colors.grayLight,
   },
-});
-
-const GridItem = styled((props) => <Grid item {...props} />)({
-  minWidth: 250,
 });
 
 const AddressLine = styled.p({
@@ -130,6 +129,24 @@ const formatAliases = (primaryNameIndex, aliases) => pipe(
 
 const formatNamesList = map((name) => <div key={name}>{name}</div>);
 
+const getInitialFormValues = applySpec({
+  id: prop('id'),
+  email: propOr('', 'email'),
+  phone: propOr('', 'phone'),
+  preferred_contact_method: propOr('', 'preferred_contact_method'),
+  address_line_1: propOr('', 'address_line_1'),
+  address_line_2: propOr('', 'address_line_2'),
+  city: propOr('', 'city'),
+  state: propOr('', 'state'),
+  zip_code: propOr('', 'zip_code'),
+  spouse: propOr('', 'spouse'),
+  aliases: prop('aliases'),
+  connected_ministers: propOr([], 'connected_ministers'),
+  primaryNameIndex: always(0),
+  monthOfBirth: getMonthOfBirth,
+  dayOfBirth: getDayOfBirth,
+});
+
 export default function PartnerCard({ id, isOpen, close }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -149,7 +166,6 @@ export default function PartnerCard({ id, isOpen, close }) {
     setIsUpdating(true);
     const payload = clone(values);
     payload.aliases = formatAliases(payload.primaryNameIndex, payload.aliases);
-    delete payload.primaryNameIndex;
     try {
       await updatePartnerById(payload.id, payload);
       dispatch(updatePartnerInState(payload));
@@ -178,12 +194,7 @@ export default function PartnerCard({ id, isOpen, close }) {
       >
         {isEditing ? (
           <Formik
-            initialValues={{
-              ...partner,
-              primaryNameIndex: 0,
-              monthOfBirth: getMonthOfBirth(partner),
-              dayOfBirth: getDayOfBirth(partner),
-            }}
+            initialValues={getInitialFormValues(partner)}
             onSubmit={handleSubmit}
           >
             {({
@@ -201,10 +212,10 @@ export default function PartnerCard({ id, isOpen, close }) {
                       onChange={handleChange}
                       error={touched.primaryNameIndex && Boolean(errors.primaryNameIndex)}
                       helperText={touched.primaryNameIndex && errors.primaryNameIndex}
-                      style={{ fontSize: 30, fontWeight: 'bold' }}
+                      style={{ fontSize: 28, fontWeight: 'bold', maxWidth: '85vw' }}
                     >
                       {values.aliases.map((alias, index) => (
-                        <MenuItem key={alias} value={index}>
+                        <MenuItem defaultValue={0} key={alias} value={index}>
                           {alias}
                         </MenuItem>
                       ))}
@@ -212,8 +223,8 @@ export default function PartnerCard({ id, isOpen, close }) {
                   </FormControl>
                 </H1>
 
-                <Grid container direction="row" spacing={10}>
-                  <GridItem xs="auto" sm={6}>
+                <Grid container direction="row" justifyContent="space-between" spacing={3}>
+                  <Grid item xs={12} sm={6}>
                     <H3>Contact</H3>
                     <Grid container direction="column">
                       <TextField
@@ -315,17 +326,18 @@ export default function PartnerCard({ id, isOpen, close }) {
                         </Grid>
                       </div>
                     </Grid>
-                  </GridItem>
+                  </Grid>
 
-                  <GridItem xs="auto" sm={6}>
+                  <Grid item xs={12} sm={6}>
                     <H3>Personal</H3>
-                    <InputLabel shrink htmlFor="monthOfBirth">
+                    <InputLabel id="monthOfBirthLabel" shrink>
                       Birthday
                     </InputLabel>
                     <Grid container direction="row" justifyContent="space-between">
                       <Select
                         id="monthOfBirth"
                         name="monthOfBirth"
+                        labelId="monthOfBirthLabel"
                         value={values.monthOfBirth}
                         onChange={(e) => {
                           handleChange(e);
@@ -338,7 +350,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                         style={{ width: '45%' }}
                       >
                         {MONTHS.map((month) => (
-                          <option selected={month === '01'} key={month.day} value={month.day}>
+                          <option defaultValue="01" key={month.number} value={month.number}>
                             {month.name}
                           </option>
                         ))}
@@ -358,7 +370,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                         style={{ width: '45%' }}
                       >
                         {daysInMonth(Number(values.monthOfBirth)).map((day) => (
-                          <option selected={day === '01'} key={day} value={day}>{day}</option>
+                          <option defaultValue="01" key={day} value={day}>{day}</option>
                         ))}
                       </Select>
                     </Grid>
@@ -418,9 +430,9 @@ export default function PartnerCard({ id, isOpen, close }) {
 
                     {/* <H3>Connected Ministers</H3>
                     {formatNamesList(partner.connected_ministers) || 'n/a'} */}
-                  </GridItem>
+                  </Grid>
                 </Grid>
-                <Grid container direction="row" justifyContent="space-evenly" spacing={5}>
+                <Grid container direction="row" justifyContent="space-evenly" spacing={5} style={{ marginTop: 15 }}>
                   <Grid item>
                     <CancelButton onClick={() => setIsEditing(false)} />
                   </Grid>
@@ -434,8 +446,8 @@ export default function PartnerCard({ id, isOpen, close }) {
         ) : (
           <>
             <H1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</H1>
-            <Grid container direction="row" spacing={10}>
-              <GridItem xs={6}>
+            <Grid container direction="row" justifyContent="space-between" spacing={6}>
+              <Grid item xs={12} sm={6}>
                 <H3>Email</H3>
                 {partner.email || 'n/a'}
 
@@ -455,9 +467,9 @@ export default function PartnerCard({ id, isOpen, close }) {
                     </AddressLine>
                   </>
                 ) : 'n/a'}
-              </GridItem>
+              </Grid>
 
-              <GridItem xs={6}>
+              <Grid item xs={12} sm={6}>
                 <H3>Birthday</H3>
                 {partner.birthday || 'n/a'}
 
@@ -475,9 +487,9 @@ export default function PartnerCard({ id, isOpen, close }) {
                 {partner.connected_ministers.length > 1
                   ? formatNamesList(partner.connected_ministers)
                   : 'n/a'}
-              </GridItem>
+              </Grid>
             </Grid>
-            <Grid container direction="row" justifyContent="space-evenly" spacing={5}>
+            <Grid container direction="row" justifyContent="space-evenly" spacing={5} style={{ marginTop: 15 }}>
               <Grid item>
                 <EditButton
                   onClick={() => {
