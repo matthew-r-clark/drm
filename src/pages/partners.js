@@ -8,7 +8,6 @@ import {
 } from 'ramda';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import Fuse from 'fuse.js';
 import { Formik, Form } from 'formik';
 import styled from '@emotion/styled';
 import CloseIcon from '@material-ui/icons/Close';
@@ -18,9 +17,9 @@ import { H1 } from 'components/headers';
 import EnhancedTable from 'components/EnhancedTable';
 import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
-import debounce from 'modules/debounce';
 import { getBreakpoint } from 'styles/theme';
 import colors from 'styles/colors';
+import useSearch from 'modules/useSearch';
 
 const searchOptions = {
   threshold: 0.15,
@@ -83,25 +82,28 @@ const ClearSearchButton = styled((props) => <CloseIcon fontSize="small" {...prop
 
 export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPartnerId, setSelectedPartnerId] = useState();
-  const searchIndex = Fuse.createIndex(searchOptions.keys, partners);
-  const fuse = new Fuse(partners, searchOptions, searchIndex);
+
+  const {
+    performSearch,
+    searchResults,
+    updateSourceList,
+    query: searchQuery,
+  } = useSearch({
+    indexKeys: searchOptions.keys,
+    sourceList: partners,
+    searchOptions,
+  });
 
   useEffect(() => {
-    const result = fuse.search(searchQuery);
-    setSearchResults(result);
+    updateSourceList(partners);
   }, [partners]);
 
-  const handleSearch = ({ query }) => {
-    debounce(() => {
-      const result = fuse.search(query);
-      setSearchResults(result);
-      setSearchQuery(query);
-    }, 500);
-  };
+  const handleSearch = pipe(
+    prop('query'),
+    performSearch,
+  );
 
   return (
     <>
