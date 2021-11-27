@@ -3,7 +3,7 @@ import {
 } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, FieldArray } from 'formik';
 import {
@@ -44,6 +44,8 @@ import {
   SaveButton,
 } from 'components/buttons';
 import colors from 'styles/colors';
+import { getBreakpoint } from 'styles/theme';
+import useWindowSize from 'modules/useWindowSize';
 
 const MONTHS = [
   { name: 'January', number: '01' },
@@ -156,6 +158,13 @@ export default function PartnerCard({ id, isOpen, close }) {
   const dispatch = useDispatch();
 
   const modalRef = useRef();
+  const windowSize = useWindowSize();
+
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    setIsMobile(windowSize.width <= getBreakpoint('sm'));
+  }, [windowSize]);
 
   const partner = useSelector(pipe(
     path(['partners', 'list']),
@@ -223,7 +232,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                   </FormControl>
                 </H1>
 
-                <Grid container direction="row" justifyContent="space-between" spacing={3}>
+                <Grid container direction="row" justifyContent="space-between" spacing={isMobile ? 0 : 3}>
                   <Grid item xs={12} sm={6}>
                     <H3>Contact</H3>
                     <Grid container direction="column">
@@ -446,7 +455,7 @@ export default function PartnerCard({ id, isOpen, close }) {
         ) : (
           <>
             <H1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</H1>
-            <Grid container direction="row" justifyContent="space-between" spacing={6}>
+            <Grid container direction="row" justifyContent="space-between" spacing={isMobile ? 0 : 6}>
               <Grid item xs={12} sm={6}>
                 <H3>Email</H3>
                 {partner.email || 'n/a'}
