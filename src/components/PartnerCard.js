@@ -220,7 +220,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                       value={values.primaryNameIndex}
                       onChange={handleChange}
                       error={touched.primaryNameIndex && Boolean(errors.primaryNameIndex)}
-                      helperText={touched.primaryNameIndex && errors.primaryNameIndex}
                       style={{ fontSize: 28, fontWeight: 'bold', maxWidth: '85vw' }}
                     >
                       {values.aliases.map((alias, index) => (
@@ -244,7 +243,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                         value={values.email}
                         onChange={handleChange}
                         error={touched.email && Boolean(errors.email)}
-                        helperText={touched.email && errors.email}
                       />
 
                       <TextField
@@ -257,7 +255,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           handleChange(onPhoneChange(e));
                         }}
                         error={touched.phone && Boolean(errors.phone)}
-                        helperText={touched.phone && errors.phone}
                       />
 
                       <FormControl>
@@ -270,8 +267,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           onChange={handleChange}
                           error={touched.preferred_contact_method
                             && Boolean(errors.preferred_contact_method)}
-                          helperText={touched.preferred_contact_method
-                            && errors.preferred_contact_method}
                         >
                           <MenuItem value="phone">phone</MenuItem>
                           <MenuItem value="text">text</MenuItem>
@@ -289,7 +284,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           value={values.address_line_1}
                           onChange={handleChange}
                           error={touched.address_line_1 && Boolean(errors.address_line_1)}
-                          helperText={touched.address_line_1 && errors.address_line_1}
                         />
                         <TextField
                           fullWidth
@@ -299,7 +293,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           value={values.address_line_2}
                           onChange={handleChange}
                           error={touched.address_line_2 && Boolean(errors.address_line_2)}
-                          helperText={touched.address_line_2 && errors.address_line_2}
                         />
                         <TextField
                           fullWidth
@@ -309,7 +302,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           value={values.city}
                           onChange={handleChange}
                           error={touched.city && Boolean(errors.city)}
-                          helperText={touched.city && errors.city}
                         />
                         <Grid container direction="row" justifyContent="space-between">
                           <TextField
@@ -319,7 +311,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                             value={values.state}
                             onChange={handleChange}
                             error={touched.state && Boolean(errors.state)}
-                            helperText={touched.state && errors.state}
                             style={{ width: '45%' }}
                           />
                           <TextField
@@ -329,7 +320,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                             value={values.zip_code}
                             onChange={handleChange}
                             error={touched.zip_code && Boolean(errors.zip_code)}
-                            helperText={touched.zip_code && errors.zip_code}
                             style={{ width: '45%' }}
                           />
                         </Grid>
@@ -355,7 +345,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           setFieldValue('birthday', `${month}/${day}`);
                         }}
                         error={touched.monthOfBirth && Boolean(errors.monthOfBirth)}
-                        helperText={touched.monthOfBirth && errors.monthOfBirth}
                         style={{ width: '45%' }}
                       >
                         {MONTHS.map((month) => (
@@ -375,7 +364,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           setFieldValue('birthday', `${month}/${day}`);
                         }}
                         error={touched.dayOfBirth && Boolean(errors.dayOfBirth)}
-                        helperText={touched.dayOfBirth && errors.dayOfBirth}
                         style={{ width: '45%' }}
                       >
                         {daysInMonth(Number(values.monthOfBirth)).map((day) => (
@@ -392,7 +380,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                       value={values.spouse}
                       onChange={handleChange}
                       error={touched.spouse && Boolean(errors.spouse)}
-                      helperText={touched.spouse && errors.spouse}
                     />
 
                     <FieldArray
