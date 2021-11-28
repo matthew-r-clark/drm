@@ -1,5 +1,5 @@
 import {
-  Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField,
+  Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, List, ListItem,
 } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import styled from '@emotion/styled';
@@ -7,15 +7,19 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, FieldArray } from 'formik';
 import {
+  all,
   always,
   applySpec,
   clone,
   curry,
+  F,
   filter,
   find,
   head,
   identity,
+  ifElse,
   last,
+  lt,
   map,
   path,
   pipe,
@@ -24,6 +28,7 @@ import {
   propOr,
   split,
   tail,
+  take,
   trim,
   uniq,
 } from 'ramda';
@@ -46,6 +51,7 @@ import {
 import colors from 'styles/colors';
 import { getBreakpoint } from 'styles/theme';
 import useWindowSize from 'modules/useWindowSize';
+import useSearch from 'modules/useSearch';
 
 const MONTHS = [
   { name: 'January', number: '01' },
@@ -61,6 +67,13 @@ const MONTHS = [
   { name: 'November', number: '11' },
   { name: 'December', number: '12' },
 ];
+
+const searchOptions = {
+  threshold: 0.15,
+  includeMatches: true,
+  includeScore: true,
+  keys: ['aliases'],
+};
 
 const getMaxDaysInMonth = (month) => new Date(2020, month, 0).getDate();
 const daysInMonth = (month) => {
@@ -92,6 +105,16 @@ const CloseButton = styled(CloseIcon)({
 
 const AddressLine = styled.p({
   margin: 0,
+});
+
+const SearchResultsList = styled((props) => (
+  <List dense {...props} />
+))({
+  backgroundColor: colors.white,
+  margin: 0,
+  padding: '5px 15px',
+  border: `1px solid ${colors.grayLight}`,
+  boxShadow: '1px 1px 4px 0px rgb(0 0 0 / 50%)',
 });
 
 const onPhoneChange = (e) => {
@@ -142,6 +165,7 @@ const getInitialFormValues = applySpec({
   state: propOr('', 'state'),
   zip_code: propOr('', 'zip_code'),
   spouse: propOr('', 'spouse'),
+  spouse_id: prop('spouse_id'),
   aliases: prop('aliases'),
   connected_ministers: propOr([], 'connected_ministers'),
   primaryNameIndex: always(0),
@@ -149,18 +173,37 @@ const getInitialFormValues = applySpec({
   dayOfBirth: getDayOfBirth,
 });
 
+const validBirthday = ifElse(
+  identity,
+  pipe(
+    split('/'),
+    map(Number),
+    all(lt(0)),
+  ),
+  F,
+);
+
 export default function PartnerCard({ id, isOpen, close }) {
+  const partners = useSelector(path(['partners', 'list']));
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
   const [isNameAdded, setIsNameAdded] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
   const dispatch = useDispatch();
 
   const modalRef = useRef();
   const windowSize = useWindowSize();
 
-  const [isMobile, setIsMobile] = useState(true);
+  const {
+    performSearch,
+    searchResults,
+  } = useSearch({
+    indexKeys: searchOptions.keys,
+    collection: partners,
+    searchOptions,
+  });
 
   useEffect(() => {
     setIsMobile(windowSize.width <= getBreakpoint('sm'));
@@ -175,6 +218,9 @@ export default function PartnerCard({ id, isOpen, close }) {
     setIsUpdating(true);
     const payload = clone(values);
     payload.aliases = formatAliases(payload.primaryNameIndex, payload.aliases);
+    if (!validBirthday(payload.birthday)) {
+      payload.birthday = null;
+    }
     try {
       await updatePartnerById(payload.id, payload);
       dispatch(updatePartnerInState(payload));
@@ -209,7 +255,7 @@ export default function PartnerCard({ id, isOpen, close }) {
             {({
               values, handleChange, touched, errors, setFieldValue,
             }) => (
-              <Form>
+              <Form autoComplete="off">
                 <H1 style={{ textAlign: 'center' }}>
                   <FormControl fullWidth>
                     <InputLabel id="primaryNameIndex">Primary Name</InputLabel>
@@ -338,6 +384,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                         name="monthOfBirth"
                         labelId="monthOfBirthLabel"
                         value={values.monthOfBirth}
+                        displayEmpty
                         onChange={(e) => {
                           handleChange(e);
                           const month = e.target.value;
@@ -347,16 +394,18 @@ export default function PartnerCard({ id, isOpen, close }) {
                         error={touched.monthOfBirth && Boolean(errors.monthOfBirth)}
                         style={{ width: '45%' }}
                       >
+                        <MenuItem value="">Month</MenuItem>
                         {MONTHS.map((month) => (
-                          <option defaultValue="01" key={month.number} value={month.number}>
+                          <MenuItem key={month.number} value={month.number}>
                             {month.name}
-                          </option>
+                          </MenuItem>
                         ))}
                       </Select>
                       <Select
                         id="dayOfBirth"
                         name="dayOfBirth"
                         value={values.dayOfBirth}
+                        displayEmpty
                         onChange={(e) => {
                           handleChange(e);
                           const day = e.target.value;
@@ -366,21 +415,50 @@ export default function PartnerCard({ id, isOpen, close }) {
                         error={touched.dayOfBirth && Boolean(errors.dayOfBirth)}
                         style={{ width: '45%' }}
                       >
+                        <MenuItem value="">Day</MenuItem>
                         {daysInMonth(Number(values.monthOfBirth)).map((day) => (
-                          <option defaultValue="01" key={day} value={day}>{day}</option>
+                          <MenuItem defaultValue="01" key={day} value={day}>{day}</MenuItem>
                         ))}
                       </Select>
                     </Grid>
 
-                    <TextField
-                      fullWidth
-                      id="spouse"
-                      name="spouse"
-                      label="Spouse"
-                      value={values.spouse}
-                      onChange={handleChange}
-                      error={touched.spouse && Boolean(errors.spouse)}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <TextField
+                        fullWidth
+                        id="spouse"
+                        name="spouse"
+                        label="Spouse"
+                        value={values.spouse}
+                        onChange={(e) => {
+                          handleChange(e);
+                          const query = e.target.value;
+                          performSearch(query);
+                          if (query === '') {
+                            setFieldValue('spouse_id', null);
+                          }
+                        }}
+                        error={touched.spouse && Boolean(errors.spouse)}
+                      />
+                      <div style={{ position: 'fixed', width: 'initial', zIndex: 100 }}>
+                        {searchResults.length > 0 && (
+                          <SearchResultsList>
+                            {take(10, searchResults).map((r) => (
+                              <ListItem
+                                button
+                                key={r.item.id}
+                                onClick={() => {
+                                  setFieldValue('spouse_id', r.item.id);
+                                  setFieldValue('spouse', r.item.aliases[0]);
+                                  performSearch('');
+                                }}
+                              >
+                                {r.item.aliases[0]}
+                              </ListItem>
+                            ))}
+                          </SearchResultsList>
+                        )}
+                      </div>
+                    </div>
 
                     <FieldArray
                       name="aliases"

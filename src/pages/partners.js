@@ -86,19 +86,14 @@ export default function MinistryPartners() {
   const [selectedPartnerId, setSelectedPartnerId] = useState();
 
   const {
-    performSearch,
+    searchQuery,
     searchResults,
-    updateSourceList,
-    query: searchQuery,
+    performSearch,
   } = useSearch({
     indexKeys: searchOptions.keys,
-    sourceList: partners,
+    collection: partners,
     searchOptions,
   });
-
-  useEffect(() => {
-    updateSourceList(partners);
-  }, [partners]);
 
   const handleSearch = pipe(
     prop('query'),
@@ -117,9 +112,10 @@ export default function MinistryPartners() {
             initialValues={{ query: '' }}
           >
             {({ handleChange, submitForm, setFieldValue }) => (
-              <Form style={{ position: 'relative' }}>
+              <Form style={{ position: 'relative' }} autoComplete="off">
                 <Search
                   name="query"
+                  placeholder="Search..."
                   onChange={(e) => {
                     handleChange(e);
                     submitForm();
