@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import Fuse from 'fuse.js';
-import { equals, prop } from 'ramda';
 
-// eslint-disable-next-line consistent-return
-const createIndex = (indexKeys, collection) => {
-  if (indexKeys && collection) {
-    return Fuse.createIndex(indexKeys, collection);
+const createIndex = (indexKeys, collection) => Fuse.createIndex(indexKeys, collection);
+
+const createFuseInstance = (collection, searchOptions, indexKeys) => {
+  if (indexKeys) {
+    return new Fuse(collection, searchOptions, createIndex(indexKeys, collection));
   }
+  return new Fuse(collection, searchOptions);
 };
 
 const useSearch = ({
@@ -16,7 +17,7 @@ const useSearch = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const fuse = new Fuse(collection, searchOptions, createIndex(indexKeys, collection));
+  const [fuse, setFuse] = useState(createFuseInstance(collection, searchOptions, indexKeys));
 
   const performSearch = (newQuery) => {
     if (newQuery !== undefined) {
@@ -27,9 +28,6 @@ const useSearch = ({
   };
 
   useEffect(() => {
-    if (equals(collection, prop('_docs', fuse))) {
-      return;
-    }
     fuse.setCollection(collection, createIndex(indexKeys, collection));
     performSearch(searchQuery);
   }, [collection]);
