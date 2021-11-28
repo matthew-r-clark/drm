@@ -17,7 +17,7 @@ const useSearch = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [fuse, setFuse] = useState(createFuseInstance(collection, searchOptions, indexKeys));
+  const [fuse] = useState(createFuseInstance(collection, searchOptions, indexKeys));
 
   const performSearch = (newQuery) => {
     if (newQuery !== undefined) {
