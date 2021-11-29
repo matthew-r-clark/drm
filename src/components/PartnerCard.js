@@ -3,13 +3,14 @@ import {
 } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import styled from '@emotion/styled';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, FieldArray } from 'formik';
 import {
   all,
   always,
   applySpec,
+  assoc,
   clone,
   curry,
   F,
@@ -183,8 +184,31 @@ const validBirthday = ifElse(
   F,
 );
 
+const getPartner = (id, partners) => find(propEq('id', id), partners);
+const getPartnerName = pipe(
+  getPartner,
+  ifElse(
+    identity,
+    pipe(
+      prop('aliases'),
+      head,
+    ),
+    always(null),
+  ),
+);
+
+const getSpouse = curry((spouseId, partners) => pipe(
+  find(propEq('id', spouseId)),
+  clone,
+)(partners));
+
 export default function PartnerCard({ id, isOpen, close }) {
   const partners = useSelector(path(['partners', 'list']));
+  const partner = useCallback(
+    find(propEq('id', id), partners),
+    [id, partners],
+  );
+
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -209,11 +233,6 @@ export default function PartnerCard({ id, isOpen, close }) {
     setIsMobile(windowSize.width <= getBreakpoint('sm'));
   }, [windowSize]);
 
-  const partner = useSelector(pipe(
-    path(['partners', 'list']),
-    find(propEq('id', id)),
-  ));
-
   const handleSubmit = async (values) => {
     setIsUpdating(true);
     const payload = clone(values);
@@ -221,7 +240,27 @@ export default function PartnerCard({ id, isOpen, close }) {
     if (!validBirthday(payload.birthday)) {
       payload.birthday = null;
     }
+
     try {
+      if (payload.spouse_id !== partner.spouse_id) {
+        if (partner.spouse_id) {
+          const oldSpouse = pipe(
+            getSpouse(partner.spouse_id),
+            assoc('spouse_id', null),
+          )(partners);
+          await updatePartnerById(oldSpouse.id, oldSpouse);
+          dispatch(updatePartnerInState(oldSpouse));
+        }
+
+        if (payload.spouse_id) {
+          const newSpouse = pipe(
+            getSpouse(payload.spouse_id),
+            assoc('spouse_id', payload.id),
+          )(partners);
+          await updatePartnerById(newSpouse.id, newSpouse);
+          dispatch(updatePartnerInState(newSpouse));
+        }
+      }
       await updatePartnerById(payload.id, payload);
       dispatch(updatePartnerInState(payload));
       dispatch(setGlobalSuccess('Successfully updated partner!'));
@@ -249,6 +288,7 @@ export default function PartnerCard({ id, isOpen, close }) {
       >
         {isEditing ? (
           <Formik
+            enableReinitialize
             initialValues={getInitialFormValues(partner)}
             onSubmit={handleSubmit}
           >
@@ -428,7 +468,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                         id="spouse"
                         name="spouse"
                         label="Spouse"
-                        value={values.spouse}
+                        value={getPartnerName(values.spouse_id, partners)}
                         onChange={(e) => {
                           handleChange(e);
                           const query = e.target.value;
@@ -448,7 +488,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                                 key={r.item.id}
                                 onClick={() => {
                                   setFieldValue('spouse_id', r.item.id);
-                                  setFieldValue('spouse', r.item.aliases[0]);
                                   performSearch('');
                                 }}
                               >
@@ -548,7 +587,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                 {partner.birthday || 'n/a'}
 
                 <H3>Spouse</H3>
-                {partner.spouse || 'n/a'}
+                {partner.spouse_id ? getPartnerName(partner.spouse_id, partners) : 'n/a'}
 
                 {partner.aliases.length > 1 && (
                   <>
