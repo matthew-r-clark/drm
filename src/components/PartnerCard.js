@@ -483,6 +483,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                           }
                           setFieldValue('spouseQuery', query);
                         }}
+                        disabled={Boolean(values.spouse_id)}
                         error={touched.spouse && Boolean(errors.spouse)}
                       />
                       {values.spouse_id && (
