@@ -24,6 +24,8 @@ const Container = styled.div({
   [`@media (max-width: ${getBreakpoint('sm')}px)`]: {
     top: 0,
     margin: 0,
+    minHeight: '100vh',
+    minWidth: '100vw',
   },
 });
 
