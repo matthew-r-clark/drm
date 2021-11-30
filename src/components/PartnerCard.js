@@ -284,6 +284,7 @@ export default function PartnerCard({ id, isOpen, close }) {
         close={() => {
           setIsEditing(false);
           setIsNameAdded(false);
+          performSearch('');
           close();
         }}
         innerRef={modalRef}
@@ -470,7 +471,9 @@ export default function PartnerCard({ id, isOpen, close }) {
                         id="spouse"
                         name="spouse"
                         label="Spouse"
-                        value={getPartnerName(values.spouse_id, partners)}
+                        value={values.spouse_id
+                          ? getPartnerName(values.spouse_id, partners)
+                          : values.spouseQuery}
                         onChange={(e) => {
                           handleChange(e);
                           const query = e.target.value;
@@ -478,9 +481,19 @@ export default function PartnerCard({ id, isOpen, close }) {
                           if (query === '') {
                             setFieldValue('spouse_id', null);
                           }
+                          setFieldValue('spouseQuery', query);
                         }}
                         error={touched.spouse && Boolean(errors.spouse)}
                       />
+                      {values.spouse_id && (
+                        <CloseButton
+                          onClick={() => {
+                            setFieldValue('spouse_id', null);
+                            setFieldValue('spouseQuery', '');
+                          }}
+                          style={{ top: 20 }}
+                        />
+                      )}
                       <div style={{ position: 'fixed', width: 'initial', zIndex: 100 }}>
                         {searchResults.length > 0 && (
                           <SearchResultsList>
@@ -491,6 +504,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                                 onClick={() => {
                                   setFieldValue('spouse_id', r.item.id);
                                   performSearch('');
+                                  setFieldValue('spouseQuery', '');
                                 }}
                               >
                                 {r.item.aliases[0]}
