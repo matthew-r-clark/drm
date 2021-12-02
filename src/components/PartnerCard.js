@@ -110,6 +110,14 @@ const AddressLine = styled.p({
   margin: 0,
 });
 
+const SearchResultsContainer = styled.div({
+  position: 'fixed',
+  zIndex: 100,
+  [`@media (max-width: ${getBreakpoint('sm')}px)`]: {
+    position: 'relative',
+  },
+});
+
 const SearchResultsList = styled((props) => (
   <List dense {...props} />
 ))({
@@ -475,6 +483,11 @@ export default function PartnerCard({ id, isOpen, close }) {
                           ? getPartnerName(values.spouse_id, partners)
                           : values.spouseQuery}
                         onChange={(e) => {
+                          const topOffset = e.target.getBoundingClientRect().top;
+                          modalRef.current.scrollTo({
+                            top: topOffset,
+                            behavior: 'smooth',
+                          });
                           handleChange(e);
                           const query = e.target.value;
                           performSearch(query);
@@ -495,7 +508,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                           style={{ top: 20 }}
                         />
                       )}
-                      <div style={{ position: 'fixed', width: 'initial', zIndex: 100 }}>
+                      <SearchResultsContainer>
                         {searchResults.length > 0 && (
                           <SearchResultsList>
                             {take(10, searchResults).map((r) => (
@@ -513,7 +526,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                             ))}
                           </SearchResultsList>
                         )}
-                      </div>
+                      </SearchResultsContainer>
                     </div>
 
                     <FieldArray
