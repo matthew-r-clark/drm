@@ -7,7 +7,7 @@ import {
   prop,
 } from 'ramda';
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Formik, Form } from 'formik';
 import styled from '@emotion/styled';
 import CloseIcon from '@material-ui/icons/Close';
