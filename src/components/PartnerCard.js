@@ -3,11 +3,29 @@ import {
 } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, FieldArray } from 'formik';
 import {
-  clone, curry, filter, find, head, identity, last, map, path, pipe, propEq, tail, trim, uniq,
+  always,
+  applySpec,
+  clone,
+  curry,
+  filter,
+  find,
+  head,
+  identity,
+  last,
+  map,
+  path,
+  pipe,
+  prop,
+  propEq,
+  propOr,
+  split,
+  tail,
+  trim,
+  uniq,
 } from 'ramda';
 
 import { deletePartnerById, updatePartnerById } from 'modules/partners';
@@ -26,6 +44,39 @@ import {
   SaveButton,
 } from 'components/buttons';
 import colors from 'styles/colors';
+import { getBreakpoint } from 'styles/theme';
+import useWindowSize from 'modules/useWindowSize';
+
+const MONTHS = [
+  { name: 'January', number: '01' },
+  { name: 'February', number: '02' },
+  { name: 'March', number: '03' },
+  { name: 'April', number: '04' },
+  { name: 'May', number: '05' },
+  { name: 'June', number: '06' },
+  { name: 'July', number: '07' },
+  { name: 'August', number: '08' },
+  { name: 'September', number: '09' },
+  { name: 'October', number: '10' },
+  { name: 'November', number: '11' },
+  { name: 'December', number: '12' },
+];
+
+const getMaxDaysInMonth = (month) => new Date(2020, month, 0).getDate();
+const daysInMonth = (month) => {
+  const maxDays = getMaxDaysInMonth(month);
+  return Array(maxDays).fill(0).map((_, i) => String(i + 1).padStart(2, '0'));
+};
+const getDayOfBirth = pipe(
+  propOr('/', 'birthday'),
+  split('/'),
+  last,
+);
+const getMonthOfBirth = pipe(
+  propOr('/', 'birthday'),
+  split('/'),
+  head,
+);
 
 const CloseButton = styled(CloseIcon)({
   color: colors.red,
@@ -39,41 +90,22 @@ const CloseButton = styled(CloseIcon)({
   },
 });
 
-const GridItem = styled((props) => <Grid item {...props} />)({
-  minWidth: 250,
-});
-
 const AddressLine = styled.p({
   margin: 0,
 });
 
-const onBirthdateChange = (e) => {
+const onPhoneChange = (e) => {
   if (!/[\d]/.test(e.target.value)) {
     e.target.value = '';
     return e;
   }
-  const birthdate = e.target.value
-    .replace(/[\D+]/g, '')
-    .substring(0, 4);
-  const convert = (match, month = '', day = '') => {
-    if (Number(month[0]) > 1) {
-      return `0${month}/`;
-    }
-    if (Number(month) > 12 || month.length === 1) {
-      return month[0];
-    }
-    const maxDaysInMonth = new Date(2020, month, 0).getDate();
-    const maxDaysInMonthFirstDigit = Number(String(maxDaysInMonth)[0]);
-    if (Number(day[0]) > maxDaysInMonthFirstDigit) {
-      return `${month}/0${day}`;
-    }
-    if (Number(day) > maxDaysInMonth || day.length === 1) {
-      return `${month}/${day[0]}`;
-    }
-    return `${month}/${day}`;
-  };
-  e.target.value = birthdate.replace(
-    /([0-9]{1,2})([0-9]{1,2})?/,
+  const phone = e.target.value
+    .replace(/[^\d]/g, '')
+    .replace(/(?:1?)/, '')
+    .substring(0, 10);
+  const convert = (match, p1 = '', p2 = '', p3 = '') => `${p1}${p2 && p2.length ? '-' : ''}${p2}${p3 && p3.length ? '-' : ''}${p3}`;
+  e.target.value = phone.replace(
+    /([0-9]{1,3})([0-9]{1,3})?([0-9]{1,4}$)?/,
     convert,
   );
   return e;
@@ -99,12 +131,41 @@ const formatAliases = (primaryNameIndex, aliases) => pipe(
 
 const formatNamesList = map((name) => <div key={name}>{name}</div>);
 
+const getInitialFormValues = applySpec({
+  id: prop('id'),
+  email: propOr('', 'email'),
+  phone: propOr('', 'phone'),
+  preferred_contact_method: propOr('', 'preferred_contact_method'),
+  address_line_1: propOr('', 'address_line_1'),
+  address_line_2: propOr('', 'address_line_2'),
+  city: propOr('', 'city'),
+  state: propOr('', 'state'),
+  zip_code: propOr('', 'zip_code'),
+  spouse: propOr('', 'spouse'),
+  aliases: prop('aliases'),
+  connected_ministers: propOr([], 'connected_ministers'),
+  primaryNameIndex: always(0),
+  monthOfBirth: getMonthOfBirth,
+  dayOfBirth: getDayOfBirth,
+});
+
 export default function PartnerCard({ id, isOpen, close }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
+  const [isNameAdded, setIsNameAdded] = useState(false);
   const dispatch = useDispatch();
+
+  const modalRef = useRef();
+  const windowSize = useWindowSize();
+
+  const [isMobile, setIsMobile] = useState(true);
+
+  useEffect(() => {
+    setIsMobile(windowSize.width <= getBreakpoint('sm'));
+  }, [windowSize]);
+
   const partner = useSelector(pipe(
     path(['partners', 'list']),
     find(propEq('id', id)),
@@ -114,7 +175,6 @@ export default function PartnerCard({ id, isOpen, close }) {
     setIsUpdating(true);
     const payload = clone(values);
     payload.aliases = formatAliases(payload.primaryNameIndex, payload.aliases);
-    delete payload.primaryNameIndex;
     try {
       await updatePartnerById(payload.id, payload);
       dispatch(updatePartnerInState(payload));
@@ -136,15 +196,14 @@ export default function PartnerCard({ id, isOpen, close }) {
         isOpen={isOpen}
         close={() => {
           setIsEditing(false);
+          setIsNameAdded(false);
           close();
         }}
+        innerRef={modalRef}
       >
         {isEditing ? (
           <Formik
-            initialValues={{
-              ...partner,
-              primaryNameIndex: 0,
-            }}
+            initialValues={getInitialFormValues(partner)}
             onSubmit={handleSubmit}
           >
             {({
@@ -161,11 +220,10 @@ export default function PartnerCard({ id, isOpen, close }) {
                       value={values.primaryNameIndex}
                       onChange={handleChange}
                       error={touched.primaryNameIndex && Boolean(errors.primaryNameIndex)}
-                      helperText={touched.primaryNameIndex && errors.primaryNameIndex}
-                      style={{ fontSize: 30, fontWeight: 'bold' }}
+                      style={{ fontSize: 28, fontWeight: 'bold', maxWidth: '85vw' }}
                     >
                       {values.aliases.map((alias, index) => (
-                        <MenuItem key={alias} value={index}>
+                        <MenuItem defaultValue={0} key={alias} value={index}>
                           {alias}
                         </MenuItem>
                       ))}
@@ -173,8 +231,8 @@ export default function PartnerCard({ id, isOpen, close }) {
                   </FormControl>
                 </H1>
 
-                <Grid container direction="row" spacing={10}>
-                  <GridItem xs={6}>
+                <Grid container direction="row" justifyContent="space-between" spacing={isMobile ? 0 : 3}>
+                  <Grid item xs={12} sm={6}>
                     <H3>Contact</H3>
                     <Grid container direction="column">
                       <TextField
@@ -185,17 +243,18 @@ export default function PartnerCard({ id, isOpen, close }) {
                         value={values.email}
                         onChange={handleChange}
                         error={touched.email && Boolean(errors.email)}
-                        helperText={touched.email && errors.email}
                       />
 
                       <TextField
                         id="phone"
                         name="phone"
                         label="Phone"
+                        type="tel"
                         value={values.phone}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          handleChange(onPhoneChange(e));
+                        }}
                         error={touched.phone && Boolean(errors.phone)}
-                        helperText={touched.phone && errors.phone}
                       />
 
                       <FormControl>
@@ -208,8 +267,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           onChange={handleChange}
                           error={touched.preferred_contact_method
                             && Boolean(errors.preferred_contact_method)}
-                          helperText={touched.preferred_contact_method
-                            && errors.preferred_contact_method}
                         >
                           <MenuItem value="phone">phone</MenuItem>
                           <MenuItem value="text">text</MenuItem>
@@ -227,7 +284,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           value={values.address_line_1}
                           onChange={handleChange}
                           error={touched.address_line_1 && Boolean(errors.address_line_1)}
-                          helperText={touched.address_line_1 && errors.address_line_1}
                         />
                         <TextField
                           fullWidth
@@ -237,7 +293,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           value={values.address_line_2}
                           onChange={handleChange}
                           error={touched.address_line_2 && Boolean(errors.address_line_2)}
-                          helperText={touched.address_line_2 && errors.address_line_2}
                         />
                         <TextField
                           fullWidth
@@ -247,7 +302,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                           value={values.city}
                           onChange={handleChange}
                           error={touched.city && Boolean(errors.city)}
-                          helperText={touched.city && errors.city}
                         />
                         <Grid container direction="row" justifyContent="space-between">
                           <TextField
@@ -257,7 +311,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                             value={values.state}
                             onChange={handleChange}
                             error={touched.state && Boolean(errors.state)}
-                            helperText={touched.state && errors.state}
                             style={{ width: '45%' }}
                           />
                           <TextField
@@ -267,33 +320,57 @@ export default function PartnerCard({ id, isOpen, close }) {
                             value={values.zip_code}
                             onChange={handleChange}
                             error={touched.zip_code && Boolean(errors.zip_code)}
-                            helperText={touched.zip_code && errors.zip_code}
                             style={{ width: '45%' }}
                           />
                         </Grid>
                       </div>
                     </Grid>
-                  </GridItem>
+                  </Grid>
 
-                  <GridItem xs={6}>
+                  <Grid item xs={12} sm={6}>
                     <H3>Personal</H3>
-                    <TextField
-                      fullWidth
-                      id="birthday"
-                      name="birthday"
-                      label="Birthday (mm/dd)"
-                      value={values.birthday}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Backspace' && last(values.birthday) === '/') {
-                          setFieldValue('birthday', values.birthday.slice(0, 2));
-                        }
-                      }}
-                      onChange={(e) => {
-                        handleChange(onBirthdateChange(e));
-                      }}
-                      error={touched.birthday && Boolean(errors.birthday)}
-                      helperText={touched.birthday && errors.birthday}
-                    />
+                    <InputLabel id="monthOfBirthLabel" shrink>
+                      Birthday
+                    </InputLabel>
+                    <Grid container direction="row" justifyContent="space-between">
+                      <Select
+                        id="monthOfBirth"
+                        name="monthOfBirth"
+                        labelId="monthOfBirthLabel"
+                        value={values.monthOfBirth}
+                        onChange={(e) => {
+                          handleChange(e);
+                          const month = e.target.value;
+                          const day = getDayOfBirth(values);
+                          setFieldValue('birthday', `${month}/${day}`);
+                        }}
+                        error={touched.monthOfBirth && Boolean(errors.monthOfBirth)}
+                        style={{ width: '45%' }}
+                      >
+                        {MONTHS.map((month) => (
+                          <option defaultValue="01" key={month.number} value={month.number}>
+                            {month.name}
+                          </option>
+                        ))}
+                      </Select>
+                      <Select
+                        id="dayOfBirth"
+                        name="dayOfBirth"
+                        value={values.dayOfBirth}
+                        onChange={(e) => {
+                          handleChange(e);
+                          const day = e.target.value;
+                          const month = getMonthOfBirth(values);
+                          setFieldValue('birthday', `${month}/${day}`);
+                        }}
+                        error={touched.dayOfBirth && Boolean(errors.dayOfBirth)}
+                        style={{ width: '45%' }}
+                      >
+                        {daysInMonth(Number(values.monthOfBirth)).map((day) => (
+                          <option defaultValue="01" key={day} value={day}>{day}</option>
+                        ))}
+                      </Select>
+                    </Grid>
 
                     <TextField
                       fullWidth
@@ -303,7 +380,6 @@ export default function PartnerCard({ id, isOpen, close }) {
                       value={values.spouse}
                       onChange={handleChange}
                       error={touched.spouse && Boolean(errors.spouse)}
-                      helperText={touched.spouse && errors.spouse}
                     />
 
                     <FieldArray
@@ -318,7 +394,7 @@ export default function PartnerCard({ id, isOpen, close }) {
                                 name={`aliases.${index}`}
                                 value={values.aliases[index]}
                                 onChange={handleChange}
-                                autoFocus={index === values.aliases.length - 1}
+                                autoFocus={isNameAdded && index === values.aliases.length - 1}
                               />
                               {values.aliases.length > 1
                                 && (
@@ -337,7 +413,10 @@ export default function PartnerCard({ id, isOpen, close }) {
                             color="primary"
                             size="small"
                             style={{ marginTop: 5 }}
-                            onClick={() => arrayHelpers.push('')}
+                            onClick={() => {
+                              arrayHelpers.push('');
+                              setIsNameAdded(true);
+                            }}
                           >
                             Add a name
                           </Button>
@@ -347,14 +426,14 @@ export default function PartnerCard({ id, isOpen, close }) {
 
                     {/* <H3>Connected Ministers</H3>
                     {formatNamesList(partner.connected_ministers) || 'n/a'} */}
-                  </GridItem>
-                </Grid>
-                <Grid container direction="row" justify="space-evenly" spacing={5}>
-                  <Grid item>
-                    <SaveButton type="submit" loading={isUpdating} />
                   </Grid>
+                </Grid>
+                <Grid container direction="row" justifyContent="space-evenly" spacing={5} style={{ marginTop: 15 }}>
                   <Grid item>
                     <CancelButton onClick={() => setIsEditing(false)} />
+                  </Grid>
+                  <Grid item>
+                    <SaveButton type="submit" loading={isUpdating} />
                   </Grid>
                 </Grid>
               </Form>
@@ -363,8 +442,8 @@ export default function PartnerCard({ id, isOpen, close }) {
         ) : (
           <>
             <H1 style={{ textAlign: 'center' }}>{partner.aliases[0]}</H1>
-            <Grid container direction="row" spacing={10}>
-              <GridItem xs={6}>
+            <Grid container direction="row" justifyContent="space-between" spacing={isMobile ? 0 : 6}>
+              <Grid item xs={12} sm={6}>
                 <H3>Email</H3>
                 {partner.email || 'n/a'}
 
@@ -384,9 +463,9 @@ export default function PartnerCard({ id, isOpen, close }) {
                     </AddressLine>
                   </>
                 ) : 'n/a'}
-              </GridItem>
+              </Grid>
 
-              <GridItem xs={6}>
+              <Grid item xs={12} sm={6}>
                 <H3>Birthday</H3>
                 {partner.birthday || 'n/a'}
 
@@ -404,11 +483,20 @@ export default function PartnerCard({ id, isOpen, close }) {
                 {partner.connected_ministers.length > 1
                   ? formatNamesList(partner.connected_ministers)
                   : 'n/a'}
-              </GridItem>
+              </Grid>
             </Grid>
-            <Grid container direction="row" justify="space-evenly" spacing={5}>
+            <Grid container direction="row" justifyContent="space-evenly" spacing={5} style={{ marginTop: 15 }}>
               <Grid item>
-                <EditButton onClick={() => setIsEditing(true)} />
+                <EditButton
+                  onClick={() => {
+                    setIsEditing(true);
+                    setIsNameAdded(false);
+                    modalRef.current.scrollTo({
+                      top: 0,
+                      behavior: 'smooth',
+                    });
+                  }}
+                />
               </Grid>
               <Grid item>
                 <DeleteButton

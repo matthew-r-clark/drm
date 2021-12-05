@@ -24,14 +24,15 @@ import {
 } from 'ramda';
 import styled from '@emotion/styled';
 
+import { DesktopOnly, MobileOnly } from 'components/MediaQuery';
 import colors from 'styles/colors';
 
-const TableRow = styled(MuiTableRow)({
+const TableRow = styled(MuiTableRow)(({ nohover }) => ({
   height: 33,
   '&:hover': {
-    cursor: 'pointer',
+    cursor: nohover ? 'auto' : 'pointer',
   },
-});
+}));
 
 const generateAkaString = pipe(
   prop('aliases'),
@@ -68,16 +69,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// function stableSort(array, comparator) {
-//   const stabilizedThis = array.map((el, index) => [el, index]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) return order;
-//     return a[1] - b[1];
-//   });
-//   return stabilizedThis.map((el) => el[0]);
-// }
-
 const getInitialCharCode = (word) => word.toLowerCase().charCodeAt();
 const alphaSortName = (a, b) => getInitialCharCode(a) - getInitialCharCode(b);
 
@@ -86,6 +77,7 @@ const EnhancedTableHead = ({
   orderBy,
   onRequestSort,
   headers,
+  sortDisabled,
 }) => {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -93,22 +85,25 @@ const EnhancedTableHead = ({
 
   return (
     <TableHead>
-      <TableRow>
+      <TableRow nohover={sortDisabled}>
         {headers.map((header) => (
           <TableCell
             key={header.id}
             align="left"
-            padding="normal"
             sortDirection={orderBy === header.id ? order : false}
+            style={{ fontWeight: 'bold' }}
           >
-            <TableSortLabel
-              active={orderBy === header.id}
-              direction={orderBy === header.id ? order : 'asc'}
-              onClick={createSortHandler(header.id)}
-              style={{ fontWeight: 'bold' }}
-            >
-              {header.label}
-            </TableSortLabel>
+            {sortDisabled
+              ? header.label
+              : (
+                <TableSortLabel
+                  active={orderBy === header.id}
+                  direction={orderBy === header.id ? order : 'asc'}
+                  onClick={createSortHandler(header.id)}
+                >
+                  {header.label}
+                </TableSortLabel>
+              )}
           </TableCell>
         ))}
       </TableRow>
@@ -118,10 +113,13 @@ const EnhancedTableHead = ({
 
 export default function EnhancedTable({
   headers,
+  mobileHeaders,
   rows,
   setIsModalOpen,
   setSelectedPartnerId,
+  defaultOrder,
   defaultOrderBy,
+  sortDisabled,
 }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -133,7 +131,14 @@ export default function EnhancedTable({
   }, [defaultOrderBy]);
 
   useEffect(() => {
+    setOrder(defaultOrder);
+  }, [defaultOrder]);
+
+  useEffect(() => {
     setPage(0);
+    if (sortDisabled) {
+      setOrder(defaultOrder);
+    }
   }, [rows]);
 
   const handleRequestSort = (event, property) => {
@@ -159,13 +164,25 @@ export default function EnhancedTable({
   return (
     <div>
       <TableContainer style={{ marginBottom: 53 }}>
-        <Table size="small">
-          <EnhancedTableHead
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleRequestSort}
-            headers={headers}
-          />
+        <Table size="small" padding="checkbox">
+          <DesktopOnly>
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+              headers={headers}
+              sortDisabled={sortDisabled}
+            />
+          </DesktopOnly>
+          <MobileOnly>
+            <EnhancedTableHead
+              order={order}
+              orderBy={orderBy}
+              onRequestSort={handleRequestSort}
+              headers={mobileHeaders}
+              sortDisabled={sortDisabled}
+            />
+          </MobileOnly>
           <TableBody>
             {sort(getComparator(order, orderBy), rows)
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -180,10 +197,13 @@ export default function EnhancedTable({
                     key={row.id}
                     title={generateAkaString(row)}
                   >
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
+                    <TableCell component="th" id={labelId} scope="row">
                       {path(['aliases', '0'], row)}
                     </TableCell>
-                    <TableCell align="left">{row.email}</TableCell>
+                    <DesktopOnly>
+                      <TableCell align="left">{row.email}</TableCell>
+                      <TableCell align="left">{row.phone}</TableCell>
+                    </DesktopOnly>
                     <TableCell align="left">
                       {row.connected_ministers && pipe(
                         sort(alphaSortName),

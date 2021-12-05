@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import CloseIcon from '@material-ui/icons/Close';
 
 import colors from 'styles/colors';
+import { getBreakpoint } from 'styles/theme';
 
 const ModalBackground = styled(Modal)({
   display: 'flex',
@@ -20,7 +21,7 @@ const Container = styled.div({
   borderRadius: 10,
   boxShadow: '1px 1px 2px 0px rgb(0 0 0 / 50%)',
   padding: 25,
-  '@media (max-width: 500px)': {
+  [`@media (max-width: ${getBreakpoint('sm')}px)`]: {
     top: 0,
     margin: 0,
   },
@@ -37,11 +38,17 @@ const CloseButton = styled(CloseIcon)({
   },
 });
 
-export default function Card({ children, isOpen, close }) {
+export default function Card({
+  children,
+  isOpen,
+  close,
+  innerRef,
+}) {
   return (
     <ModalBackground
       open={isOpen}
       onClose={close}
+      ref={innerRef}
     >
       <Container>
         <CloseButton onClick={close} />

@@ -10,15 +10,20 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 import { Formik, Form } from 'formik';
+import styled from '@emotion/styled';
+import CloseIcon from '@material-ui/icons/Close';
 
-import { LineSeparatedList } from 'components/lists';
+import { DesktopOnly } from 'components/MediaQuery';
+import { H1 } from 'components/headers';
 import EnhancedTable from 'components/EnhancedTable';
 import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
 import debounce from 'modules/debounce';
+import { getBreakpoint } from 'styles/theme';
+import colors from 'styles/colors';
 
 const searchOptions = {
-  threshold: 0.5,
+  threshold: 0.15,
   includeMatches: true,
   includeScore: true,
   keys: ['aliases'],
@@ -29,16 +34,52 @@ const setPrimaryName = (partner) => {
   return assoc('name', name, partner);
 };
 const mapPrimaryName = map(setPrimaryName);
-const mapSearchScoreToItem = (searchItem) => {
+const addScoreToSearchItem = (searchItem) => {
   const score = prop('score', searchItem);
-  return assocPath(['item', 'score'], score, searchItem.item);
+  return assocPath(['item', 'score'], score, searchItem);
 };
 
 const tableHeaders = [
   { id: 'name', numeric: false, label: 'Name' },
   { id: 'email', numeric: false, label: 'Email' },
+  { id: 'phone', numeric: false, label: 'Phone' },
   { id: 'connected_ministers', numeric: false, label: 'Connected Ministers' },
 ];
+
+const tableHeadersMobile = [
+  { id: 'name', numeric: false, label: 'Name' },
+  { id: 'connected_ministers', numeric: false, label: 'Ministers' },
+];
+
+const Heading = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  margin: '0 1rem',
+  [`@media (max-width: ${getBreakpoint('sm')}px)`]: {
+    justifyContent: 'center',
+    marginTop: 25,
+  },
+});
+
+const SearchContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const ClearSearchButton = styled((props) => <CloseIcon fontSize="small" {...props} />)({
+  position: 'absolute',
+  right: 0,
+  top: 4,
+  color: colors.gray,
+  borderRadius: '50%',
+  '&:hover': {
+    cursor: 'pointer',
+    backgroundColor: colors.grayLight,
+  },
+});
 
 export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));
@@ -64,76 +105,82 @@ export default function MinistryPartners() {
 
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <h1 style={{ marginLeft: '1rem' }}>Ministry Partners</h1>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: '1rem',
-          }}
-        >
+      <Heading>
+        <DesktopOnly>
+          <H1>Ministry Partners</H1>
+        </DesktopOnly>
+        <SearchContainer>
           <Formik
             onSubmit={handleSearch}
             initialValues={{ query: '' }}
           >
-            {({ handleChange, submitForm }) => (
-              <Form>
+            {({ handleChange, submitForm, setFieldValue }) => (
+              <Form style={{ position: 'relative' }}>
                 <Search
                   name="query"
-                  placeholder="Search..."
                   onChange={(e) => {
                     handleChange(e);
+                    submitForm();
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setFieldValue('query', '');
+                      submitForm();
+                    }
+                  }}
+                />
+                <ClearSearchButton
+                  onClick={() => {
+                    setFieldValue('query', '');
                     submitForm();
                   }}
                 />
               </Form>
             )}
           </Formik>
-        </div>
-      </div>
+        </SearchContainer>
+      </Heading>
 
       <div style={{ margin: 15 }}>
-        <LineSeparatedList>
-          {searchResults.length ? (
-            <EnhancedTable
-              headers={tableHeaders}
-              rows={map(pipe(
-                mapSearchScoreToItem,
-                prop('item'),
-                setPrimaryName,
-              ), searchResults)}
-              setIsModalOpen={setIsModalOpen}
-              setSelectedPartnerId={setSelectedPartnerId}
-              defaultOrder="desc"
-              defaultOrderBy="score"
-            />
-          ) : (
-            <>
-              {searchQuery ? (
-                <p>
-                  {`No partners match "${searchQuery}"`}
-                </p>
-              ) : (
-                <EnhancedTable
-                  headers={tableHeaders}
-                  rows={mapPrimaryName(partners)}
-                  setIsModalOpen={setIsModalOpen}
-                  setSelectedPartnerId={setSelectedPartnerId}
-                  defaultOrderBy="name"
-                />
-              )}
-            </>
-          )}
-        </LineSeparatedList>
+        {searchResults.length ? (
+          <EnhancedTable
+            headers={tableHeaders}
+            mobileHeaders={tableHeadersMobile}
+            rows={map(pipe(
+              addScoreToSearchItem,
+              prop('item'),
+              setPrimaryName,
+            ), searchResults)}
+            setIsModalOpen={setIsModalOpen}
+            setSelectedPartnerId={setSelectedPartnerId}
+            defaultOrder="asc"
+            defaultOrderBy="score"
+            sortDisabled
+          />
+        ) : (
+          <>
+            {searchQuery ? (
+              <p>
+                {`No partners match "${searchQuery}"`}
+              </p>
+            ) : (
+              <EnhancedTable
+                headers={tableHeaders}
+                mobileHeaders={tableHeadersMobile}
+                rows={mapPrimaryName(partners)}
+                setIsModalOpen={setIsModalOpen}
+                setSelectedPartnerId={setSelectedPartnerId}
+                defaultOrderBy="name"
+              />
+            )}
+          </>
+        )}
       </div>
 
       {selectedPartnerId && (
         <PartnerCard
           id={selectedPartnerId}
-          isOpen={isModalOpen && selectedPartnerId}
+          isOpen={isModalOpen && Boolean(selectedPartnerId)}
           close={() => setIsModalOpen(false)}
         />
       )}
