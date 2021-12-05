@@ -10,7 +10,7 @@ export const CancelButton = (props) => {
   const { loading } = props;
   return (
     <Button disabled={loading} variant="contained" startIcon={<CancelIcon />} {...props}>
-      {loading ? <CircularProgress size={25} color="inherit" /> : 'Cancel'}
+      Cancel
     </Button>
   );
 };
@@ -28,7 +28,7 @@ export const EditButton = (props) => {
   const { loading } = props;
   return (
     <Button disabled={loading} variant="contained" startIcon={<EditIcon />} {...props}>
-      {loading ? <CircularProgress size={25} color="inherit" /> : 'Edit'}
+      Edit
     </Button>
   );
 };
