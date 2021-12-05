@@ -7,7 +7,8 @@ import Fuse from 'fuse.js';
 import { Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 
-import { LineSeparatedList } from 'components/elements';
+import { LineSeparatedList } from 'components/lists';
+import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
 
 const searchOptions = {
@@ -42,7 +43,7 @@ const generateAkaString = pipe(
   ),
 );
 
-const Partner = ({ partner }) => (
+const Partner = ({ partner, setIsModalOpen, setSelectedPartner }) => (
   <Grid
     container
     component="li"
@@ -54,7 +55,8 @@ const Partner = ({ partner }) => (
       borderRadius: 5,
     }}
     onClick={() => {
-      alert(JSON.stringify(partner, null, 2));
+      setIsModalOpen(true);
+      setSelectedPartner(partner);
     }}
   >
     <Grid item xs={4} style={{ paddingLeft: 10 }} title={generateAkaString(partner)}>
@@ -74,6 +76,8 @@ export default function MinistryPartners() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [timeoutId, setTimeoutId] = useState(undefined);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPartner, setSelectedPartner] = useState();
   const fuse = new Fuse(partners, searchOptions);
 
   const handleSearch = ({ query }) => {
@@ -126,7 +130,14 @@ export default function MinistryPartners() {
         <LineSeparatedList>
           {searchResults.length ? (
             <>
-              {searchResults.map((r) => <Partner partner={r.item} />)}
+              {searchResults.map((r) => (
+                <Partner
+                  key={r.item.id}
+                  partner={r.item}
+                  setIsModalOpen={setIsModalOpen}
+                  setSelectedPartner={setSelectedPartner}
+                />
+              ))}
             </>
           ) : (
             <>
@@ -136,13 +147,28 @@ export default function MinistryPartners() {
                 </p>
               ) : (
                 <>
-                  {partners.map((p) => <Partner key={p.id} partner={p} />)}
+                  {partners.map((p) => (
+                    <Partner
+                      key={p.id}
+                      partner={p}
+                      setIsModalOpen={setIsModalOpen}
+                      setSelectedPartner={setSelectedPartner}
+                    />
+                  ))}
                 </>
               )}
             </>
           )}
         </LineSeparatedList>
       </div>
+
+      {selectedPartner && (
+        <PartnerCard
+          id={selectedPartner.id}
+          isOpen={isModalOpen && selectedPartner}
+          close={() => setIsModalOpen(false)}
+        />
+      )}
     </>
   );
 }
