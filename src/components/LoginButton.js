@@ -7,11 +7,33 @@ import colors from 'styles/colors';
 
 const WhiteBtn = styled(Button)({ color: colors.white });
 
-export default function LoginButton() {
+export default function LoginButton({ clickHandler }) {
   const isAuthorized = useSelector(path(['authorization', 'isAuthorized']));
   const dispatch = useDispatch();
 
   return isAuthorized
-    ? <WhiteBtn onClick={() => dispatch(logout())}>Logout</WhiteBtn>
-    : <WhiteBtn onClick={() => dispatch(login())}>Login</WhiteBtn>;
+    ? (
+      <WhiteBtn
+        onClick={() => {
+          dispatch(logout());
+          if (clickHandler) {
+            clickHandler();
+          }
+        }}
+      >
+        Logout
+      </WhiteBtn>
+    )
+    : (
+      <WhiteBtn
+        onClick={() => {
+          dispatch(login());
+          if (clickHandler) {
+            clickHandler();
+          }
+        }}
+      >
+        Login
+      </WhiteBtn>
+    );
 }

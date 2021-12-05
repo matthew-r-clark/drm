@@ -1,13 +1,18 @@
 import {
-  always, concat, ifElse, join, length, lt, path, pipe, prop, tail,
+  assoc,
+  assocPath,
+  map,
+  path,
+  pipe,
+  prop,
 } from 'ramda';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
-import { Grid } from '@material-ui/core';
 import { Formik, Form } from 'formik';
 
 import { LineSeparatedList } from 'components/lists';
+import EnhancedTable from 'components/EnhancedTable';
 import PartnerCard from 'components/PartnerCard';
 import Search from 'components/Search';
 import debounce from 'modules/debounce';
@@ -15,73 +20,32 @@ import debounce from 'modules/debounce';
 const searchOptions = {
   threshold: 0.5,
   includeMatches: true,
+  includeScore: true,
   keys: ['aliases'],
 };
 
-const GridHeaders = () => (
-  <Grid container direction="row" justifyContent="space-evenly" alignItems="center" style={{ fontWeight: 'bold' }}>
-    <Grid item xs={4} style={{ paddingLeft: 10 }}>Name</Grid>
-    <Grid item xs={4}>Email</Grid>
-    <Grid item xs={4}>Ministers</Grid>
-  </Grid>
-);
-
-const generateAkaString = pipe(
-  prop('aliases'),
-  ifElse(
-    pipe(
-      length,
-      lt(1),
-    ),
-    pipe(
-      tail,
-      join(', '),
-      concat('aka: '),
-    ),
-    always(''),
-  ),
-);
-
-const Partner = ({ partner, setIsModalOpen, setSelectedPartner }) => {
-  if (!partner) {
-    return null;
-  }
-
-  return (
-    <Grid
-      container
-      component="li"
-      direction="row"
-      justifyContent="space-evenly"
-      alignItems="center"
-      style={{
-        padding: '3px 0',
-        borderRadius: 5,
-      }}
-      onClick={() => {
-        setIsModalOpen(true);
-        setSelectedPartner(partner);
-      }}
-    >
-      <Grid item xs={4} style={{ paddingLeft: 10 }} title={generateAkaString(partner)}>
-        {partner.aliases[0]}
-      </Grid>
-      <Grid item xs={4}>
-        {partner.email}
-      </Grid>
-      <Grid item xs={4}>
-        {partner.connected_ministers.join(', ')}
-      </Grid>
-    </Grid>
-  );
+const setPrimaryName = (partner) => {
+  const name = path(['aliases', '0'], partner);
+  return assoc('name', name, partner);
 };
+const mapPrimaryName = map(setPrimaryName);
+const mapSearchScoreToItem = (searchItem) => {
+  const score = prop('score', searchItem);
+  return assocPath(['item', 'score'], score, searchItem.item);
+};
+
+const tableHeaders = [
+  { id: 'name', numeric: false, label: 'Name' },
+  { id: 'email', numeric: false, label: 'Email' },
+  { id: 'connected_ministers', numeric: false, label: 'Connected Ministers' },
+];
 
 export default function MinistryPartners() {
   const partners = useSelector(path(['partners', 'list']));
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPartner, setSelectedPartner] = useState();
+  const [selectedPartnerId, setSelectedPartnerId] = useState();
   const searchIndex = Fuse.createIndex(searchOptions.keys, partners);
   const fuse = new Fuse(partners, searchOptions, searchIndex);
 
@@ -132,19 +96,20 @@ export default function MinistryPartners() {
       </div>
 
       <div style={{ margin: 15 }}>
-        <GridHeaders />
         <LineSeparatedList>
           {searchResults.length ? (
-            <>
-              {searchResults.map((r) => (
-                <Partner
-                  key={r.item.id}
-                  partner={r.item}
-                  setIsModalOpen={setIsModalOpen}
-                  setSelectedPartner={setSelectedPartner}
-                />
-              ))}
-            </>
+            <EnhancedTable
+              headers={tableHeaders}
+              rows={map(pipe(
+                mapSearchScoreToItem,
+                prop('item'),
+                setPrimaryName,
+              ), searchResults)}
+              setIsModalOpen={setIsModalOpen}
+              setSelectedPartnerId={setSelectedPartnerId}
+              defaultOrder="desc"
+              defaultOrderBy="score"
+            />
           ) : (
             <>
               {searchQuery ? (
@@ -152,26 +117,23 @@ export default function MinistryPartners() {
                   {`No partners match "${searchQuery}"`}
                 </p>
               ) : (
-                <>
-                  {partners.map((p) => (
-                    <Partner
-                      key={p.id}
-                      partner={p}
-                      setIsModalOpen={setIsModalOpen}
-                      setSelectedPartner={setSelectedPartner}
-                    />
-                  ))}
-                </>
+                <EnhancedTable
+                  headers={tableHeaders}
+                  rows={mapPrimaryName(partners)}
+                  setIsModalOpen={setIsModalOpen}
+                  setSelectedPartnerId={setSelectedPartnerId}
+                  defaultOrderBy="name"
+                />
               )}
             </>
           )}
         </LineSeparatedList>
       </div>
 
-      {selectedPartner && (
+      {selectedPartnerId && (
         <PartnerCard
-          id={selectedPartner.id}
-          isOpen={isModalOpen && selectedPartner}
+          id={selectedPartnerId}
+          isOpen={isModalOpen && selectedPartnerId}
           close={() => setIsModalOpen(false)}
         />
       )}

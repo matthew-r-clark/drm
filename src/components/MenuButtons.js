@@ -89,6 +89,9 @@ export default function MenuButtons({ toggleMenu }) {
                 </Link>
               </ListItem>
             ))}
+            <ListItem>
+              <LoginButton clickHandler={toggleMenu} />
+            </ListItem>
           </List>
         </MobileContainer>
       </MobileOnly>
