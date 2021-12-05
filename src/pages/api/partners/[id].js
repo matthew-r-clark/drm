@@ -1,6 +1,6 @@
 import router from 'modules/router';
 import supabase from 'modules/supabase';
-import { head, isEmpty, omit } from 'ramda';
+import { head, isEmpty, pick } from 'ramda';
 
 const api = {
   /* GET partner by ID
@@ -75,7 +75,23 @@ const api = {
       res.status(400).send('ID from body does not match ID route parameter.');
       return;
     }
-    const payload = omit(['id'], body);
+    const payload = pick(
+      [
+        'aliases',
+        'address_line_1',
+        'address_line_2',
+        'city',
+        'state',
+        'zip_code',
+        'email',
+        'phone',
+        'birthday',
+        'is_married',
+        'preferred_contact_method',
+        'spouse_id',
+      ],
+      body,
+    );
 
     const { data, error } = await supabase
       .from('partners')
