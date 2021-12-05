@@ -20,6 +20,7 @@
     "@material-ui/system": "^4.12.1",
     "@reduxjs/toolkit": "^1.6.1",
     "@supabase/supabase-js": "^1.18.1",
+    "date-fns": "^2.24.0",
     "eslint-config-next": "^11.0.1",
     "formik": "^2.2.9",
     "fuse.js": "^6.4.6",
