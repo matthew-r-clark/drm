@@ -8,7 +8,7 @@ import {
 
 export const CancelButton = ({ loading, ...props }) => (
   <Button disabled={loading} variant="contained" startIcon={<CancelIcon />} {...props}>
-    {loading ? <CircularProgress size={25} color="inherit" /> : 'Cancel'}
+    Cancel
   </Button>
 );
 
@@ -20,7 +20,7 @@ export const DeleteButton = ({ loading, ...props }) => (
 
 export const EditButton = ({ loading, ...props }) => (
   <Button disabled={loading} variant="contained" startIcon={<EditIcon />} {...props}>
-    {loading ? <CircularProgress size={25} color="inherit" /> : 'Edit'}
+    Edit
   </Button>
 );
 
